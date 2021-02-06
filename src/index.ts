@@ -2,7 +2,7 @@ import "module-alias/register";
 import "reflect-metadata";
 import http from "http";
 import { App } from "./server/app";
-import { Log } from "./common/services/log";
+import { Log } from "./common/services";
 import dotenv from "dotenv";
 import { rAmqp } from "./common/services/amqp";
 
