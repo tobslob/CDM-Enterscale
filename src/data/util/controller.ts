@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { injectable, unmanaged } from "inversify";
 import pick from "lodash/pick";
 import Logger = require("bunyan");
-import { Log } from "../../common/services/log";
+import { Log } from "../../common/services";
 
 @injectable()
 export class Controller<T> {

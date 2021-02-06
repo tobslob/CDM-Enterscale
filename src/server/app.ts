@@ -7,7 +7,8 @@ import mongoose, { Connection } from "mongoose";
 import container from "../common/config/ioc";
 import { Application, Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
-import { defaultMongoOpts, secureMongoOpts } from "../data/database";
+import { Store, Auth } from "@app/common/services";
+import session from "express-session";
 
 dotenv.config();
 
@@ -22,6 +23,10 @@ export class App {
     // setup server-level middlewares
     this.server.setConfig((app: Application) => {
       app.enabled("x-powered-by");
+
+      app.use(session)
+      // automatically load sessions
+      app.use(Auth.autoload());
 
       app.use(responseTime());
       app.use(bodyparser.urlencoded({ extended: true }));
@@ -38,7 +43,7 @@ export class App {
 
         res.status(200).json({
           status: "success",
-          data: { message: "Welcome To Home Todo" }
+          data: { message: "Welcome To Enterscale" }
         });
       });
 
@@ -46,7 +51,7 @@ export class App {
       app.use((_req, res, _next) => {
         res.status(404).json({
           status: "error",
-          data: { message: "Not Found" }
+          data: { message: "Route Not Found" }
         });
       });
 
@@ -71,8 +76,9 @@ export class App {
   getServer = () => this.server;
 
   async connectDB() {
+    await Store.connect();
     await mongoose.connect(process.env.mongodb_url, {
-      ...(process.env.is_production ? secureMongoOpts : defaultMongoOpts)
+      useCreateIndex: true, useFindAndModify: false, useNewUrlParser: true, useUnifiedTopology: true
     });
     this.db = mongoose.connection;
   }
@@ -82,5 +88,6 @@ export class App {
    */
   async closeDB() {
     await mongoose.disconnect();
+    await Store.quit();
   }
 }
