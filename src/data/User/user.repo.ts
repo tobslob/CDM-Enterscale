@@ -5,6 +5,7 @@ import { BaseRepository } from "../database";
 import { Passwords } from "@app/services/password";
 import { RoleRepo } from "../role/role.repo";
 import { UnAuthorisedError } from "../util";
+import { Role } from "../role/role.model";
 
 class UserRepository extends BaseRepository<User> {
   constructor() {
@@ -13,11 +14,9 @@ class UserRepository extends BaseRepository<User> {
 
     /**
    * Creates an unconfirmed user
-   * @param branch branch the user belongs to
    * @param dto DTO of the user to create
    */
-  async newUser(dto: UserDTO): Promise<User> {
-    const role = await RoleRepo.byID(dto.role_id);
+  async newUser(dto: UserDTO, role: Role): Promise<User> {
     return this.create({
       email_address: dto.email_address,
       first_name: dto.first_name,

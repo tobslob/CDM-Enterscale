@@ -49,5 +49,9 @@ export const JoiValidator = {
 
   validateID() {
     return Joi.string().uuid().trim().required();
+  },
+
+  validPhoneNumber() {
+    return Joi.string().regex(/^\d{11}/$);
   }
 };
