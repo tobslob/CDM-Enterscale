@@ -1,10 +1,11 @@
 import { SchemaFactory } from "@app/data/database";
 import { SchemaDefinition, SchemaTypes } from "mongoose";
-import { trimmedString } from "@app/data/util"
+import { trimmedString } from "@app/data/util";
 
 const PermissionSchema: SchemaDefinition = {
-  super_administrator: { type: SchemaTypes.Boolean, default: false },
-  loan_administrator: { type: SchemaTypes.Boolean, default: false }
+  super_admin: { type: SchemaTypes.Boolean, default: false },
+  loan_admin: { type: SchemaTypes.Boolean, default: false },
+  users: { type: SchemaTypes.Boolean, default: true }
 };
 
 export const RoleSchema = SchemaFactory({

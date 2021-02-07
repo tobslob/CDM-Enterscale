@@ -8,7 +8,7 @@ import { validate } from "@app/data/util/validate";
 import { isLoginDTO } from "./session.validator";
 import { BaseController } from "@app/data/util";
 
-@controller("/admin/sessions")
+@controller("/sessions")
 export class SessionController extends BaseController<Session> {
   @httpPost("/login", validate(isLoginDTO))
   async Login(@request() req: Request, @response() res: Response, @requestBody() body: LoginDTO) {
