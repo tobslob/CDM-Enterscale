@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import {} from "@app/data/user";
 import { Request, Response } from "express";
 import { controller, httpPost, request, requestBody, response } from "inversify-express-utils";
 import { validate } from "@app/data/util/validate";
