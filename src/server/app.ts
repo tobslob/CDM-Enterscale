@@ -24,7 +24,11 @@ export class App {
     this.server.setConfig((app: Application) => {
       app.enabled("x-powered-by");
 
-      app.use(session)
+      app.use(session({
+        secret: process.env.secret_key,
+        resave: true,
+        saveUninitialized: false
+      }))
       // automatically load sessions
       app.use(Auth.autoload());
 
