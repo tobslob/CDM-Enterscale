@@ -1,6 +1,5 @@
 import { SchemaFactory } from "../database";
 import { trimmedLowercaseString, trimmedString } from "../util/schema";
-import { SchemaTypes } from "mongoose";
 
 export const UserSchema = SchemaFactory({
   first_name: { ...trimmedString, required: true, index: true },
@@ -11,5 +10,4 @@ export const UserSchema = SchemaFactory({
   role_id: { ...trimmedString, required: true, index: true },
   role_name: { ...trimmedString, required: true, index: true },
   workspace: { ...trimmedString, required: true, index: true },
-  permissions: { type: SchemaTypes.Mixed, requierd: true }
 });
