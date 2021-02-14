@@ -21,6 +21,7 @@ class UserRepository extends BaseRepository<User> {
       first_name: dto.first_name,
       last_name: dto.last_name,
       password: dto.password,
+      phone_number: dto.phone_number,
       role_id: role.id,
       role_name: role.name,
       workspace
