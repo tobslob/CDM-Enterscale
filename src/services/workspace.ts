@@ -12,7 +12,6 @@ class WorkspaceService {
     await UserServ.createUser(workspace.id, {
       first_name: dto.first_name,
       last_name: dto.last_name,
-      password: dto.password,
       email_address: dto.email_address,
       phone_number: dto.phone_number
     });

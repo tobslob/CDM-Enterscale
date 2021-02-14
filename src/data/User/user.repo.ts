@@ -15,12 +15,12 @@ class UserRepository extends BaseRepository<User> {
    * Creates an unconfirmed user
    * @param dto DTO of the user to create
    */
-  async newUser(role: Role, workspace: string, dto: UserDTO): Promise<User> {
+  async newUser(role: Role, workspace: string, password: string, dto: UserDTO): Promise<User> {
     return this.create({
       email_address: dto.email_address,
       first_name: dto.first_name,
       last_name: dto.last_name,
-      password: dto.password,
+      password,
       phone_number: dto.phone_number,
       role_id: role.id,
       role_name: role.name,
