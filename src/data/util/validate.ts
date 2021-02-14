@@ -52,6 +52,6 @@ export const JoiValidator = {
   },
 
   validPhoneNumber() {
-    return Joi.string().regex(/^\d{11}/$);
+    return Joi.string().regex(/^\d{11}$/);
   }
 };

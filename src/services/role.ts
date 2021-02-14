@@ -1,12 +1,17 @@
 import { RoleRepo } from "@app/data/role/role.repo";
 
-class UserService {
+class RoleService {
   createDefaultRole(workspace: string) {
     return RoleRepo.createRole(workspace, {
-      name: "platform user",
-      description: "user without any administrative role"
+      name: "Loan Administrator",
+      permissions: {
+        loan_administrator: true,
+        super_administrator: false,
+        users: false,
+      },
+      description: "Workspace loan administrator"
     });
   }
 }
 
-export const UserServ = new UserService();
+export const RoleServ = new RoleService();

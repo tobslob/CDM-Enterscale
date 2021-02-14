@@ -21,7 +21,6 @@ export interface UserDTO {
   password: string;
   email_address: string;
   phone_number: string;
-  role_id: string;
 }
 
 export interface LoginDTO {
