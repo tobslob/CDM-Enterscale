@@ -24,7 +24,7 @@ class PasswordService {
    * @param length length of random password to be generated
    */
   generateRandomPassword(length: number) {
-    return randomPassword({length, type: "ascii-printable"})
+    return randomPassword(length)
   }
 }
 

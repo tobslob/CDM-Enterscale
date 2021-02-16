@@ -18,7 +18,7 @@
       "@app/services/*": ["services/*"],
       "@app/server/*": ["server/*"]
     },
-    "typeRoots": ["./node_modules/@types", "./typings"],
+    "typeRoots": ["./node_modules/@types", "./src/type"],
     "types": ["reflect-metadata", "jest"],
     "esModuleInterop": true,
     "experimentalDecorators": true,

@@ -8,7 +8,6 @@ import container from "../common/config/ioc";
 import { Application, Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import { Store, Auth } from "@app/common/services";
-import session from "express-session";
 
 dotenv.config();
 
@@ -24,11 +23,6 @@ export class App {
     this.server.setConfig((app: Application) => {
       app.enabled("x-powered-by");
 
-      app.use(session({
-        secret: process.env.secret_key,
-        resave: true,
-        saveUninitialized: false
-      }))
       // automatically load sessions
       app.use(Auth.autoload());
 
