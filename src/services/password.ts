@@ -1,4 +1,5 @@
 import { compare, hash } from "bcrypt";
+import randomPassword from "crypto-random-string";
 
 class PasswordService {
   /**
@@ -16,6 +17,14 @@ class PasswordService {
    */
   validate(password: string, hashPassword: string) {
     return compare(password, hashPassword);
+  }
+
+  /**
+   * Generate a ascii-printable password
+   * @param length length of random password to be generated
+   */
+  generateRandomPassword(length: number) {
+    return randomPassword({length, type: "ascii-printable"})
   }
 }
 
