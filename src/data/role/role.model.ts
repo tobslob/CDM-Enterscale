@@ -1,8 +1,8 @@
 import { Model } from "@app/data/database";
 
 export interface Permissions {
-  super_administrator: boolean;
-  loan_administrator: boolean;
+  super_admin: boolean;
+  loan_admin: boolean;
   users: boolean;
 }
 
