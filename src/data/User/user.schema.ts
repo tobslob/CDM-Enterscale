@@ -9,5 +9,5 @@ export const UserSchema = SchemaFactory({
   phone_number: { ...trimmedString, required: true, index: true },
   role_id: { ...trimmedString, required: true, index: true },
   role_name: { ...trimmedString, required: true, index: true },
-  workspace: { ...trimmedString, required: true, index: true },
+  workspace: { ...trimmedString, required: true, index: true }
 });
