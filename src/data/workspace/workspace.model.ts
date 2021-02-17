@@ -1,5 +1,4 @@
 import { Model } from "../database";
-import { Permissions } from "../role/role.model";
 
 /**
  * Model of a Enterscale Workspace.
@@ -19,5 +18,4 @@ export interface WorkspaceDTO {
   password: string;
   email_address: string;
   phone_number: string;
-  permissions: Permissions;
 }

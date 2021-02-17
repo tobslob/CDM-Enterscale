@@ -3,7 +3,7 @@ import joi from "@hapi/joi";
 
 export const isPermissions = joi.object({
   super_admin: joi.bool().default(false),
-  loan_admin: joi.bool().default(false),
+  loan_admin: joi.bool().default(true),
   users: joi.bool().default(false)
 });
 
@@ -14,6 +14,5 @@ export const isWorkspaceWihAdminDTO = joi.object({
   first_name: JoiValidator.validateString().required(),
   last_name: JoiValidator.validateString().required(),
   email_address: JoiValidator.validateEmail().required(),
-  phone_number: JoiValidator.validPhoneNumber().required(),
-  permissions: isPermissions.required()
+  phone_number: JoiValidator.validPhoneNumber().required()
 });
