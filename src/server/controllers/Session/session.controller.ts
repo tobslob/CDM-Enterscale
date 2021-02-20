@@ -12,51 +12,63 @@ import { BaseController } from "@app/data/util";
 export class SessionController extends BaseController<Session> {
   @httpPost("/login", validate(isLoginDTO))
   async Login(@request() req: Request, @response() res: Response, @requestBody() body: LoginDTO) {
-    const user = await UserRepo.getAuthenticatedUser(body.email_address, body.password);
-    const role = await RoleRepo.byID(user.role_id);
+    try {
+      const user = await UserRepo.getAuthenticatedUser(body.email_address, body.password);
+      const role = await RoleRepo.byID(user.role_id);
 
-    const token = await Auth.saveSession(user.id, {
-      ...role.permissions,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email_address: user.email_address,
-      user: user.id,
-      role: role.id,
-      workspace: user.workspace
-    });
+      const token = await Auth.saveSession(user.id, {
+        ...role.permissions,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email_address: user.email_address,
+        user: user.id,
+        role: role.id,
+        workspace: user.workspace
+      });
 
-    this.handleSuccess(req, res, {
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email_address: user.email_address,
-      token: token,
-      user: user.id,
-      role: role.id,
-      permissions: role.permissions,
-      workspace: user.workspace
-    });
+      this.handleSuccess(req, res, {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email_address: user.email_address,
+        token: token,
+        user: user.id,
+        role: role.id,
+        permissions: role.permissions,
+        workspace: user.workspace
+      });
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
   }
 
   @httpGet("/", Auth.authCheck)
   async getSession(@request() req: Request, @response() res: Response) {
-    const user = await UserRepo.byID(req.session.user);
-    const role = await RoleRepo.byID(user.role_id);
+    try {
+      const user = await UserRepo.byID(req.session.user);
+      const role = await RoleRepo.byID(user.role_id);
 
-    this.handleSuccess(req, res, {
-      permissions: role.permissions,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email_address: user.email_address,
-      user: user.id,
-      role: role.id,
-      workspace: user.workspace,
-      token: req.sessionID
-    });
+      this.handleSuccess(req, res, {
+        permissions: role.permissions,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email_address: user.email_address,
+        user: user.id,
+        role: role.id,
+        workspace: user.workspace,
+        token: req.sessionID
+      });
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
   }
 
   @httpDelete("/logout", Auth.authCheck)
   async logout(@request() req: Request, @response() res: Response) {
-    Auth.destroySession(req.session.user);
-    this.handleSuccess(req, res, null);
+    try {
+      Auth.destroySession(req.session.user);
+      this.handleSuccess(req, res, null);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
   }
 }

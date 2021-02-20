@@ -3,7 +3,6 @@ import { UserRepo, UserDTO } from "@app/data/user";
 import { Passwords } from "./password";
 import { RoleRepo } from "@app/data/role/role.repo";
 import { Role } from "@app/data/role/role.model";
-import { DuplicateModelError } from "@app/data/util";
 
 class UserService {
   private role: Role;
@@ -17,15 +16,14 @@ class UserService {
         dto.permissions.users
       );
       const generatedPassword = Passwords.generateRandomPassword(10);
+      console.log(generatedPassword)
       const password = await Passwords.generateHash(generatedPassword);
       const user = await UserRepo.newUser(this.role, workspace, password, dto);
 
       return user;
     } catch (err) {
+      console.log(err)
       await RoleRepo.destroy(this.role.id);
-      if (err.message === "Users exists already") {
-        throw new DuplicateModelError("Users exists already");
-      }
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Model } from "@app/data/database";
+import { Model } from "@random-guys/bucket";
 
 export interface Permissions {
   super_admin: boolean;

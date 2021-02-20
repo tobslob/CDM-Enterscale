@@ -1,10 +1,8 @@
-import { compose, ConstraintError } from "@app/data/util";
+import { compose } from "compose-middleware";
 import { Auth } from "@app/common/services";
-import { Request, Response, NextFunction } from "express";
+import { when } from "@random-guys/sp-auth";
 
-export const canCreateUser = compose(Auth.authCheck, (req: Request, _res: Response, next: NextFunction) => {
-  if (req.session.users) {
-    throw new ConstraintError("You are not allowed to perform this operation");
-  }
-  return next();
-});
+export const canCreateUser = compose(
+  Auth.authCheck,
+  when(req => req.session.loan_admin)
+);

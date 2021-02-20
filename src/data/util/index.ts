@@ -1,8 +1,18 @@
+import JSend from "jsend";
+
 export * from "./error";
 export * from "./query";
 export * from "./schema";
-export * from "./logger";
 export * from "./controller";
 export * from "./audits";
 export * from "./validate";
-export * from "./compose";
+
+declare global {
+  namespace Express {
+    interface Response{
+      id: string,
+      body: any,
+      jSend: JSend
+    }
+  }
+}

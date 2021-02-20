@@ -1,4 +1,4 @@
-import HttpStatus from "http-status-codes";
+import HttpStatus, { UNAUTHORIZED } from "http-status-codes";
 import { Request, Response } from "express";
 
 /**
@@ -94,8 +94,8 @@ export class ConflictError extends ControllerError {
   }
 }
 
-export class UnAuthorisedError extends ControllerError {
-  code = HttpStatus.UNAUTHORIZED;
+export class UnauthorizedError extends ControllerError {
+  code = UNAUTHORIZED;
   constructor(message: string) {
     super(message);
   }
@@ -113,9 +113,10 @@ export class NoAuthenticationError extends Error {
   }
 }
 
-export const handleError = (req: Request, res: Response, error: any, code: number) => {
-  res.json({
+export const handleResponse = (_req: Request, res: Response, data: any, message: string, code: number) => {
+  return res.status(code).json({
     code,
-    error
+    data,
+    message
   });
 };

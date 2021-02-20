@@ -1,5 +1,5 @@
 import { connection } from "mongoose";
-import { BaseRepository } from "../database";
+import { BaseRepository } from "@random-guys/bucket";
 import { Workspace } from "./workspace.model";
 import { WorkspaceSchema } from "./workspace.schema";
 
