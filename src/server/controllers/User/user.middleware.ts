@@ -1,8 +1,14 @@
-import { compose } from "compose-middleware";
-import { Auth } from "@app/common/services";
-import { when } from "@random-guys/sp-auth";
+import { NextFunction, Request, Response } from "express";
 
-export const canCreateUser = compose(
-  Auth.authCheck,
-  when(req => req.session.loan_admin)
-);
+import { UNAUTHORIZED, FORBIDDEN } from "http-status-codes";
+import { response } from "@app/data/util/response";
+
+export const canCreateUser = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.session) {
+    return response(res, UNAUTHORIZED, "You are not allowed to perform this operation", null);
+  }
+  if (!req.session.loan_admin) {
+    return response(res, FORBIDDEN, "You are not allowed to perform this operation", null);
+  }
+  return next();
+}
