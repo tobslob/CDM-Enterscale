@@ -1,10 +1,13 @@
-import { connection } from "mongoose";
+import { connection, model } from "mongoose";
 import { User, UserDTO } from "./user.model";
 import { UserSchema } from "./user.schema";
-import { BaseRepository } from "../database";
+import { BaseRepository } from "@random-guys/bucket";
 import { Passwords } from "@app/services/password";
-import { UnAuthorisedError } from "../util";
+import { UnauthorizedError } from "@app/data/util";
 import { Role } from "../role/role.model";
+
+
+const User = model<User>("User", UserSchema);
 
 class UserRepository extends BaseRepository<User> {
   constructor() {
@@ -37,13 +40,13 @@ class UserRepository extends BaseRepository<User> {
   async getAuthenticatedUser(email: string, password: string) {
     const user = await this.byQuery({ email_address: email }, false);
     if (!user) {
-      throw new UnAuthorisedError("Your email or password is incorrect");
+      throw new UnauthorizedError("Your email or password is incorrect");
     }
 
     const correctPassword = await Passwords.validate(password, user.password);
 
     if (!correctPassword) {
-      throw new UnAuthorisedError("Your email or password is incorrect");
+      throw new UnauthorizedError("Your email or password is incorrect");
     }
 
     return user;

@@ -16,7 +16,8 @@
       "@app/common/*": ["common/*"],
       "@app/data/*": ["data/*"],
       "@app/services/*": ["services/*"],
-      "@app/server/*": ["server/*"]
+      "@app/server/*": ["server/*"],
+      "@/*": ["*"]
     },
     "typeRoots": ["./node_modules/@types", "./src/type"],
     "types": ["reflect-metadata", "jest"],

@@ -1,4 +1,4 @@
-import { Model } from "../database";
+import { Model } from "@random-guys/bucket";
 import { Permissions } from "@app/data/role/role.model"
 
 /**

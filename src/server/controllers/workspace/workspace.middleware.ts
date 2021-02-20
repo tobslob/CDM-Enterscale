@@ -1,10 +1,13 @@
-import { compose, ConstraintError } from "@app/data/util";
-import { Auth } from "@app/common/services";
 import { Request, Response, NextFunction } from "express";
+import { UNAUTHORIZED, FORBIDDEN } from "http-status-codes";
+import { response } from "@app/data/util/response";
 
-export const canCreateWorkspace = compose(Auth.authCheck, (req: Request, _res: Response, next: NextFunction) => {
+export const canCreateWorkspace = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.session) {
+    return response(res, UNAUTHORIZED, "You are not allowed to perform this operation", null);
+  }
   if (!req.session.super_admin) {
-    throw new ConstraintError("You are not allowed to perform this operation");
+    return response(res, FORBIDDEN, "You are not allowed to perform this operation", null);
   }
   return next();
-});
+};

@@ -5,7 +5,7 @@ import responseTime from "response-time";
 import { getRouteInfo, InversifyExpressServer } from "inversify-express-utils";
 import mongoose, { Connection } from "mongoose";
 import container from "../common/config/ioc";
-import { Application, Request, Response, NextFunction } from "express";
+import { Application, Request, Response } from "express";
 import dotenv from "dotenv";
 import { Store, Auth } from "@app/common/services";
 
@@ -51,17 +51,6 @@ export class App {
           status: "error",
           data: { message: "Route Not Found" }
         });
-      });
-
-      // handle all error
-      app.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
-        if (err) {
-          return res.status(500).json({
-            status: "error",
-            data: err.message
-          });
-        }
-        return next();
       });
     });
   }

@@ -1,7 +1,7 @@
-import { SchemaFactory } from "../database";
-import { trimmedLowercaseString, trimmedString } from "../util/schema";
+import { Schema } from "mongoose";
+import { trimmedLowercaseString, trimmedString } from "@random-guys/bucket";
 
-export const UserSchema = SchemaFactory({
+export const UserSchema = new Schema({
   first_name: { ...trimmedString, required: true, index: true },
   last_name: { ...trimmedString, required: true, index: true },
   password: { ...trimmedString, required: true },

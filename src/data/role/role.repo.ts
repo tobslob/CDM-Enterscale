@@ -1,4 +1,4 @@
-import { BaseRepository } from "@app/data/database";
+import { BaseRepository } from "@random-guys/bucket";
 import { Role, RoleDTO } from "./role.model";
 import mongoose from "mongoose";
 import { RoleSchema } from "./role.schema";

@@ -1,14 +1,13 @@
-import { Query, Audits, ActionLog } from "@app/data/util";
+import { Query, Audits, ActionLog, ControllerError } from "@app/data/util";
 import { Request, Response } from "express";
-import { injectable, unmanaged } from "inversify";
-import pick from "lodash/pick";
-import Logger = require("bunyan");
-import { Log } from "../../common/services";
+import { injectable } from "inversify";
+import _ from "lodash";
+import logger from "@app/common/services/logger";
+import { ModelNotFoundError, DuplicateModelError } from "@random-guys/bucket";
+import { NOT_FOUND, BAD_REQUEST, CONFLICT } from "http-status-codes";
 
 @injectable()
 export class Controller<T> {
-  constructor(@unmanaged() private logger: Logger) {}
-
   /**
    * Handles operation success and sends a HTTP response.
    * __Note__: if the data passed is a promise, no value is sent
@@ -22,25 +21,57 @@ export class Controller<T> {
       status: "success",
       data: result
     });
-    this.logger.info({ req, res });
+    logger.message({ req, res });
+  }
+
+  /*
+   * Determines the HTTP status code of an error
+   * @param err Error object
+   */
+  getHTTPErrorCode(err) {
+    // check if error code exists and is a valid HTTP code.
+    if (err.code >= 100 && err.code < 600) {
+      if (err instanceof ModelNotFoundError) return NOT_FOUND;
+      if (err instanceof DuplicateModelError) return CONFLICT;
+      return err.code;
+    }
+    return BAD_REQUEST;
   }
 
   /**
-   * Picks relevant pagination options from an Express query object
-   * @param query Express Query object
+   * Handles operation error, sends a HTTP response and logs the error.
+   * @param req Express request
+   * @param res Express response
+   * @param error Error object
+   * @param message Optional error message. Useful for hiding internal errors from clients.
    */
+  handleError(req: Request, res: Response, err: Error, message?: string) {
+    /**
+     * Useful when we call an asynchrous function that might throw
+     * after we've sent a response to client
+     */
+    if (res.headersSent) return logger.error(err);
+
+    const { code } = <ControllerError>err;
+
+    const errorMessage = message || err.message;
+
+    res.status(this.getHTTPErrorCode(err) ?? code).json({
+      code: this.getHTTPErrorCode(err) ?? code,
+      data: null,
+      message: errorMessage
+    });
+    logger.logAPIError(req, res, err);
+  }
+
   getPaginationOptions(query: any): PaginationOptions {
-    return pick(query, ["page", "per_page", "projections", "sort"]);
+    return _.pick(query, ["page", "per_page", "projections", "sort"]);
   }
 }
 
 export type PaginationOptions = Pick<Query, Exclude<keyof Query, "conditions" | "archived">>;
 
 export class BaseController<T> extends Controller<T> {
-  constructor() {
-    super(Log);
-  }
-
   log(req: Request, action: ActionLog) {
     return Audits.log(req, action);
   }

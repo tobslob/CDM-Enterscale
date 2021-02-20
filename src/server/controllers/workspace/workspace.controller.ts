@@ -16,8 +16,12 @@ export class WorkspaceController extends BaseController<Workspace> {
     @response() res: Response,
     @requestBody() body: WorkspaceDTO
   ) {
-    const workspace = await WorkspaceServ.createWorkspaceWithAdmin(body);
+    try {
+      const workspace = await WorkspaceServ.createWorkspaceWithAdmin(body);
 
-    this.handleSuccess(req, res, workspace);
+      this.handleSuccess(req, res, workspace);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
   }
 }
