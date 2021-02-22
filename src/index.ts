@@ -3,7 +3,7 @@ import "reflect-metadata";
 import http from "http";
 import { App } from "./server/app";
 import dotenv from "dotenv";
-import { rAmqp } from "./common/services/amqp";
+// import { rAmqp } from "./common/services/amqp";
 import logger from "./common/services/logger";
 
 dotenv.config();
@@ -18,8 +18,8 @@ const start = async () => {
     logger.message("📦  MongoDB Connected!");
 
     // connect to amqp
-    await rAmqp.init(process.env.amqp_url)
-    logger.message("🐰  Amqp Connected!");
+    // await rAmqp.init(process.env.amqp_url)
+    // logger.message("🐰  Amqp Connected!");
 
     // start server
     const httpServer = http.createServer(appServer);
