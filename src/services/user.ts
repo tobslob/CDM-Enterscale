@@ -16,13 +16,11 @@ class UserService {
         dto.permissions.users
       );
       const generatedPassword = Passwords.generateRandomPassword(10);
-      console.log(generatedPassword)
       const password = await Passwords.generateHash(generatedPassword);
       const user = await UserRepo.newUser(this.role, workspace, password, dto);
 
       return user;
     } catch (err) {
-      console.log(err)
       await RoleRepo.destroy(this.role.id);
     }
   }

@@ -21,7 +21,7 @@ export function validate(schema: SchemaLike): RequestHandler{
       });
       return res.status(422).json({
         code: UNPROCESSABLE_ENTITY,
-        error: errors
+        message: errors
       });
     });
   }
