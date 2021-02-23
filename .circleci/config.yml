@@ -33,20 +33,20 @@ jobs:
       - image: rabbitmq:3.5.4
       - image: redis
     environment:
-      AMQP_URL: amqp://localhost:5672
-      AUTH_SCHEME: TestScheme
-      CLIENT_DOMAIN: enterscale.netlify.app
-      MONGODB_URL: mongodb://localhost:27017/pro-admin
-      MONGODB_NAME: mongo-name
-      MONGODB_PASSWORD: mongo-password
-      MONGODB_USERNAME: pro-admin
-      PORT: "8080"
-      REDIS_URL: redis://localhost:6379
-      SERVICE_SECRET: some-32-character-secret-string-key
-      SERVICE_NAME: enterscale
-      STATEFUL_SESSION_DURATION: 1h
-      STATELESS_SESSION_DURATION: 60s
-      APPROVALS_QUEUE: APPROVALS
+      api_version: /api/v1
+      service_name: Enterscale
+      mongodb_url: mongodb://localhost:27017/enterscale
+      mongodb_username: username
+      mongodb_password: some-password
+      redis_url: redis://localhost:6379
+      redis_password: some-password
+      port: 8080
+      node_env: dev
+      expire_time: "3h"
+      secret_key: some-32-character-secret-string-key
+      amqp_url: //localhost:5672
+      amqp_password: P7D6U5yGFtPHzMTtqcpfNhz7E-HGCIVz
+      is_production: true
     steps:
       - checkout
       - attach_workspace:
