@@ -65,9 +65,14 @@ jobs:
       - run:
           name: Build and push docker image
           command: |
-            apk --no-cache add make # at some point this should be part of enterscale
-            make push
-            make deploy
+            git config user.email $GITHUB_EMAIL
+            git config user.name $GITHUB_USERNAME
+      - add_ssh_keys:
+          fingerprints:
+            - $GITHUB_FINGERPRINT
+      - run:
+          name: Deploy to Azure Web App Using Azure Container Registry Task
+          command: npm run deploy
 workflows:
   version: 2
   build-test-deploy:
