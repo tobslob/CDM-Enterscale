@@ -1,7 +1,96 @@
 version: 2.1
-orbs:
-  node: circleci/node@3.0.0
+jobs:
+  build:
+    working_directory: ~/app
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependency-cache-{{checksum "package.json"}}
+            - dependency-cache-
+      - run:
+          name: Install dependencies
+          command: yarn
+      - save_cache:
+          key: dependency-cache-{{checksum "package.json"}}
+          paths:
+            - node_modules
+      - run:
+          name: Build typescript
+          command: yarn build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+            - dist
+  test:
+    working_directory: ~/app
+    docker:
+      - image: circleci/node:10
+      - image: mongo
+      - image: rabbitmq:3.5.4
+      - image: redis
+    environment:
+      AMQP_URL: amqp://localhost:5672
+      AUTH_SCHEME: TestScheme
+      CLIENT_DOMAIN: enterscale.netlify.app
+      MONGODB_URL: mongodb://localhost:27017/pro-admin
+      MONGODB_NAME: mongo-name
+      MONGODB_PASSWORD: mongo-password
+      MONGODB_USERNAME: pro-admin
+      PORT: "8080"
+      REDIS_URL: redis://localhost:6379
+      SERVICE_SECRET: some-32-character-secret-string-key
+      SERVICE_NAME: enterscale
+      STATEFUL_SESSION_DURATION: 1h
+      STATELESS_SESSION_DURATION: 60s
+      APPROVALS_QUEUE: APPROVALS
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./
+      - run:
+          name: Run tests
+          command: yarn test
+  deploy:
+    working_directory: ~/app
+    docker:
+      - image: enterscale
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Build and push docker image
+          command: |
+            apk --no-cache add make # at some point this should be part of enterscale
+            make push
+            make deploy
 workflows:
-  node-tests:
+  version: 2
+  build-test-deploy:
     jobs:
-      - node/test
+      - build:
+          filters:
+            branches:
+              ignore:
+                - staging
+                - master
+      - test:
+          context: enterscale
+          requires:
+            - build
+          filters:
+            branches:
+              ignore:
+                - staging
+                - master
+      - deploy:
+          context: enterscale
+          filters:
+            branches:
+              only:
+                - staging
+                - master
