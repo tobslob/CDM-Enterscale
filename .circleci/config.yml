@@ -45,7 +45,7 @@ jobs:
       expire_time: "3h"
       secret_key: some-32-character-secret-string-key
       amqp_url: //localhost:5672
-      amqp_password: P7D6U5yGFtPHzMTtqcpfNhz7E-HGCIVz
+      amqp_password: some-password
       is_production: true
     steps:
       - checkout
