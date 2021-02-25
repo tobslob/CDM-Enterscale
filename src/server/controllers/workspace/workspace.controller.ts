@@ -6,7 +6,7 @@ import { BaseController } from "@app/data/util";
 import { isWorkspaceWihAdminDTO, isValidID } from "./workspace.validator";
 import { Workspace, WorkspaceDTO, WorkspaceRepo } from "@app/data/workspace";
 import { WorkspaceServ } from "@app/services/workspace";
-// import { canCreateWorkspace } from "./workspace.middleware";
+import { canCreateWorkspace } from "./workspace.middleware";
 
 @controller("/workspaces")
 export class WorkspaceController extends BaseController<Workspace> {
