@@ -46,7 +46,7 @@ jobs:
       secret_key: some-32-character-secret-string-key
       amqp_url: //localhost:5672
       amqp_password: some-password
-      is_production: true
+      is_production: false
     steps:
       - checkout
       - attach_workspace:
