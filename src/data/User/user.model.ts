@@ -1,5 +1,5 @@
 import { Model } from "@random-guys/bucket";
-import { Permissions } from "@app/data/role/role.model"
+import { Permissions } from "@app/data/role"
 
 /**
  * Model of a Enterscale user.

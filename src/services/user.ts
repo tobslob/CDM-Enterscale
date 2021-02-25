@@ -1,8 +1,8 @@
 import { RoleServ } from "./role";
 import { UserRepo, UserDTO } from "@app/data/user";
 import { Passwords } from "./password";
-import { RoleRepo } from "@app/data/role/role.repo";
-import { Role } from "@app/data/role/role.model";
+import { RoleRepo } from "@app/data/role";
+import { Role } from "@app/data/role";
 
 class UserService {
   private role: Role;
@@ -16,7 +16,6 @@ class UserService {
         dto.permissions.users
       );
       const generatedPassword = Passwords.generateRandomPassword(10);
-      console.log(generatedPassword)
       const password = await Passwords.generateHash(generatedPassword);
       const user = await UserRepo.newUser(this.role, workspace, password, dto);
 
