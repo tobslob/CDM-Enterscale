@@ -1,8 +1,9 @@
 import { RoleServ } from "./role";
 import { UserRepo, UserDTO } from "@app/data/user";
 import { Passwords } from "./password";
-import { RoleRepo } from "@app/data/role/role.repo";
-import { Role } from "@app/data/role/role.model";
+import { RoleRepo } from "@app/data/role";
+import { Role } from "@app/data/role";
+import AdapterInstance from "@app/server/adapter/mail";
 
 class UserService {
   private role: Role;
@@ -18,6 +19,18 @@ class UserService {
       const generatedPassword = Passwords.generateRandomPassword(10);
       const password = await Passwords.generateHash(generatedPassword);
       const user = await UserRepo.newUser(this.role, workspace, password, dto);
+
+      AdapterInstance.send({
+        subject: "Welcome mail",
+        channel: "mail",
+        recipient: user.email_address,
+        template: "welcome-mail",
+        template_vars: {
+          firstname: user.first_name,
+          emailaddress: user.email_address,
+          password: generatedPassword
+        }
+      });
 
       return user;
     } catch (err) {

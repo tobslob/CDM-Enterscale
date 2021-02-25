@@ -1,4 +1,4 @@
-import { RoleRepo } from "@app/data/role/role.repo";
+import { RoleRepo } from "@app/data/role";
 
 class RoleService {
   async createRole(workspace: string, loan_admin?: boolean, super_admin?: boolean, users?: boolean) {

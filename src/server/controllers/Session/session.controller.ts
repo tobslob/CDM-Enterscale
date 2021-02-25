@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Auth } from "@app/common/services";
-import { RoleRepo } from "@app/data/role/role.repo";
+import { RoleRepo } from "@app/data/role";
 import { LoginDTO, Session, UserRepo } from "@app/data/user";
 import { Request, Response } from "express";
 import { controller, httpDelete, httpGet, httpPost, request, requestBody, response } from "inversify-express-utils";
