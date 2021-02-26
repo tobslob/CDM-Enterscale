@@ -10,7 +10,7 @@ import { canCreateWorkspace } from "./workspace.middleware";
 
 @controller("/workspaces")
 export class WorkspaceController extends BaseController<Workspace> {
-  @httpPost("/", validate(isWorkspaceWihAdminDTO))
+  @httpPost("/", canCreateWorkspace, validate(isWorkspaceWihAdminDTO))
   async CreateWorkspaceWithAdmin(
     @request() req: Request,
     @response() res: Response,

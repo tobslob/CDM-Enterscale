@@ -28,6 +28,15 @@ export interface LoginDTO {
   password: string;
 }
 
+export interface PasswordDTO {
+  old_password: string;
+  new_password: string;
+}
+
+export interface ResetPasswordDTO {
+  email_address: string;
+}
+
 export interface Session {
   email_address: string;
   first_name: string;

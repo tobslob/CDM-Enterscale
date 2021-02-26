@@ -37,7 +37,7 @@ class UserRepository extends BaseRepository<User> {
    * @param email user's email address
    * @param password user's password
    */
-  async getAuthenticatedUser(email: string, password: string) {
+  async getAuthenticatedUser(email: string, password: string): Promise<User> {
     const user = await this.byQuery({ email_address: email }, false);
     if (!user) {
       throw new UnauthorizedError("Your email or password is incorrect");
@@ -50,6 +50,10 @@ class UserRepository extends BaseRepository<User> {
     }
 
     return user;
+  }
+
+  async setPassword(user: string, password: string): Promise<User> {
+    return this.atomicUpdate(user, { $set: { password: await Passwords.generateHash(password) } });
   }
 }
 
