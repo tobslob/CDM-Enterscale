@@ -32,15 +32,15 @@ export function validate(schema: SchemaLike): RequestHandler{
  */
 export const JoiValidator = {
   validateString() {
-    return Joi.string();
+    return Joi.string().trim();
   },
 
   validateEmail() {
-    return Joi.string().email();
+    return Joi.string().email().trim();
   },
 
   validatePassword() {
-    return Joi.string().min(8).strict().required();
+    return Joi.string().min(8).strict().trim().required();
   },
 
   validateNumber() {
@@ -52,6 +52,6 @@ export const JoiValidator = {
   },
 
   validPhoneNumber() {
-    return Joi.string().regex(/^\d{11}$/);
+    return Joi.string().regex(/^\d{11}$/).trim();
   }
 };

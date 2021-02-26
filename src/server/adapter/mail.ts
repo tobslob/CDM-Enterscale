@@ -73,6 +73,9 @@ const AdapterInstance = new MailAdapter();
 // welcome mail to onboarded users
 AdapterInstance.createTemplate("welcome-mail", Mailer.mailLoader("welcome-mail.mjml"));
 
+// Reset password
+AdapterInstance.createTemplate("reset-password-mail", Mailer.mailLoader("reset-password-mail.mjml"));
+
 export const isMailNotification = joi.object({
   subject: JoiValidator.validateString().required(),
   recipient: JoiValidator.validateEmail(),

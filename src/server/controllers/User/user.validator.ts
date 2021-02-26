@@ -9,3 +9,14 @@ export const isUserDTO = joi.object({
   phone_number: JoiValidator.validPhoneNumber(),
   permissions: isPermissions.required()
 });
+
+export const isPasswordDTO = joi.object({
+  old_password: JoiValidator.validateString().required(),
+  new_password: JoiValidator.validatePassword()
+})
+
+export const isEditUserDTO = joi.object({
+    first_name: JoiValidator.validateString(),
+    last_name: JoiValidator.validateString(),
+    phone_number: JoiValidator.validPhoneNumber()
+})
