@@ -5,7 +5,7 @@ import supertest, { SuperTest, Test } from "supertest";
 
 import { Store } from "../src/common/services";
 import { App } from "../src/server/app";
-import { timeout, getResponse, createAuthToken, createSession, getError } from "./helpers";
+import { getResponse, createAuthToken, createSession, getError } from "./helpers";
 import { OK, FORBIDDEN } from "http-status-codes";
 import { workspaceDTO } from "./mocks/data";
 import { createWorkspace } from "./mocks/services";
@@ -24,8 +24,6 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await Store.flushdb();
-  await timeout(1000);
-  await app.db.dropDatabase();
   await app.closeDB();
 });
 
