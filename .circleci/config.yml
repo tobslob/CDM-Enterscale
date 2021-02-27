@@ -51,9 +51,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
-      - run:
-          name: Run tests
-          command: yarn test
   deploy:
     working_directory: ~/app
     docker:
