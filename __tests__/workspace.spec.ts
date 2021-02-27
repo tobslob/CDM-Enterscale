@@ -5,10 +5,9 @@ import supertest, { SuperTest, Test } from "supertest";
 
 import { Store } from "../src/common/services";
 import { App } from "../src/server/app";
-import { timeout, getResponse, createAuthToken, createSession, getError } from "./helpers";
+import { getResponse, createAuthToken, createSession, getError } from "./helpers";
 import { OK, FORBIDDEN } from "http-status-codes";
 import { workspaceDTO } from "./mocks/data";
-import sinon from "sinon";
 import { createWorkspace } from "./mocks/services";
 
 let app: App;
@@ -23,15 +22,8 @@ beforeAll(async () => {
   request = supertest(server);
 });
 
-afterEach(async () => {
-  sinon.restore();
-  await app.db.dropDatabase();
-});
-
 afterAll(async () => {
   await Store.flushdb();
-  timeout(500);
-  await app.db.dropDatabase();
   await app.closeDB();
 });
 
