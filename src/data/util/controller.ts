@@ -2,7 +2,7 @@ import { Query, Audits, ActionLog, ControllerError } from "@app/data/util";
 import { Request, Response } from "express";
 import { injectable } from "inversify";
 import _ from "lodash";
-import logger from "@app/common/services/logger";
+import { Log } from "@app/common/services/logger";
 import { ModelNotFoundError, DuplicateModelError } from "@random-guys/bucket";
 import { NOT_FOUND, BAD_REQUEST, CONFLICT } from "http-status-codes";
 
@@ -21,7 +21,7 @@ export class Controller<T> {
       status: "success",
       data: result
     });
-    logger.message({ req, res });
+    Log.info({ req, res });
   }
 
   /*
@@ -50,7 +50,7 @@ export class Controller<T> {
      * Useful when we call an asynchrous function that might throw
      * after we've sent a response to client
      */
-    if (res.headersSent) return logger.error(err);
+    if (res.headersSent) return Log.error(err);
 
     const { code } = <ControllerError>err;
 
@@ -61,7 +61,7 @@ export class Controller<T> {
       data: null,
       message: errorMessage
     });
-    logger.logAPIError(req, res, err);
+    Log.error(req, res, err);
   }
 
   getPaginationOptions(query: any): PaginationOptions {

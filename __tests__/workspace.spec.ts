@@ -5,10 +5,10 @@ import supertest, { SuperTest, Test } from "supertest";
 
 import { Store } from "../src/common/services";
 import { App } from "../src/server/app";
-import { timeout, getResponse, createAuthToken, createSession, getError } from "./helpers";
+import { getResponse, createAuthToken, createSession, getError } from "./helpers";
 import { OK, FORBIDDEN } from "http-status-codes";
 import { workspaceDTO } from "./mocks/data";
-import sinon from "sinon";
+import { createWorkspace } from "./mocks/services";
 
 let app: App;
 let request: SuperTest<Test>;
@@ -22,15 +22,8 @@ beforeAll(async () => {
   request = supertest(server);
 });
 
-afterEach(async () => {
-  sinon.restore();
-  await app.db.dropDatabase();
-});
-
 afterAll(async () => {
   await Store.flushdb();
-  timeout(500);
-  await app.db.dropDatabase();
   await app.closeDB();
 });
 
@@ -49,7 +42,7 @@ describe("Workspace Creation", () => {
     expect(workspace.address).toMatch(dto.address)
   });
 
-  it.only("Should not create workspace if not super_admin", async () => {
+  it("Should not create workspace if not super_admin", async () => {
     const session = createSession({ super_admin: false });
     const token = await createAuthToken(session);
 
@@ -60,5 +53,18 @@ describe("Workspace Creation", () => {
     );
 
     expect(message).toMatch("You are not allowed to perform this operation")
+  });
+
+  it.skip("Only super_admin can get workspace", async () => {
+    const session = createSession({ super_admin: true });
+    const token = await createAuthToken(session);
+
+    const workspace = await createWorkspace();
+
+    const response = await getResponse(
+      request.post(`${baseUrl}/${workspace._id}`).set("Authorization", token).expect(OK)
+    );
+
+   expect(response._id).toBe(workspace._id)
   });
 });

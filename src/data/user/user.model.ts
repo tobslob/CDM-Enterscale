@@ -1,5 +1,5 @@
 import { Model } from "@random-guys/bucket";
-import { Permissions } from "@app/data/role/role.model"
+import { Permissions } from "@app/data/role"
 
 /**
  * Model of a Enterscale user.
@@ -26,6 +26,15 @@ export interface UserDTO {
 export interface LoginDTO {
   email_address: string;
   password: string;
+}
+
+export interface PasswordDTO {
+  old_password: string;
+  new_password: string;
+}
+
+export interface ResetPasswordDTO {
+  email_address: string;
 }
 
 export interface Session {

@@ -16,3 +16,7 @@ export const isWorkspaceWihAdminDTO = joi.object({
   email_address: JoiValidator.validateEmail().required(),
   phone_number: JoiValidator.validPhoneNumber().required()
 });
+
+export const isValidID = joi.object({
+  id: joi.string().regex(/^[0-9a-fA-F]{24}$/)
+})

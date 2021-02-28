@@ -8,6 +8,8 @@ import container from "../common/config/ioc";
 import { Application, Request, Response } from "express";
 import dotenv from "dotenv";
 import { Store, Auth } from "@app/common/services";
+import { secureMongoOpts, defaultMongoOpts } from "@random-guys/bucket";
+import { errors } from "@app/data/util";
 
 dotenv.config();
 
@@ -52,6 +54,9 @@ export class App {
           data: { message: "Route Not Found" }
         });
       });
+
+      // handle thrown error
+      app.use(errors);
     });
   }
 
@@ -65,7 +70,11 @@ export class App {
   async connectDB() {
     await Store.connect();
     await mongoose.connect(process.env.mongodb_url, {
-      useCreateIndex: true, useFindAndModify: false, useNewUrlParser: true, useUnifiedTopology: true
+      ...(process.env.is_production ? secureMongoOpts({
+        mongodb_url: process.env.mongodb_url,
+        mongodb_username: process.env.mongodb_username,
+        mongodb_password: process.env.mongodb_password
+      }) : defaultMongoOpts)
     });
     this.db = mongoose.connection;
   }

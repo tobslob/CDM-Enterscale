@@ -1,7 +1,7 @@
 import IORedis from "ioredis";
-import { RedisStore, SessionService } from "@random-guys/sp-auth";
+import { RedisStore, SessionService } from "@app/common/services/authorisation";
 import dotenv from "dotenv";
-import logger from '@app/common/services/logger/logger';
+import {Log} from '@app/common/services/logger/logger';
 
 dotenv.config();
 
@@ -9,8 +9,8 @@ export const Store = new IORedis(
   process.env.redis_url,
   process.env.is_production ? { lazyConnect: true, password: process.env.redis_password } : { lazyConnect: true }
 );
-Store.on("ready", () => logger.message("🐳 Redis Connected!"));
-Store.on("error", err => logger.error(err, "An error occured with the Redis client."));
+Store.on("ready", () => Log.info("🐳 Redis Connected!"));
+Store.on("error", err => Log.info(err, "An error occured with the Redis client."));
 
 export const Auth = new SessionService({
   secret: process.env.service_secret,
