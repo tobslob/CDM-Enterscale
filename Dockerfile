@@ -12,7 +12,7 @@ COPY . ./
 
 RUN yarn build
 
-EXPOSE ${port}
+EXPOSE ${PORT}
 
 FROM mhart/alpine-node:10
 

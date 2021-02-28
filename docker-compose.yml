@@ -1,31 +1,36 @@
 version: "3"
 services:
+  rabbitmq:
+    image: rabbitmq
+  redis:
+    image: redis
+  mongo:
+    image: mongo
   app:
     container_name: app
     restart: always
     build: .
-    ports:
-      - "8080:8080"
-    links:
-      - mongo
-    networks:
-      - webnet
-  redis:
-    env_file:
-      - .env
-    image: redis
-    environment:
+    environment: 
+      - api_version=${api_version}
+      - service_name=${service_name}
+      - mongodb_url=${mongodb_url}
+      - mongodb_username=${mongodb_username}
+      - mongodb_password=${mongodb_password}
       - redis_url=${redis_url}
-    networks:
-      - webnet
-  mongo:
-    container_name: mongo
-    image: mongo
-    volumes:
-      - ./data:/data/db
-    ports:
-      - "27017:27017"
-    networks:
-      - webnet
-networks:
-  webnet:
+      - redis_password=${redis_password}
+      - PORT=${PORT}
+      - node_env=${node_env}
+      - expire_time=${expire_time}
+      - secret_key=${secret_key}
+      - amqp_url=${amqp_url}
+      - amqp_password=${amqp_password}
+      - is_production=${is_production}
+      - sendgrid_key=${sendgrid_key}
+      - mail_sender_address=${mail_sender_address}
+      - app_env=${app_env}
+      - stateful_session_duration=${stateful_session_duration}
+      - stateless_session_duration=${stateless_session_duration}
+    depends_on:
+      - rabbitmq
+      - redis
+      - mongo
