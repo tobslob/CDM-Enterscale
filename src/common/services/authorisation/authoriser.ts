@@ -28,17 +28,22 @@ export function checkRequest(scheme: string | null, ...predicates: RequestPredic
   };
 }
 
+export const sessionPermissions = <const>["super_admin", "loan_admin", "users"];
+export type Permission = typeof sessionPermissions[number];
+
 /**
  * Creates a function that tests a request and throws `FailedPredicateError` with
  * the right message.
  * @param message message to return to the client
  * @param predicate test to be done over the user's session
  */
-export function because(message: string, predicate: (req: Request) => boolean): RequestPredicate {
-  return (req: Request) => {
-    if (!predicate(req)) {
+export function because(message: string, predicate: Permission): RequestHandler {
+  return (req, _res, next) => {
+    if (!req.session[predicate]) {
       throw new FailedPredicateError(message);
     }
+
+    next();
   };
 }
 

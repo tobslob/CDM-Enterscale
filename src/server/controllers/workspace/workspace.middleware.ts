@@ -4,5 +4,5 @@ import { because } from "@app/common/services/authorisation";
 
 export const canCreateWorkspace = compose(
   Auth.authCheck,
-  because("You are not allowed to perform this operation", req => req.session.super_admin)
+  because("You are not allowed to perform this operation", "super_admin")
 )
