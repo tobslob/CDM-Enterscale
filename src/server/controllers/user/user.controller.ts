@@ -20,6 +20,7 @@ import { canCreateUser } from "./user.middleware";
 import { isValidID } from "../workspace/workspace.validator";
 import { Auth } from "@app/common/services";
 import { Passwords } from "@app/services/password";
+import { ForbiddenError } from "@random-guys/siber";
 
 @controller("/users")
 export class UserController extends BaseController<User> {
@@ -38,6 +39,10 @@ export class UserController extends BaseController<User> {
   async GetUser(@request() req: Request, @response() res: Response, @requestParam("id") id: string) {
     try {
       const user = await UserRepo.byID(id);
+
+      if (user.workspace !== req.session.workspace && !req.session.super_admin) {
+        throw new ForbiddenError("You are not allowed to perform this operation.");
+      }
 
       this.handleSuccess(req, res, user);
     } catch (error) {
