@@ -9,6 +9,7 @@ import { Application, Request, Response } from "express";
 import dotenv from "dotenv";
 import { Store, Auth } from "@app/common/services";
 import { secureMongoOpts, defaultMongoOpts } from "@random-guys/bucket";
+import { errors } from "@app/data/util";
 
 dotenv.config();
 
@@ -53,6 +54,9 @@ export class App {
           data: { message: "Route Not Found" }
         });
       });
+
+      // handle thrown error
+      app.use(errors);
     });
   }
 

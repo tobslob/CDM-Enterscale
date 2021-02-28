@@ -1,13 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import { UNAUTHORIZED, FORBIDDEN } from "http-status-codes";
-import { response } from "@app/data/util/response";
+import { compose } from "@random-guys/siber";
+import { Auth } from "@app/common/services";
+import { because } from "@app/common/services/authorisation";
 
-export const canCreateWorkspace = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.session) {
-    return response(res, UNAUTHORIZED, "You are not allowed to perform this operation", null);
-  }
-  if (!req.session.super_admin) {
-    return response(res, FORBIDDEN, "You are not allowed to perform this operation", null);
-  }
-  return next();
-};
+export const canCreateWorkspace = compose(
+  Auth.authCheck,
+  because("You are not allowed to perform this operation", req => req.session.super_admin)
+)

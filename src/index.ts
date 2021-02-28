@@ -3,8 +3,8 @@ import "reflect-metadata";
 import http from "http";
 import { App } from "./server/app";
 import dotenv from "dotenv";
-// import { rAmqp } from "./common/services/amqp";
-import logger from "./common/services/logger";
+import { rAmqp } from "./common/services/amqp";
+import { Log } from "./common/services/logger";
 
 dotenv.config();
 
@@ -15,18 +15,18 @@ const start = async () => {
 
     // connect to MongoDB
     await app.connectDB();
-    logger.message("📦  MongoDB Connected!");
+    Log.info("📦  MongoDB Connected!");
 
     // connect to amqp
-    // await rAmqp.init(process.env.amqp_url)
-    // logger.message("🐰  Amqp Connected!");
+    await rAmqp.init(process.env.amqp_url)
+    Log.info("🐰  Amqp Connected!");
 
     // start server
     const httpServer = http.createServer(appServer);
     httpServer.listen(process.env.PORT);
-    httpServer.on("listening", () => logger.message(`🚀  ${process.env.service_name} listening on ` + process.env.port));
+    httpServer.on("listening", () => Log.info(`🚀  ${process.env.service_name} listening on ` + process.env.port));
   } catch (err) {
-    logger.error(err, "Fatal server error");
+    Log.error(err, "Fatal server error");
   }
 };
 
