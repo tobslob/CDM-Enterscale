@@ -138,8 +138,6 @@ export function universalErrorHandler(logger: Logger): ErrorRequestHandler {
       );
     }
 
-    console.log(err);
-
     response(res, err.code, err.message, err["data"]);
     logger.error({ err, res, req });
   };
