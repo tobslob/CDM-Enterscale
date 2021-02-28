@@ -1,5 +1,9 @@
 import HttpStatus, { UNAUTHORIZED } from "http-status-codes";
-import { Request, Response } from "express";
+import { Request, Response, ErrorRequestHandler, NextFunction } from "express";
+import { Log } from "@app/common/services/logger";
+import { response } from "./response";
+import Logger from "bunyan";
+import { NoAuthenticationError, InvalidSessionError, FailedPredicateError } from "@app/common/services/authorisation";
 
 /**
  * Base error type for errors that the server can respond
@@ -101,22 +105,42 @@ export class UnauthorizedError extends ControllerError {
   }
 }
 
-export class InvalidSessionError extends Error {
-  constructor(readonly originalError: Error) {
-    super("Your session is invalid");
-  }
-}
+export const errors = universalErrorHandler(Log);
 
-export class NoAuthenticationError extends Error {
-  constructor() {
-    super("There's no session associated with this request");
-  }
-}
+/**
+ * A global error handler for an entire app.
+ * @param logger Logger to log errors and their corresponding
+ * request/response pair
+ */
+export function universalErrorHandler(logger: Logger): ErrorRequestHandler {
+  // useful when we have call an asynchrous function that might throw
+  // after we've sent a response to client
+  return async (err: any, req: Request, res: Response, next: NextFunction) => {
+    if (res.headersSent) return next(err);
+    if (err instanceof NoAuthenticationError) {
+      return response(res, err.code, err.message, null);
+    } else if (err instanceof InvalidSessionError) {
+      Log.error(err);
+      return response(res, err.code, err.message, null);
+    } else if (err instanceof FailedPredicateError) {
+      Log.error(err);
+      return response(res, err.code, err.message, null);
+    }
 
-export const handleResponse = (_req: Request, res: Response, data: any, message: string, code: number) => {
-  return res.status(code).json({
-    code,
-    data,
-    message
-  });
-};
+    // exit early when we don't understand it
+    if (!(err instanceof ControllerError)) {
+      logger.error({ err, res, req });
+      return response(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        "We are having internal issues. Please bear with us",
+        null
+      );
+    }
+
+    console.log(err);
+
+    response(res, err.code, err.message, err["data"]);
+    logger.error({ err, res, req });
+  };
+}

@@ -1,4 +1,4 @@
-import logger, {  } from "@app/common/services/logger";
+import { Log } from "@app/common/services/logger";
 import { Mailer } from "@app/services/mailer";
 import joi from "@hapi/joi";
 import { Adapter } from "./base";
@@ -52,7 +52,7 @@ class MailAdapter implements Adapter {
 
     // ignore invalid notifications
     if (error) {
-      logger.error(error, "Failed to validate email notification");
+      Log.error(error, "Failed to validate email notification");
       return;
     }
 
