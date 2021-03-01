@@ -68,7 +68,7 @@ class MailAdapter implements Adapter {
   }
 }
 
-const AdapterInstance = new MailAdapter();
+export const AdapterInstance = new MailAdapter();
 
 // welcome mail to onboarded users
 AdapterInstance.createTemplate("welcome-mail", Mailer.mailLoader("welcome-mail.mjml"));
