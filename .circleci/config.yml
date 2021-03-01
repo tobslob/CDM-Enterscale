@@ -51,6 +51,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
+      - run:
+          name: Run tests
+          command: yarn && yarn build && yarn test
   deploy:
     docker:
       - image: enterscale/cdm-enterscale:latest
