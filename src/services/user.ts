@@ -21,17 +21,19 @@ class UserService {
       const password = await Passwords.generateHash(generatedPassword);
       const user = await UserRepo.newUser(this.role, workspace, password, dto);
 
-      AdapterInstance.send({
-        subject: "Welcome! Supercharge your digital transformation",
-        channel: "mail",
-        recipient: user.email_address,
-        template: "welcome-mail",
-        template_vars: {
-          firstname: user.first_name,
-          emailaddress: user.email_address,
-          password: generatedPassword
-        }
-      });
+      if (!this.role.permissions.users) {
+        AdapterInstance.send({
+          subject: "Welcome! Supercharge your digital transformation",
+          channel: "mail",
+          recipient: user.email_address,
+          template: "welcome-mail",
+          template_vars: {
+            firstname: user.first_name,
+            emailaddress: user.email_address,
+            password: generatedPassword
+          }
+        });
+      }
 
       return user;
     } catch (err) {
