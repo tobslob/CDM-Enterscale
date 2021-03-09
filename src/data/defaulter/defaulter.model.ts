@@ -7,9 +7,11 @@ export interface Defaulters extends Model {
   time_since_default: number;
   time_since_last_payment: number;
   last_contacted_date: Date;
-  BVN?: string;
+  BVN: string;
   workspace: string;
   user: string;
+  request_token: string;
+  role_id: string;
 }
 
 export interface DefaulterDTO {
@@ -23,5 +25,6 @@ export interface DefaulterDTO {
   time_since_default: number;
   time_since_last_payment: number;
   last_contacted_date: Date;
-  BVN?: string;
+  BVN: string;
+  request_token?: string;
 }
