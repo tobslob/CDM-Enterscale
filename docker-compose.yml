@@ -30,6 +30,7 @@ services:
       - app_env=${app_env}
       - stateful_session_duration=${stateful_session_duration}
       - stateless_session_duration=${stateless_session_duration}
+    entrypoint: ["/bin/bash", "./entrypoint.sh"]
     depends_on:
       - rabbitmq
       - redis
