@@ -6,10 +6,12 @@ import { getRouteInfo, InversifyExpressServer } from "inversify-express-utils";
 import mongoose, { Connection } from "mongoose";
 import container from "../common/config/ioc";
 import { Application, Request, Response } from "express";
-import dotenv from "dotenv";
 import { Store, Auth } from "@app/common/services";
 import { secureMongoOpts, defaultMongoOpts } from "@random-guys/bucket";
 import { errors } from "@app/data/util";
+import cors from "cors";
+import dotenv from "dotenv";
+
 
 dotenv.config();
 
@@ -31,6 +33,10 @@ export class App {
       app.use(responseTime());
       app.use(bodyparser.urlencoded({ extended: true }));
       app.use(bodyparser.json());
+
+      // CORS
+      app.use(cors());
+      app.options("*", cors());
     });
 
     this.server.setErrorConfig((app: Application) => {
