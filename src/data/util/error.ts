@@ -1,7 +1,7 @@
 import HttpStatus, { UNAUTHORIZED } from "http-status-codes";
 import { Request, Response, ErrorRequestHandler, NextFunction } from "express";
 import { Log } from "@app/common/services/logger";
-import { response } from "./response";
+import { responseHandler } from "./response";
 import Logger from "bunyan";
 import { NoAuthenticationError, InvalidSessionError, FailedPredicateError } from "@app/common/services/authorisation";
 
@@ -118,19 +118,19 @@ export function universalErrorHandler(logger: Logger): ErrorRequestHandler {
   return async (err: any, req: Request, res: Response, next: NextFunction) => {
     if (res.headersSent) return next(err);
     if (err instanceof NoAuthenticationError) {
-      return response(res, err.code, err.message, null);
+      return responseHandler(res, err.code, err.message, null);
     } else if (err instanceof InvalidSessionError) {
       Log.error(err);
-      return response(res, err.code, err.message, null);
+      return responseHandler(res, err.code, err.message, null);
     } else if (err instanceof FailedPredicateError) {
       Log.error(err);
-      return response(res, err.code, err.message, null);
+      return responseHandler(res, err.code, err.message, null);
     }
 
     // exit early when we don't understand it
     if (!(err instanceof ControllerError)) {
       logger.error({ err, res, req });
-      return response(
+      return responseHandler(
         res,
         HttpStatus.INTERNAL_SERVER_ERROR,
         "We are having internal issues. Please bear with us",
@@ -138,7 +138,7 @@ export function universalErrorHandler(logger: Logger): ErrorRequestHandler {
       );
     }
 
-    response(res, err.code, err.message, err["data"]);
+    responseHandler(res, err.code, err.message, err["data"]);
     logger.error({ err, res, req });
   };
 }

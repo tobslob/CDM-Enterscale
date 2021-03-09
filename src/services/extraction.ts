@@ -2,6 +2,7 @@ import { bufferToStream } from "@app/data/util";
 import { ConstraintError } from "@random-guys/siber";
 import { Workbook } from "exceljs";
 import { uniqBy } from "lodash";
+import uuid from "uuid/v4";
 // This is a hack to make Multer available in the Express namespace
 //@ts-ignore
 import { Multer } from "multer";
@@ -9,7 +10,7 @@ import { Multer } from "multer";
 export const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 export const CSV_MIME = "text/csv";
 
-export interface ExtractedDefaulters {
+export interface ExtractedDefaulter {
   first_name: string;
   last_name: string;
   email_address: string;
@@ -20,17 +21,20 @@ export interface ExtractedDefaulters {
   time_since_default: number;
   time_since_last_payment: number;
   last_contacted_date: Date;
-  BVN?: string;
+  BVN: string;
+  request_token: string;
 }
 
 class ExtractionService {
-  async extractDefaulters(file: Express.Multer.File): Promise<ExtractedDefaulters[]> {
+  async extractDefaulters(file: Express.Multer.File): Promise<ExtractedDefaulter[]> {
     try {
       const rows = await this.loadSheetValues(file.mimetype, file.buffer);
 
       const BVN = /^\d{1,11}$/;
       const EMAIL = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/;
       let results = [];
+
+      const request_token = uuid()
 
       rows.forEach(row => {
         // ignore empty rows
@@ -54,6 +58,8 @@ class ExtractionService {
           if (!BVN.test(row[11])) return;
         }
 
+        row[4] = row[4].padStart(11, "0")
+
 
         results = uniqBy(results, result => {
           return `${result.phone_number}:${result.BVN}`;
@@ -70,7 +76,8 @@ class ExtractionService {
           time_since_default: row[8],
           time_since_last_payment: row[9],
           last_contacted_date: row[10],
-          BVN: row[11]
+          BVN: row[11],
+          request_token
         });
       });
 
