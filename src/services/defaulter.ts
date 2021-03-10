@@ -21,10 +21,10 @@ class DefaulterService {
           }
         });
 
-        loopConcurrently(defaulters, async (defaulter) => {
+        loopConcurrently(defaulters, async defaulter => {
           await UserRepo.destroy({ id: defaulter.user });
           await RoleRepo.destroy({ id: defaulter.role_id });
-        })
+        });
 
         await DefaulterRepo.bulkDelete(defaulter.request_token);
         throw new ConstraintError(`We could not validate the user ${defaulter.first_name} ${defaulter.last_name}`);
