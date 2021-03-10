@@ -29,6 +29,17 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
       role_id: user.role_id
     });
   }
+
+  async getDefaulters(workspace: string) {
+    return this.all({
+      conditions: {
+        workspace
+      },
+      sort: {
+        created_at: -1
+      }
+    });
+  }
 }
 
 export const DefaulterRepo = new DefaulterRepository();
