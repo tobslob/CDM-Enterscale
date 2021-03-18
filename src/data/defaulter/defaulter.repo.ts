@@ -25,7 +25,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
       BVN: await Passwords.generateHash(defaulterDTO.BVN),
       workspace,
       user: user.id,
-      request_token: defaulterDTO.request_token,
+      request_id: defaulterDTO.request_id,
       role_id: user.role_id
     });
   }
@@ -34,6 +34,18 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     return this.all({
       conditions: {
         workspace
+      },
+      sort: {
+        created_at: -1
+      }
+    });
+  }
+
+  async getUniqueDefaulters(workspace: string, request_id: string) {
+    return this.all({
+      conditions: {
+        workspace,
+        request_id
       },
       sort: {
         created_at: -1
