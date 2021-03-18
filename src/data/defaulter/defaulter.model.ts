@@ -10,7 +10,7 @@ export interface Defaulters extends Model {
   BVN: string;
   workspace: string;
   user: string;
-  request_token: string;
+  request_id: string;
   role_id: string;
 }
 
@@ -26,5 +26,5 @@ export interface DefaulterDTO {
   time_since_last_payment: number;
   last_contacted_date: Date;
   BVN: string;
-  request_token?: string;
+  request_id?: string;
 }

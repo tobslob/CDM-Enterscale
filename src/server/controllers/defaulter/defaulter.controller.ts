@@ -1,4 +1,4 @@
-import { controller, httpPost, request, response, httpGet } from "inversify-express-utils";
+import { controller, httpPost, request, response, httpGet, requestParam } from "inversify-express-utils";
 import { BaseController, mapConcurrently } from "@app/data/util";
 import { isUpload, canCreateDefaulters } from "./defaulter.middleware";
 import { Extractions, ExtractedDefaulter } from "@app/services/extraction";
@@ -27,10 +27,26 @@ export class DefaultersController extends BaseController<ControllerResponse> {
   }
 
   @httpGet("/", canCreateDefaulters)
-  async getDefaulters(@request() req: Request, @response() res: Response) {
+  async getAllDefaulters(@request() req: Request, @response() res: Response) {
     try {
       const workspace = req.session.workspace;
       const defaulters = await DefaulterRepo.getDefaulters(workspace);
+
+      this.handleSuccess(req, res, defaulters);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpGet("/:request_id", canCreateDefaulters)
+  async getUniqueDefaulters(
+    @request() req: Request,
+    @response() res: Response,
+    @requestParam("request_id") request_id: string
+  ) {
+    try {
+      const workspace = req.session.workspace;
+      const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, request_id);
 
       this.handleSuccess(req, res, defaulters);
     } catch (error) {

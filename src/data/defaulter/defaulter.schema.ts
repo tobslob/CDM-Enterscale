@@ -11,6 +11,6 @@ export const DefaulterSchema = new Schema({
   BVN: { ...trimmedString, index: true, unique: true},
   workspace: { ...trimmedString, required: true, index: true},
   user: { ...trimmedString, required: true, index: true},
-  request_token: { ...trimmedString, index: true },
+  request_id: { ...trimmedString, index: true },
   role_id: { ...trimmedString, index: true }
 });

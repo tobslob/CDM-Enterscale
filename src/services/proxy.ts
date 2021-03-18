@@ -31,14 +31,14 @@ class ProxyServices {
   facebookLoginUrl = `${process.env.fb_url}/dialog/oauth?${this.stringifiedParams}`;
 
   async getAccessTokenFromCode(code: string) {
-    const { data } = await Axios(`${process.env.fb_url}/oauth/access_token`, "get", null, null, {
+    const data = await Axios(`${process.env.fb_url}/oauth/access_token`, "get", null, null, {
       client_id: process.env.fb_client_id,
       client_secret: process.env.fb_app_secret,
       redirect_uri: `${process.env.fb_login_url}`,
       code
     });
 
-    return data.access_token;
+    return data;
   }
 
   async getFacebookUserData(access_token: string) {
@@ -57,7 +57,7 @@ class ProxyServices {
     description: string,
     customer_file_source: customAudienceType
   ) {
-    const { data } = await Axios(
+    const data = await Axios(
       `${process.env.fb_graph_url}/v10.0/act_${process.env.fb_account_id}/customaudiences`,
       "post",
       null,
