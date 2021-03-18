@@ -58,7 +58,7 @@ class ExtractionService {
           if (!BVN.test(row[11])) return;
         }
 
-        row[4] = row[4].padStart(11, "0")
+        row[4] = row[4].padStart(15, "+234")
 
 
         results = uniqBy(results, result => {
