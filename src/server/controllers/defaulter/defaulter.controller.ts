@@ -16,11 +16,11 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       const workspace = req.session.workspace;
       const defaulters = await Extractions.extractDefaulters(req.file);
 
-      await mapConcurrently(defaulters, defaulter => {
-        return Defaulter.createDefaulters(res, workspace, defaulter);
+      const cratedDefaulters = await mapConcurrently(defaulters, async defaulter => {
+        return await Defaulter.createDefaulters(res, workspace, defaulter);
       });
 
-      this.handleSuccess(req, res, defaulters);
+      this.handleSuccess(req, res, cratedDefaulters);
     } catch (error) {
       this.handleError(req, res, error);
     }
