@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { DefaulterSchema } from "./defaulter.schema";
 import { Passwords } from "@app/services/password";
 import { User } from "../user";
+import { Request } from "express";
 
 class DefaulterRepository extends BaseRepository<Defaulters> {
   constructor() {
@@ -14,8 +15,9 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     return this.truncate({ request_token });
   }
 
-  async createDefaulters(workspace: string, user: User, defaulterDTO: DefaulterDTO) {
+  async createDefaulters(req: Request, workspace: string, user: User, defaulterDTO: DefaulterDTO) {
     return this.create({
+      title: req.file.originalname,
       total_loan_amount: defaulterDTO.total_loan_amount,
       loan_outstanding_balance: defaulterDTO.loan_outstanding_balance,
       loan_tenure: defaulterDTO.loan_tenure,

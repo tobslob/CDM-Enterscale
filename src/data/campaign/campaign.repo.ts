@@ -11,7 +11,9 @@ class CampaignRepository extends BaseRepository<Campaign> {
 
   async createCampaign(workspace: string, user: User, campaignDTO: CampaignDTO) {
     return this.create({
-      campaign_name: campaignDTO.campaign_name,
+      name: campaignDTO.name,
+      subject: campaignDTO.subject,
+      description: campaignDTO.description,
       channel: campaignDTO.channel,
       amount: campaignDTO.amount,
       frequency: campaignDTO.frequency,
@@ -20,7 +22,8 @@ class CampaignRepository extends BaseRepository<Campaign> {
       target_audience: campaignDTO.target_audience,
       message: campaignDTO.message,
       user: user.id,
-      workspace
+      workspace,
+      status: "STOP"
     });
   }
 

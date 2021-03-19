@@ -11,6 +11,7 @@ export const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsh
 export const CSV_MIME = "text/csv";
 
 export interface ExtractedDefaulter {
+  title: string;
   first_name: string;
   last_name: string;
   email_address: string;
@@ -58,7 +59,7 @@ class ExtractionService {
           if (!BVN.test(row[11])) return;
         }
 
-        row[4] = row[4].padStart(15, "+234")
+        row[4] = row[4].padStart(14, "+234")
 
 
         results = uniqBy(results, result => {
