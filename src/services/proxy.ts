@@ -5,11 +5,11 @@ import { Axios } from "@app/data/util/proxy";
 dotenv.config();
 
 export const customAudience = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
-export type customAudienceType = typeof customAudience[number];
+export type CustomAudienceType = typeof customAudience[number];
 
 class ProxyServices {
   async verifyBVN(bvn: string) {
-    const data = Axios(`${process.env.flutter_url}`, "get", bvn, {
+    const data = Axios(`${process.env.flutter_url}`, "get", bvn, null, null, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `${process.env.auth_scheme} ${process.env.sec_key}`
@@ -55,7 +55,7 @@ class ProxyServices {
     name: string,
     subtype: string,
     description: string,
-    customer_file_source: customAudienceType
+    customer_file_source: CustomAudienceType
   ) {
     const data = await Axios(
       `${process.env.fb_graph_url}/v10.0/act_${process.env.fb_account_id}/customaudiences`,

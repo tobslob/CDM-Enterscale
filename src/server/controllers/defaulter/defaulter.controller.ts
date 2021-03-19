@@ -17,7 +17,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       const defaulters = await Extractions.extractDefaulters(req.file);
 
       const cratedDefaulters = await mapConcurrently(defaulters, async defaulter => {
-        return await Defaulter.createDefaulters(res, workspace, defaulter);
+        return await Defaulter.createDefaulters(req, workspace, defaulter);
       });
 
       this.handleSuccess(req, res, cratedDefaulters);

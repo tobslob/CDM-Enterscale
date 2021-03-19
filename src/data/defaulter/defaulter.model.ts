@@ -1,6 +1,7 @@
 import { Model } from "@random-guys/bucket";
 
 export interface Defaulters extends Model {
+  title: string;
   total_loan_amount: number;
   loan_outstanding_balance: number;
   loan_tenure: number;
@@ -15,6 +16,7 @@ export interface Defaulters extends Model {
 }
 
 export interface DefaulterDTO {
+  title: string;
   first_name: string;
   last_name: string;
   email_address: string;
