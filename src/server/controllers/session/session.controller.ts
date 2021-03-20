@@ -21,6 +21,7 @@ export class SessionController extends BaseController<Session> {
         first_name: user.first_name,
         last_name: user.last_name,
         email_address: user.email_address,
+        phone_number: user.phone_number,
         user: user.id,
         role: role.id,
         workspace: user.workspace
@@ -30,6 +31,7 @@ export class SessionController extends BaseController<Session> {
         first_name: user.first_name,
         last_name: user.last_name,
         email_address: user.email_address,
+        phone_number: user.phone_number,
         token: token,
         user: user.id,
         role: role.id,
@@ -52,6 +54,7 @@ export class SessionController extends BaseController<Session> {
         first_name: user.first_name,
         last_name: user.last_name,
         email_address: user.email_address,
+        phone_number: user.phone_number,
         user: user.id,
         role: role.id,
         workspace: user.workspace,

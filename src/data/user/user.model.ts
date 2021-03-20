@@ -41,6 +41,7 @@ export interface Session {
   email_address: string;
   first_name: string;
   last_name: string;
+  phone_number: string;
   token?: string;
   user: string;
   role: string;
