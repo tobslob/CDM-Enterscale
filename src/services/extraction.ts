@@ -23,7 +23,7 @@ export interface ExtractedDefaulter {
   time_since_last_payment: number;
   last_contacted_date: Date;
   BVN: string;
-  request_token: string;
+  request_id: string;
 }
 
 class ExtractionService {
@@ -34,8 +34,7 @@ class ExtractionService {
       const BVN = /^\d{1,11}$/;
       const EMAIL = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/;
       let results = [];
-
-      const request_token = uuid()
+      let request_id = uuid();
 
       rows.forEach(row => {
         // ignore empty rows
@@ -78,7 +77,7 @@ class ExtractionService {
           time_since_last_payment: row[9],
           last_contacted_date: row[10],
           BVN: row[11],
-          request_token
+          request_id
         });
       });
 
