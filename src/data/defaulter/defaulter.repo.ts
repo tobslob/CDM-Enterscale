@@ -48,11 +48,17 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
   getDefaulters(req: Request, query?: DefaulterQuery) {
     const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
 
-    const conditions = fromQueryMap(query, {
-      request_id: { customer_id: query.request_id },
-      title: { name: nameRegex },
-      workspace: { workspace: req.session.workspace}
+    let conditions = fromQueryMap(query, {
+      request_id: { request_id: query.request_id },
+      title: { title: nameRegex }
     });
+
+    conditions = {
+      ...conditions,
+      workspace: req.session.workspace
+    };
+
+    console.log(conditions)
 
     return this.model.find(conditions);
   }
