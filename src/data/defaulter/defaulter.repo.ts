@@ -58,8 +58,6 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
       workspace: req.session.workspace
     };
 
-    console.log(conditions)
-
     return this.model.find(conditions);
   }
 }
