@@ -45,8 +45,8 @@ class DefaulterService {
     });
   }
 
-  async sha256Defaulter(workspace: string) {
-    const defaulters = await DefaulterRepo.getDefaulters(workspace);
+  async sha256Defaulter(req: Request) {
+    const defaulters = await DefaulterRepo.getDefaulters(req);
 
     return mapConcurrently(defaulters, async defaulter => {
       const user = await UserRepo.byID(defaulter.user);

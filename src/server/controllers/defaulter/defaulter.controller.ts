@@ -1,10 +1,11 @@
-import { controller, httpPost, request, response, httpGet, requestParam } from "inversify-express-utils";
-import { BaseController, mapConcurrently } from "@app/data/util";
+import { controller, httpPost, request, response, httpGet, requestParam, queryParam } from "inversify-express-utils";
+import { BaseController, mapConcurrently, validate } from "@app/data/util";
 import { isUpload, canCreateDefaulters } from "./defaulter.middleware";
 import { Extractions, ExtractedDefaulter } from "@app/services/extraction";
 import { Request, Response } from "express";
 import { Defaulter } from "@app/services/defaulter";
-import { DefaulterRepo, Defaulters } from "@app/data/defaulter";
+import { DefaulterRepo, Defaulters, DefaulterQuery } from "@app/data/defaulter";
+import { isDefaulterQuery } from "./defaulter.validator";
 
 type ControllerResponse = ExtractedDefaulter[] | Defaulters[] | Defaulters;
 
@@ -28,11 +29,10 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpGet("/", canCreateDefaulters)
-  async getAllDefaulters(@request() req: Request, @response() res: Response) {
+  @httpGet("/", canCreateDefaulters, validate(isDefaulterQuery))
+  async getAllDefaulters(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
     try {
-      const workspace = req.session.workspace;
-      const defaulters = await DefaulterRepo.getDefaulters(workspace);
+      const defaulters = await DefaulterRepo.getDefaulters(req, query);
 
       const defaultUsers = await Defaulter.getDefaultUsers(defaulters);
 

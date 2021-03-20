@@ -30,3 +30,8 @@ export interface DefaulterDTO {
   BVN: string;
   request_id?: string;
 }
+
+export interface DefaulterQuery {
+  request_id?: string;
+  title?: string;
+}

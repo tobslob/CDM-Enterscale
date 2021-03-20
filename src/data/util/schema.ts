@@ -11,6 +11,7 @@ export const readMapper = {
     transform: (doc: any, ret: any, options: any) => {
       delete ret._id;
       if (ret.password) delete ret.password;
+      if (ret.BVN) delete ret.BVN;
       return ret;
     }
   }
