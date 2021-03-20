@@ -1,4 +1,5 @@
 import { Schema, SchemaTypes } from "mongoose";
+import generateUUID from "uuid/v4";
 
 /**
  * Removes _id field in subdocuments and allows virtual fields to be returned
@@ -67,3 +68,11 @@ export function uniqueIndex(schema: Schema, ...props: string[]) {
   schema.index(indexes, { unique: true });
   return schema;
 }
+
+/**
+ * Changes default mongodb objectid to guuid
+ */
+export const uuid = {
+  type: SchemaTypes.String,
+  default: generateUUID
+};

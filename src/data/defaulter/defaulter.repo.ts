@@ -15,19 +15,19 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     return this.truncate({ request_token });
   }
 
-  async createDefaulters(req: Request, workspace: string, user: User, defaulterDTO: DefaulterDTO) {
+  async createDefaulters(req: Request, workspace: string, user: User, defaulter: DefaulterDTO) {
     return this.create({
       title: req.file.originalname,
-      total_loan_amount: defaulterDTO.total_loan_amount,
-      loan_outstanding_balance: defaulterDTO.loan_outstanding_balance,
-      loan_tenure: defaulterDTO.loan_tenure,
-      time_since_default: defaulterDTO.time_since_default,
-      time_since_last_payment: defaulterDTO.time_since_last_payment,
-      last_contacted_date: defaulterDTO.last_contacted_date,
-      BVN: await Passwords.generateHash(defaulterDTO.BVN),
+      total_loan_amount: defaulter.total_loan_amount,
+      loan_outstanding_balance: defaulter.loan_outstanding_balance,
+      loan_tenure: defaulter.loan_tenure,
+      time_since_default: defaulter.time_since_default,
+      time_since_last_payment: defaulter.time_since_last_payment,
+      last_contacted_date: defaulter.last_contacted_date,
+      BVN: await Passwords.generateHash(defaulter.BVN),
       workspace,
       user: user.id,
-      request_id: defaulterDTO.request_id,
+      request_id: defaulter.request_id,
       role_id: user.role_id
     });
   }
@@ -39,7 +39,8 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
       },
       sort: {
         created_at: -1
-      }
+      },
+      projections: { BVN: 0 }
     });
   }
 

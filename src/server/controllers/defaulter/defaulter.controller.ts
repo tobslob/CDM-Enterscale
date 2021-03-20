@@ -20,7 +20,9 @@ export class DefaultersController extends BaseController<ControllerResponse> {
         return await Defaulter.createDefaulters(req, workspace, defaulter);
       });
 
-      this.handleSuccess(req, res, cratedDefaulters);
+      const defaultUsers = await Defaulter.getDefaultUsers(cratedDefaulters);
+
+      this.handleSuccess(req, res, defaultUsers);
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -32,7 +34,9 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       const workspace = req.session.workspace;
       const defaulters = await DefaulterRepo.getDefaulters(workspace);
 
-      this.handleSuccess(req, res, defaulters);
+      const defaultUsers = await Defaulter.getDefaultUsers(defaulters);
+
+      this.handleSuccess(req, res, defaultUsers);
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -48,7 +52,9 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       const workspace = req.session.workspace;
       const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, request_id);
 
-      this.handleSuccess(req, res, defaulters);
+      const defaultUsers = await Defaulter.getDefaultUsers(defaulters);
+
+      this.handleSuccess(req, res, defaultUsers);
     } catch (error) {
       this.handleError(req, res, error);
     }

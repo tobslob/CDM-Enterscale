@@ -1,4 +1,4 @@
-import { controller, httpPost, request, response, httpGet, requestBody } from "inversify-express-utils";
+import { controller, httpPost, request, response, httpGet, requestBody, requestParam } from "inversify-express-utils";
 import { BaseController, validate } from "@app/data/util";
 import { Request, Response } from "express";
 import { Campaign, CampaignDTO, CampaignRepo } from "@app/data/campaign";
@@ -27,6 +27,18 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     try {
       const workspace = req.session.workspace;
       const campaigns = await CampaignRepo.getCampaigns(workspace);
+
+      this.handleSuccess(req, res, campaigns);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpGet("/:id", canCreateCampaign)
+  async getCampaign(@request() req: Request, @response() res: Response, @requestParam("id") id: string) {
+    try {
+      const workspace = req.session.workspace;
+      const campaigns = await CampaignRepo.byQuery({workspace, id});
 
       this.handleSuccess(req, res, campaigns);
     } catch (error) {
