@@ -1,10 +1,11 @@
 import { BaseRepository } from "@random-guys/bucket";
-import { Defaulters, DefaulterDTO } from "./defaulter.model";
+import { Defaulters, DefaulterDTO, DefaulterQuery } from "./defaulter.model";
 import mongoose from "mongoose";
 import { DefaulterSchema } from "./defaulter.schema";
 import { Passwords } from "@app/services/password";
 import { User } from "../user";
 import { Request } from "express";
+import { fromQueryMap } from "../util";
 
 class DefaulterRepository extends BaseRepository<Defaulters> {
   constructor() {
@@ -32,18 +33,6 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     });
   }
 
-  async getDefaulters(workspace: string) {
-    return this.all({
-      conditions: {
-        workspace
-      },
-      sort: {
-        created_at: -1
-      },
-      projections: { BVN: 0 }
-    });
-  }
-
   async getUniqueDefaulters(workspace: string, request_id: string) {
     return this.all({
       conditions: {
@@ -54,6 +43,18 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
         created_at: -1
       }
     });
+  }
+
+  getDefaulters(req: Request, query?: DefaulterQuery) {
+    const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
+
+    const conditions = fromQueryMap(query, {
+      request_id: { customer_id: query.request_id },
+      title: { name: nameRegex },
+      workspace: { workspace: req.session.workspace}
+    });
+
+    return this.model.find(conditions);
   }
 }
 
