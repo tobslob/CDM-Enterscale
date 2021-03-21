@@ -1,31 +1,32 @@
-import { Defaulters } from "@app/data/defaulter";
 import AdapterInstance from "@app/server/adapter/mail";
-import { UserRepo } from "@app/data/user";
 import { Campaign } from "@app/data/campaign";
+import { Proxy } from "@app/services/proxy";
+import { User } from "@app/data/user";
 
 class CampaignService {
-  async send(champaign: Campaign, defaulter: Defaulters) {
-    switch (champaign.channel) {
+  async send(campaign: Campaign, user: User) {
+    switch (campaign.channel) {
       case "EMAIL":
-        await this.emailCampaign(defaulter, champaign);
+        await this.email(campaign, user);
+      case "SMS":
+        await Proxy.sms(campaign, user);
     }
   }
 
-  async emailCampaign(defaulter: Defaulters, champaign: Campaign) {
-    const user = await UserRepo.byID(defaulter.user)
+  private async email(campaign: Campaign, user: User) {
     AdapterInstance.send({
-      subject: champaign.subject,
+      subject: campaign.subject,
       channel: "mail",
       recipient: user.email_address,
       template: "email-template",
       template_vars: {
         firstname: user.first_name,
         emailaddress: user.email_address,
-        subject: champaign.subject,
-        message: champaign.message,
+        subject: campaign.subject,
+        message: campaign.message
       }
     });
   }
 }
 
-export const campaignService = new CampaignService();
+export const CampaignServ = new CampaignService();

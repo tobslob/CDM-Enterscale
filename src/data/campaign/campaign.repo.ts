@@ -37,6 +37,22 @@ class CampaignRepository extends BaseRepository<Campaign> {
       }
     });
   }
+
+  async startCampaign(id: string) {
+    return this.atomicUpdate(id, {
+      $set: {
+        status: "START"
+      }
+    });
+  }
+
+  async stopCampaign(id: string) {
+    return this.atomicUpdate(id, {
+      $set: {
+        status: "STOP"
+      }
+    });
+  }
 }
 
 export const CampaignRepo = new CampaignRepository();

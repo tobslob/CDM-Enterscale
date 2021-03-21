@@ -23,6 +23,8 @@
     "@stablelib/utf8": "^1.0.0",
     "@types/axios": "^0.14.0",
     "@types/mjml": "^4.7.0",
+    "africastalking": "^0.5.3",
+    "agenda": "^3.1.0",
     "amqplib": "^0.6.0",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.0",
@@ -62,6 +64,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "@types/agenda": "^2.0.8",
     "@types/amqplib": "^0.5.16",
     "@types/bcrypt": "^3.0.0",
     "@types/body-parser": "^1.19.0",
