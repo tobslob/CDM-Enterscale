@@ -3,6 +3,7 @@ import { Campaign, CampaignDTO } from "./campaign.model";
 import mongoose from "mongoose";
 import { CampaignSchema } from "./campaign.schema";
 import { User } from "../user";
+import { addDays } from "date-fns";
 
 class CampaignRepository extends BaseRepository<Campaign> {
   constructor() {
@@ -41,7 +42,8 @@ class CampaignRepository extends BaseRepository<Campaign> {
   async startCampaign(id: string) {
     return this.atomicUpdate(id, {
       $set: {
-        status: "START"
+        status: "START",
+        start_date: addDays(new Date(), 1)
       }
     });
   }
@@ -49,7 +51,8 @@ class CampaignRepository extends BaseRepository<Campaign> {
   async stopCampaign(id: string) {
     return this.atomicUpdate(id, {
       $set: {
-        status: "STOP"
+        status: "STOP",
+        end_date: addDays(new Date(), 1)
       }
     });
   }
