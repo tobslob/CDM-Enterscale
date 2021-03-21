@@ -1,6 +1,8 @@
 import * as queryString from "query-string";
 import dotenv from "dotenv";
 import { Axios } from "@app/data/util/proxy";
+import { Campaign } from "@app/data/campaign";
+import { User } from "@app/data/user";
 
 dotenv.config();
 
@@ -69,6 +71,35 @@ class ProxyServices {
         access_token
       }
     );
+    return data;
+  }
+
+  async sms(campaign: Campaign, user: User) {
+    const data = await Axios(
+      process.env.sms_url,
+      "post",
+      null,
+      {
+        username: process.env.sms_username,
+        to: user.email_address,
+        message: campaign.message,
+        from: "Mooyi",
+        bulkSMSMode: 1,
+        enqueue: 1,
+        keyword: "",
+        linkId: "",
+        retryDurationInHours: 2
+      },
+      null,
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+          apiKey: process.env.sms_api_key
+        }
+      }
+    );
+
     return data;
   }
 }

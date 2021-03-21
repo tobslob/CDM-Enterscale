@@ -25,7 +25,7 @@ class DefaulterService {
 
   async getDefaultUsers(cratedDefaulters: Defaulters[]) {
     return mapConcurrently(cratedDefaulters, async defaulter => {
-      const user = await UserRepo.byQuery({ role_id: defaulter.role_id });
+      const user = await UserRepo.byID(defaulter.user);
 
       return {
         title: defaulter.title,

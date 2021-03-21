@@ -10,7 +10,7 @@ export const CampaignSchema = new Schema(
     description: { ...trimmedString, required: true, index: true },
     channel: { ...trimmedString, required: true, index: true },
     amount: { type: SchemaTypes.Number, required: true, index: true },
-    frequency: { type: SchemaTypes.Number, index: true },
+    frequency: { ...trimmedString, index: true },
     start_date: { type: SchemaTypes.Date, index: true },
     end_date: { type: SchemaTypes.Date, index: true },
     target_audience: { ...trimmedString, index: true },

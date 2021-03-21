@@ -13,16 +13,19 @@ import { Request, Response } from "express";
 import { Campaign, CampaignDTO, CampaignRepo } from "@app/data/campaign";
 import { canCreateCampaign } from "./campaign.middleware";
 import { isCampaignDTO } from "./campaign.validator";
+import { checkSchedule } from "@app/services/scheduler";
 
 type ControllerResponse = Campaign[] | Campaign;
 
-@controller("/campaigns", canCreateCampaign, validate(isCampaignDTO))
+@controller("/campaigns")
 export class CampaignController extends BaseController<ControllerResponse> {
-  @httpPost("/")
+  @httpPost("/", canCreateCampaign, validate(isCampaignDTO))
   async createCampaign(@request() req: Request, @response() res: Response, @requestBody() body: CampaignDTO) {
     try {
       const workspace = req.session.workspace;
       const user = req.session.user;
+
+      checkSchedule(body);
 
       const campaign = await CampaignRepo.createCampaign(workspace, user, body);
       this.handleSuccess(req, res, campaign);

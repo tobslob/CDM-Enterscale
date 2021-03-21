@@ -1,4 +1,5 @@
 import { Model } from "@random-guys/bucket";
+import { Frequency } from "@app/services/scheduler";
 
 const channel = <const>["FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM"]
 export type Channel = typeof channel[number]
@@ -12,9 +13,12 @@ export interface Campaign extends Model {
   description: string;
   channel: Channel;
   amount: number;
-  frequency?: number;
+  frequency?: Frequency;
   start_date?: Date;
   end_date?: Date;
+  /**
+   * request_id from uploaded file
+   */
   target_audience: string;
   message: string;
   user: string;
@@ -28,9 +32,20 @@ export interface CampaignDTO {
   description: string;
   channel: Channel;
   amount: number;
-  frequency?: number;
+  frequency?: Frequency;
   start_date?: Date;
   end_date?: Date;
   target_audience: string;
+  message: string;
+}
+
+export interface ReminderDTO {
+  subject?: string;
+  channel: Channel;
+  /**
+   * request_id from target audience
+   */
+  id: string;
+  campaign_id: string;
   message: string;
 }
