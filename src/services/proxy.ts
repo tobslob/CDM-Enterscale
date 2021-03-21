@@ -86,8 +86,6 @@ class ProxyServices {
         from: "Mooyi",
         bulkSMSMode: 1,
         enqueue: 1,
-        keyword: "",
-        linkId: "",
         retryDurationInHours: 2
       },
       null,
