@@ -58,6 +58,6 @@ export const JoiValidator = {
   },
 
   validDate() {
-    return Joi.date().min(Joi.ref(`${new Date()}`));
+    return Joi.date().min(new Date());
   }
 };

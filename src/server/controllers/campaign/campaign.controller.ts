@@ -8,12 +8,12 @@ import {
   requestParam,
   httpDelete
 } from "inversify-express-utils";
-import { BaseController, validate } from "@app/data/util";
+import { BaseController, validate, ConstraintError } from "@app/data/util";
 import { Request, Response } from "express";
 import { Campaign, CampaignDTO, CampaignRepo } from "@app/data/campaign";
 import { canCreateCampaign } from "./campaign.middleware";
 import { isCampaignDTO } from "./campaign.validator";
-import { checkSchedule } from "@app/services/scheduler";
+import { differenceInDays } from "date-fns";
 
 type ControllerResponse = Campaign[] | Campaign;
 
@@ -25,7 +25,12 @@ export class CampaignController extends BaseController<ControllerResponse> {
       const workspace = req.session.workspace;
       const user = req.session.user;
 
-      checkSchedule(body);
+      if (body.end_date) {
+        const diff = differenceInDays(body.end_date, body.start_date);
+        if (diff < 1) {
+          throw new ConstraintError("The end date must at least be a day after start date");
+        }
+      }
 
       const campaign = await CampaignRepo.createCampaign(workspace, user, body);
       this.handleSuccess(req, res, campaign);
@@ -47,10 +52,10 @@ export class CampaignController extends BaseController<ControllerResponse> {
   }
 
   @httpGet("/:id", canCreateCampaign)
-  async getCampaign(@request() req: Request, @response() res: Response, @requestParam("id") id: string) {
+  async getCampaign(@request() req: Request, @response() res: Response, @requestParam("id") _id: string) {
     try {
       const workspace = req.session.workspace;
-      const campaigns = await CampaignRepo.byQuery({ workspace, id });
+      const campaigns = await CampaignRepo.byQuery({ workspace, _id });
 
       this.handleSuccess(req, res, campaigns);
     } catch (error) {
@@ -59,10 +64,10 @@ export class CampaignController extends BaseController<ControllerResponse> {
   }
 
   @httpDelete("/:id", canCreateCampaign)
-  async deleteCampaign(@request() req: Request, @response() res: Response, @requestParam("id") id: string) {
+  async deleteCampaign(@request() req: Request, @response() res: Response, @requestParam("id") _id: string) {
     try {
       const workspace = req.session.workspace;
-      const campaigns = await CampaignRepo.destroy({ workspace, id });
+      const campaigns = await CampaignRepo.destroy({ workspace, _id });
 
       this.handleSuccess(req, res, campaigns);
     } catch (error) {

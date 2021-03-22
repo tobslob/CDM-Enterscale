@@ -7,9 +7,9 @@ class CampaignService {
   async send(campaign: Campaign, user: User) {
     switch (campaign.channel) {
       case "EMAIL":
-        await this.email(campaign, user);
+        return await this.email(campaign, user);
       case "SMS":
-        await Proxy.sms(campaign, user);
+        return await Proxy.sms(campaign, user);
     }
   }
 

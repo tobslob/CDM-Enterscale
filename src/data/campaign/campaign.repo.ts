@@ -2,7 +2,6 @@ import { BaseRepository } from "@random-guys/bucket";
 import { Campaign, CampaignDTO } from "./campaign.model";
 import mongoose from "mongoose";
 import { CampaignSchema } from "./campaign.schema";
-import { User } from "../user";
 import { addDays } from "date-fns";
 
 class CampaignRepository extends BaseRepository<Campaign> {
@@ -10,7 +9,7 @@ class CampaignRepository extends BaseRepository<Campaign> {
     super(mongoose.connection, "Campaign", CampaignSchema);
   }
 
-  async createCampaign(workspace: string, user: User, campaignDTO: CampaignDTO) {
+  async createCampaign(workspace: string, user: string, campaignDTO: CampaignDTO) {
     return this.create({
       name: campaignDTO.name,
       subject: campaignDTO.subject,
@@ -22,7 +21,7 @@ class CampaignRepository extends BaseRepository<Campaign> {
       end_date: campaignDTO.end_date,
       target_audience: campaignDTO.target_audience,
       message: campaignDTO.message,
-      user: user.id,
+      user: user,
       workspace,
       status: "STOP"
     });

@@ -6,7 +6,7 @@ export const isCampaignDTO = joi.object({
   description: JoiValidator.validateString().required(),
   channel: JoiValidator.validateString().valid("FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM").required(),
   amount: JoiValidator.validateNumber().required(),
-  frequency: JoiValidator.validateNumber(),
+  frequency: JoiValidator.validateString().valid("DAILY", "WEEKLY", "MONTHLY").required(),
   start_date: JoiValidator.validDate(),
   end_date: JoiValidator.validDate(),
   target_audience: JoiValidator.validateString().required(),

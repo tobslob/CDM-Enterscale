@@ -14,10 +14,6 @@
       </mj-column>
     </mj-section>
 
-    <mj-section>
-      <mj-image padding-top="16px" padding-bottom="22px" align="left" width="100px" src=`${ image }` alt="image" />
-    </mj-section>
-
     <mj-section padding-left="20px" padding-right="20px" padding-top="16px" padding-bottom="24px">
       <mj-column background-color="#f7f9fc">
         <mj-text line-height="40px" color="#000000" font-size="14px" padding="20px 20px 0px 20px">

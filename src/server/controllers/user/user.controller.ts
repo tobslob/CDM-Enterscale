@@ -17,7 +17,6 @@ import { BaseController, UnauthorizedError } from "@app/data/util";
 import { isUserDTO, isPasswordDTO, isEditUserDTO } from "./user.validator";
 import { UserServ } from "@app/services/user";
 import { canCreateUser } from "./user.middleware";
-import { isValidID } from "../workspace/workspace.validator";
 import { Auth } from "@app/common/services";
 import { Passwords } from "@app/services/password";
 import { ForbiddenError } from "@random-guys/siber";
@@ -35,7 +34,7 @@ export class UserController extends BaseController<User> {
     }
   }
 
-  @httpGet("/:id", canCreateUser, validate(isValidID))
+  @httpGet("/:id", canCreateUser)
   async GetUser(@request() req: Request, @response() res: Response, @requestParam("id") id: string) {
     try {
       const user = await UserRepo.byID(id);
