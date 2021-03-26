@@ -146,8 +146,6 @@ export async function job(done: (err?: Error) => void) {
     const resetMonthly = await Scheduler.create("Reset Weekly Campaign", null);
     const resetDaily = await Scheduler.create("Reset Monthly Campaign", null);
 
-    await Scheduler.start();
-
     start.repeatEvery("0 0 * * *").save();
     stop.repeatEvery("0 0 * * *").save();
     run.repeatEvery("0 * * * *").save();
