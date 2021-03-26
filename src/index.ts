@@ -20,7 +20,8 @@ const start = async () => {
 
     // start running jobs
     await Scheduler.start();
-    job
+    job()
+    Log.info("🕕  Scheduler Job Started")
 
     // connect to amqp
     await rAmqp.init(process.env.amqp_url)

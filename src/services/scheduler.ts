@@ -25,7 +25,7 @@ export const Scheduler = new Agenda({
   }
 });
 
-export async function job(done: (err?: Error) => void) {
+export async function job(done?: (err?: Error) => void) {
   try {
     const campaigns = await CampaignRepo.all({});
 
