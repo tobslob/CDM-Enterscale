@@ -14,13 +14,13 @@ const start = async () => {
     const app = new App();
     const appServer = app.getServer().build();
 
-    // start running jobs
-    await Scheduler.start();
-    job
-
     // connect to MongoDB
     await app.connectDB();
     Log.info("📦  MongoDB Connected!");
+
+    // start running jobs
+    await Scheduler.start();
+    job
 
     // connect to amqp
     await rAmqp.init(process.env.amqp_url)
