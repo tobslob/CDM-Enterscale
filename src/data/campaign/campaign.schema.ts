@@ -17,7 +17,8 @@ export const CampaignSchema = new Schema(
     message: { ...trimmedString, required: true, index: true },
     user: { ...trimmedString, required: true, index: true },
     workspace: { ...trimmedString, index: true },
-    status: { ...trimmedString, index: true, default: "STOP" }
+    status: { ...trimmedString, index: true, default: "STOP" },
+    sent: { type: SchemaTypes.Boolean, required: true, index: true }
   },
   {
     ...readMapper,

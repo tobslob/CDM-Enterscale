@@ -2,7 +2,7 @@ import Agenda from "agenda";
 import mongoose from "mongoose";
 import differenceInDays from "date-fns/differenceInDays";
 import { loopConcurrently, mapConcurrently } from "@app/data/util";
-import { CampaignRepo } from "@app/data/campaign";
+import { CampaignRepo, Campaign } from "@app/data/campaign";
 import { isToday } from "date-fns";
 import { CampaignServ } from "@app/services/campaign";
 import { UserRepo } from "@app/data/user";
@@ -25,72 +25,136 @@ export const Scheduler = new Agenda({
   }
 });
 
-export async function job() {
-  Scheduler.define("Start Scheduled Campaign", async () => {
+export async function job(done: (err?: Error) => void) {
+  try {
     const campaigns = await CampaignRepo.all({});
 
-    await loopConcurrently(campaigns, async c => {
-      if (c.status == "STOP" && isToday(c.start_date)) {
-        const defaulters = await DefaulterRepo.all({
-          conditions: {
-            request_id: c.target_audience
-          }
-        });
-
-        await mapConcurrently(defaulters, async d => {
-          const user = await UserRepo.byID(d.user);
-          await CampaignServ.send(c, user);
-          await CampaignRepo.atomicUpdate(c.id, {
-            $set: {
-              status: "START"
+    Scheduler.define("Start Scheduled Campaign", async () => {
+      await loopConcurrently(campaigns, async c => {
+        if (c.status == "STOP" && isToday(c.start_date)) {
+          const defaulters = await DefaulterRepo.all({
+            conditions: {
+              request_id: c.target_audience
             }
           });
-        });
-      }
+
+          await mapConcurrently(defaulters, async d => {
+            await CampaignRepo.atomicUpdate(c.id, {
+              $set: {
+                status: "START"
+              }
+            });
+          });
+        }
+      });
     });
-  });
 
-  Scheduler.define("Stop Scheduled Campaign", async () => {
-    const campaigns = await CampaignRepo.all({});
+    Scheduler.define("Stop Scheduled Campaign", async () => {
+      await loopConcurrently(campaigns, async c => {
+        const stop_hour = c.end_date.getHours();
+        const today_hour = new Date().getHours();
 
-    await loopConcurrently(campaigns, async c => {
-      if (c.status == "START" && isToday(c.end_date)) {
-        await CampaignRepo.atomicUpdate(c.id, {
-          $set: {
-            status: "STOP"
-          }
-        });
-      }
+        if (c.status == "START" && isToday(c.end_date) && stop_hour == today_hour) {
+          await CampaignRepo.atomicUpdate(c.id, {
+            $set: {
+              status: "STOP"
+            }
+          });
+        }
+      });
     });
-  });
 
-  Scheduler.define("Run Scheduled Campaign", async () => {
-    const campaigns = await CampaignRepo.all({});
+    async function runCampaign(c: Campaign) {
+      const defaulters = await DefaulterRepo.all({
+        conditions: {
+          request_id: c.target_audience
+        }
+      });
 
-    await loopConcurrently(campaigns, async c => {
-      if (c.status == "START" && differenceInDays(c.end_date, new Date()) > 1) {
-        const defaulters = await DefaulterRepo.all({
-          conditions: {
-            request_id: c.target_audience
-          }
-        });
+      await mapConcurrently(defaulters, async d => {
+        const user = await UserRepo.byID(d.user);
+        await CampaignServ.send(c, user);
+      });
+    }
 
-        await mapConcurrently(defaulters, async d => {
-          const user = await UserRepo.byID(d.user);
-          await CampaignServ.send(c, user);
-        });
-      }
+    Scheduler.define("Run Campaign", async () => {
+      await loopConcurrently(campaigns, async c => {
+        const send_hour = c.start_date.getHours();
+        const time_hour = new Date().getHours();
+
+        if (c.status == "START" && !c.sent && differenceInDays(c.end_date, new Date()) > 1 && send_hour == time_hour) {
+          await runCampaign(c);
+        }
+      });
     });
-  });
 
-  const start = await Scheduler.create("Start Scheduled Campaign", null);
-  const run = await Scheduler.create("Run Scheduled Campaign", null);
-  const stop = await Scheduler.create("Stop Scheduled Campaign", null);
+    Scheduler.define("Reset Daily Campaign", async () => {
+      await loopConcurrently(campaigns, async c => {
+        if (
+          c.status == "START" &&
+          c.sent &&
+          c.frequency == Frequency.Daily &&
+          differenceInDays(c.end_date, new Date()) > 1
+        ) {
+          await CampaignRepo.atomicUpdate(c.id, {
+            $set: {
+              sent: false
+            }
+          });
+        }
+      });
+    });
 
-  await Scheduler.start();
+    Scheduler.define("Reset Weekly Campaign", async () => {
+      await loopConcurrently(campaigns, async c => {
+        if (
+          c.status == "START" &&
+          c.sent &&
+          c.frequency == Frequency.Weekly &&
+          differenceInDays(c.end_date, new Date()) > 1
+        ) {
+          await CampaignRepo.atomicUpdate(c.id, {
+            $set: {
+              sent: false
+            }
+          });
+        }
+      });
+    });
 
-  start.repeatEvery("0 1 * * *").save();
-  run.repeatEvery("0 1 * * *").save();
-  stop.repeatEvery("0 1 * * *").save();
-}
-job();
+    Scheduler.define("Reset Monthly Campaign", async () => {
+      await loopConcurrently(campaigns, async c => {
+        if (
+          c.status == "START" &&
+          c.sent &&
+          c.frequency == Frequency.Monthly &&
+          differenceInDays(c.end_date, new Date()) > 1
+        ) {
+          await CampaignRepo.atomicUpdate(c.id, {
+            $set: {
+              sent: false
+            }
+          });
+        }
+      });
+    });
+
+    const start = await Scheduler.create("Start Scheduled Campaign", null);
+    const stop = await Scheduler.create("Stop Scheduled Campaign", null);
+    const run = await Scheduler.create("Run Campaign", null);
+    const resetWeekly = await Scheduler.create("Reset Daily Campaign", null);
+    const resetMonthly = await Scheduler.create("Reset Weekly Campaign", null);
+    const resetDaily = await Scheduler.create("Reset Monthly Campaign", null);
+
+    await Scheduler.start();
+
+    start.repeatEvery("0 0 * * *").save();
+    stop.repeatEvery("0 0 * * *").save();
+    run.repeatEvery("0 * * * *").save();
+    resetDaily.repeatEvery("0 0 * * *").save();
+    resetWeekly.repeatEvery("0 0 * * MON").save();
+    resetMonthly.repeatEvery("0 0 1 * *").save();
+  } catch (error) {
+    done(error.message);
+  }
+};

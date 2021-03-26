@@ -3,7 +3,7 @@ import { Campaign } from "@app/data/campaign";
 import { Proxy } from "@app/services/proxy";
 import { User } from "@app/data/user";
 
-class CampaignService {
+class CampaignService { 
   async send(campaign: Campaign, user: User) {
     switch (campaign.channel) {
       case "EMAIL":

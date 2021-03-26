@@ -24,6 +24,7 @@ export interface Campaign extends Model {
   user: string;
   workspace: string;
   status: Status;
+  sent: boolean;
 }
 
 export interface CampaignDTO {
