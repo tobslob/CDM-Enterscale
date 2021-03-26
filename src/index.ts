@@ -5,6 +5,7 @@ import { App } from "./server/app";
 import dotenv from "dotenv";
 import { rAmqp } from "./common/services/amqp";
 import { Log } from "./common/services/logger";
+import { Scheduler, job } from "./services/scheduler";
 
 dotenv.config();
 
@@ -12,6 +13,10 @@ const start = async () => {
   try {
     const app = new App();
     const appServer = app.getServer().build();
+
+    // start running jobs
+    await Scheduler.start();
+    job
 
     // connect to MongoDB
     await app.connectDB();
