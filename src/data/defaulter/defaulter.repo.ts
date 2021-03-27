@@ -3,9 +3,10 @@ import { Defaulters, DefaulterDTO, DefaulterQuery } from "./defaulter.model";
 import mongoose from "mongoose";
 import { DefaulterSchema } from "./defaulter.schema";
 import { Passwords } from "@app/services/password";
-import { User } from "../user";
+import { User, UserRepo } from "../user";
 import { Request } from "express";
 import { fromQueryMap } from "../util";
+import { RoleRepo } from "../role";
 
 class DefaulterRepository extends BaseRepository<Defaulters> {
   constructor() {
@@ -59,6 +60,12 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     };
 
     return this.model.find(conditions);
+  }
+
+  async deleteDefaulter(defaulter: Defaulters) {
+    await UserRepo.destroy(defaulter.user);
+    await RoleRepo.destroy(defaulter.role_id);
+    await DefaulterRepo.destroy(defaulter.id);
   }
 }
 

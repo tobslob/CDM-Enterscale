@@ -68,9 +68,9 @@ export class UserController extends BaseController<User> {
   @httpPatch("/reset-password")
   async resetPassword(@request() req: Request, @response() res: Response, @requestBody() body: ResetPasswordDTO) {
     try {
-      const user = await UserServ.resetPassword(body.email_address);
+      await UserServ.resetPassword(body.email_address);
 
-      this.handleSuccess(req, res, user);
+      this.handleSuccess(req, res, null);
     } catch (error) {
       this.handleError(req, res, error);
     }

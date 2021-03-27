@@ -28,6 +28,7 @@ class DefaulterService {
       const user = await UserRepo.byID(defaulter.user);
 
       return {
+        id: defaulter.id,
         title: defaulter.title,
         first_name: user.first_name,
         last_name: user.last_name,
@@ -40,7 +41,8 @@ class DefaulterService {
         time_since_last_payment: defaulter.time_since_last_payment,
         last_contacted_date: defaulter.last_contacted_date,
         BVN: defaulter.BVN,
-        request_id: defaulter.request_id
+        request_id: defaulter.request_id,
+        workspace: defaulter.workspace
       };
     });
   }
