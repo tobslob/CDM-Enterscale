@@ -8,15 +8,13 @@ import {
   queryParam,
   httpDelete
 } from "inversify-express-utils";
-import { BaseController, mapConcurrently, validate, NotFoundError } from "@app/data/util";
+import { BaseController, mapConcurrently, validate } from "@app/data/util";
 import { isUpload, canCreateDefaulters } from "./defaulter.middleware";
 import { Extractions, ExtractedDefaulter } from "@app/services/extraction";
 import { Request, Response } from "express";
 import { Defaulter } from "@app/services/defaulter";
 import { DefaulterRepo, Defaulters, DefaulterQuery } from "@app/data/defaulter";
 import { isDefaulterQuery } from "./defaulter.validator";
-import { RoleRepo } from "@app/data/role";
-import { UserRepo } from "@app/data/user";
 
 type ControllerResponse = ExtractedDefaulter[] | Defaulters[] | Defaulters;
 
@@ -53,44 +51,25 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpGet("/:request_id", canCreateDefaulters)
-  async getUniqueDefaulters(
-    @request() req: Request,
-    @response() res: Response,
-    @requestParam("request_id") request_id: string
-  ) {
+  @httpGet("/:id", canCreateDefaulters)
+  async getDefaulter(@request() req: Request, @response() res: Response, @requestParam("id") _id: string) {
     try {
       const workspace = req.session.workspace;
-      const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, request_id);
+      const defaulter = await DefaulterRepo.byQuery({ workspace, _id });
 
-      const defaultUsers = await Defaulter.getDefaultUsers(defaulters);
-
-      this.handleSuccess(req, res, defaultUsers);
+      this.handleSuccess(req, res, defaulter);
     } catch (error) {
       this.handleError(req, res, error);
     }
   }
 
-  @httpDelete("/:request_id", canCreateDefaulters)
-  async deleteFaultUniqueDefaulters(
-    @request() req: Request,
-    @response() res: Response,
-    @requestParam("request_id") request_id: string
-  ) {
+  @httpDelete("/:id", canCreateDefaulters)
+  async deleteDefaulter(@request() req: Request, @response() res: Response, @requestParam("id") _id: string) {
     try {
       const workspace = req.session.workspace;
-      const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, request_id);
+      const defaulter = await DefaulterRepo.byQuery({ workspace, _id });
 
-      if(defaulters.length === 0) {
-        throw new NotFoundError("We could not find any defaulter with such request id");
-      }
-
-      await mapConcurrently(defaulters, async d => {
-        const user = await UserRepo.byID(d.user);
-        await UserRepo.destroy(user.id)
-        await RoleRepo.destroy(d.role_id);
-        await DefaulterRepo.destroy({ request_id: d.request_id });
-      });
+      await DefaulterRepo.deleteDefaulter(defaulter);
 
       this.handleSuccess(req, res, null);
     } catch (error) {
