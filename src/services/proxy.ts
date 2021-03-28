@@ -11,7 +11,7 @@ export type CustomAudienceType = typeof customAudience[number];
 
 class ProxyServices {
   async verifyBVN(bvn: string) {
-    const data = Axios(`${process.env.flutter_url}/${bvn}`, "get", null, null, {
+    const data = Axios(`${process.env.flutter_url}`, "get", bvn, null, null, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `${process.env.auth_scheme} ${process.env.sec_key}`
@@ -62,6 +62,7 @@ class ProxyServices {
     const data = await Axios(
       `${process.env.fb_graph_url}/v10.0/act_${process.env.fb_account_id}/customaudiences`,
       "post",
+      null,
       {
         name,
         subtype,
@@ -77,16 +78,20 @@ class ProxyServices {
     const data = await Axios(
       process.env.sms_url,
       "post",
+      null,
       {
         username: process.env.sms_username,
-        to: user.phone_number,
+        to: user.email_address,
         message: campaign.message,
         from: "Mooyi",
+        bulkSMSMode: 1,
+        enqueue: 1,
+        retryDurationInHours: 2
       },
       null,
       {
         headers: {
-          accept: "application/json",
+          Accept: "application/json",
           "Content-Type": "application/x-www-form-urlencoded",
           apiKey: process.env.sms_api_key
         }
