@@ -12,10 +12,11 @@ import { BaseController, validate, ConstraintError } from "@app/data/util";
 import { Request, Response } from "express";
 import { Campaign, CampaignDTO, CampaignRepo } from "@app/data/campaign";
 import { canCreateCampaign } from "./campaign.middleware";
+import { SendMessageResponse } from "africastalking-ts";
 import { isCampaignDTO } from "./campaign.validator";
 import { differenceInDays } from "date-fns";
 
-type ControllerResponse = Campaign[] | Campaign;
+type ControllerResponse = Campaign[] | Campaign | SendMessageResponse | any;
 
 @controller("/campaigns")
 export class CampaignController extends BaseController<ControllerResponse> {

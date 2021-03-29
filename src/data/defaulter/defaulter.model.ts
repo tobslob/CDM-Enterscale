@@ -1,5 +1,8 @@
 import { Model } from "@random-guys/bucket";
 
+const status = <const>["paid part", "owning", "completed"]
+export type StatusType = typeof status[number]
+
 export interface Defaulters extends Model {
   title: string;
   total_loan_amount: number;
@@ -13,6 +16,7 @@ export interface Defaulters extends Model {
   user: string;
   request_id: string;
   role_id: string;
+  status: StatusType;
 }
 
 export interface DefaulterDTO {
@@ -29,6 +33,7 @@ export interface DefaulterDTO {
   last_contacted_date: Date;
   BVN: string;
   request_id?: string;
+  status: StatusType;
 }
 
 export interface DefaulterQuery {

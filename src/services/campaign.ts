@@ -1,15 +1,21 @@
 import AdapterInstance from "@app/server/adapter/mail";
 import { Campaign } from "@app/data/campaign";
-import { Proxy } from "@app/services/proxy";
 import { User } from "@app/data/user";
+import Africastalking from "africastalking";
+import dotenv from "dotenv";
+import { NotFoundError } from "@app/data/util";
 
-class CampaignService { 
+dotenv.config();
+
+class CampaignService {
   async send(campaign: Campaign, user: User) {
     switch (campaign.channel) {
       case "EMAIL":
         return await this.email(campaign, user);
       case "SMS":
-        return await Proxy.sms(campaign, user);
+        return await this.sms(campaign, user);
+      default:
+        return new NotFoundError("channel not found");
     }
   }
 
@@ -25,6 +31,20 @@ class CampaignService {
         subject: campaign.subject,
         message: campaign.message
       }
+    });
+  }
+
+  private async sms(campaign: Campaign, user: User) {
+    const sms = Africastalking({
+      apiKey: process.env.sms_api_key,
+      username: process.env.sms_username,
+      enqueue: true
+    }).SMS;
+
+    return await sms.send({
+      to: user.phone_number, 
+      message: campaign.message,
+      from: process.env.sms_sender
     });
   }
 }

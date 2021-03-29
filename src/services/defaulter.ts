@@ -42,7 +42,8 @@ class DefaulterService {
         last_contacted_date: defaulter.last_contacted_date,
         BVN: defaulter.BVN,
         request_id: defaulter.request_id,
-        workspace: defaulter.workspace
+        workspace: defaulter.workspace,
+        status: defaulter.status
       };
     });
   }

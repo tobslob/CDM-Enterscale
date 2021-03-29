@@ -30,7 +30,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
       workspace,
       user: user.id,
       request_id: defaulter.request_id,
-      role_id: user.role_id
+      role_id: user.role_id,
     });
   }
 

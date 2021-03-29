@@ -6,6 +6,7 @@ import uuid from "uuid/v4";
 // This is a hack to make Multer available in the Express namespace
 //@ts-ignore
 import { Multer } from "multer";
+import { StatusType } from "@app/data/defaulter";
 
 export const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 export const CSV_MIME = "text/csv";
@@ -24,6 +25,7 @@ export interface ExtractedDefaulter {
   last_contacted_date: Date;
   BVN: string;
   request_id: string;
+  status: StatusType 
 }
 
 class ExtractionService {
@@ -77,7 +79,8 @@ class ExtractionService {
           time_since_last_payment: row[9],
           last_contacted_date: row[10],
           BVN: row[11],
-          request_id
+          request_id,
+          status: "owning"
         });
       });
 
