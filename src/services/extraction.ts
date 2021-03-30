@@ -52,8 +52,8 @@ class ExtractionService {
         row[5] = typeof row[5] === "string" ? Number(row[5]) : row[5];
         row[6] = typeof row[6] === "string" ? Number(row[6]) : row[6];
         row[7] = typeof row[7] === "string" ? Number(row[7]) : row[7];
-        row[8] = typeof row[8] === "string" ? Number(row[8]) : row[8];
-        row[9] = typeof row[9] === "string" ? Number(row[9]) : row[9];
+        row[8] = typeof row[8] === "string" ? new Date(row[8]) : row[8];
+        row[9] = typeof row[9] === "string" ? new Date(row[9]) : row[9];
         row[10] = typeof row[10] === "string" ? new Date(row[10]) : row[10];
 
         if (row[11]) {

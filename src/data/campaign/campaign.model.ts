@@ -8,11 +8,11 @@ const status = <const>["START", "STOP"]
 export type Status = typeof status[number]
 
 export interface Campaign extends Model {
-  name: string;
-  subject: string;
-  description: string;
+  name?: string;
+  subject?: string;
+  description?: string;
   channel: Channel;
-  amount: number;
+  amount?: number;
   frequency?: Frequency;
   start_date?: Date;
   end_date?: Date;
@@ -23,30 +23,19 @@ export interface Campaign extends Model {
   message: string;
   user: string;
   workspace: string;
-  status: Status;
-  sent: boolean;
+  status?: Status;
+  sent?: boolean;
 }
 
 export interface CampaignDTO {
-  name: string;
-  subject: string;
-  description: string;
+  name?: string;
+  subject?: string;
+  description?: string;
   channel: Channel;
-  amount: number;
+  amount?: number;
   frequency?: Frequency;
   start_date?: Date;
   end_date?: Date;
   target_audience: string;
-  message: string;
-}
-
-export interface ReminderDTO {
-  subject?: string;
-  channel: Channel;
-  /**
-   * request_id from target audience
-   */
-  id: string;
-  campaign_id: string;
   message: string;
 }

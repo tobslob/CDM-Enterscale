@@ -1,5 +1,5 @@
 import AdapterInstance from "@app/server/adapter/mail";
-import { Campaign } from "@app/data/campaign";
+import { CampaignDTO } from "@app/data/campaign";
 import { User } from "@app/data/user";
 import Africastalking from "africastalking";
 import dotenv from "dotenv";
@@ -8,7 +8,7 @@ import { NotFoundError } from "@app/data/util";
 dotenv.config();
 
 class CampaignService {
-  async send(campaign: Campaign, user: User) {
+  async send(campaign: CampaignDTO, user: any) {
     switch (campaign.channel) {
       case "EMAIL":
         return await this.email(campaign, user);
@@ -19,7 +19,7 @@ class CampaignService {
     }
   }
 
-  private async email(campaign: Campaign, user: User) {
+  private async email(campaign: CampaignDTO, user: any) {
     AdapterInstance.send({
       subject: campaign.subject,
       channel: "mail",
@@ -34,7 +34,7 @@ class CampaignService {
     });
   }
 
-  private async sms(campaign: Campaign, user: User) {
+  private async sms(campaign: CampaignDTO, user: User) {
     const sms = Africastalking({
       apiKey: process.env.sms_api_key,
       username: process.env.sms_username,

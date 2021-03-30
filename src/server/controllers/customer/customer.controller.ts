@@ -15,7 +15,7 @@ import { Defaulter } from "@app/services/defaulter";
 
 type ControllerResponse = ExtractedDefaulter[] | Defaulters[] | Defaulters;
 
-@controller("/customer")
+@controller("/customers")
 export class CustomerController extends BaseController<ControllerResponse> {
   @httpDelete("/:request_id", canCreateDefaulters)
   async deleteUniqueDefaulters(
