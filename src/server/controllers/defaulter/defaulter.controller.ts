@@ -6,15 +6,17 @@ import {
   httpGet,
   requestParam,
   queryParam,
-  httpDelete
+  httpDelete,
+  httpPatch,
+  requestBody
 } from "inversify-express-utils";
 import { BaseController, mapConcurrently, validate } from "@app/data/util";
 import { isUpload, canCreateDefaulters } from "./defaulter.middleware";
 import { Extractions, ExtractedDefaulter } from "@app/services/extraction";
 import { Request, Response } from "express";
 import { Defaulter } from "@app/services/defaulter";
-import { DefaulterRepo, Defaulters, DefaulterQuery } from "@app/data/defaulter";
-import { isDefaulterQuery } from "./defaulter.validator";
+import { DefaulterRepo, Defaulters, DefaulterQuery, DefaulterDTO } from "@app/data/defaulter";
+import { isDefaulterQuery, isDefaulterDTO } from "./defaulter.validator";
 
 type ControllerResponse = ExtractedDefaulter[] | Defaulters[] | Defaulters;
 
@@ -72,6 +74,23 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       await DefaulterRepo.deleteDefaulter(defaulter);
 
       this.handleSuccess(req, res, null);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPatch("/:id", canCreateDefaulters, validate(isDefaulterDTO))
+  async editDefaulters(
+    @request() req: Request,
+    @response() res: Response,
+    @requestParam("id") id: string,
+    @requestBody() body: DefaulterDTO
+  ) {
+    try {
+      const workspace = req.session.workspace;
+      const defaulter = await DefaulterRepo.editDefulter(workspace, id, body);
+
+      this.handleSuccess(req, res, defaulter);
     } catch (error) {
       this.handleError(req, res, error);
     }

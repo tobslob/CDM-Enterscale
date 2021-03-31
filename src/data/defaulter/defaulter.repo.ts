@@ -30,7 +30,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
       workspace,
       user: user.id,
       request_id: defaulter.request_id,
-      role_id: user.role_id,
+      role_id: user.role_id
     });
   }
 
@@ -66,6 +66,25 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     await UserRepo.destroy(defaulter.user);
     await RoleRepo.destroy(defaulter.role_id);
     await DefaulterRepo.destroy(defaulter.id);
+  }
+
+  async editDefulter(workspace: string, id: string, defaulter: DefaulterDTO) {
+    return this.atomicUpdate(
+      {
+        _id: id,
+        workspace
+      },
+      {
+        $set: {
+          total_loan_amount: defaulter.total_loan_amount,
+          loan_outstanding_balance: defaulter.loan_outstanding_balance,
+          loan_tenure: defaulter.loan_tenure,
+          time_since_default: defaulter.time_since_default,
+          time_since_last_payment: defaulter.time_since_last_payment,
+          last_contacted_date: defaulter.last_contacted_date
+        }
+      }
+    );
   }
 }
 

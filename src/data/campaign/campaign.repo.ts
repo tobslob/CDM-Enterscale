@@ -73,7 +73,6 @@ class CampaignRepository extends BaseRepository<Campaign> {
     return this.atomicUpdate(id, {
       $set: {
         status: "STOP",
-        end_date: new Date()
       }
     });
   }
