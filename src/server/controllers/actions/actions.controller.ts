@@ -5,8 +5,7 @@ import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
 import { CampaignServ } from "@app/services/campaign";
 import { DefaulterRepo } from "@app/data/defaulter";
-import { UserRepo } from "@app/data/user";
-import { differenceInDays } from "date-fns";
+import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
 
 type ControllerResponse = Campaign[] | Campaign;
@@ -19,21 +18,10 @@ export class ActionsController extends BaseController<ControllerResponse> {
       const campaign = await CampaignRepo.byID(id);
 
       if (campaign.status == "STOP") {
-        const diff = differenceInDays(campaign.end_date, campaign.start_date);
+        const diff = differenceInCalendarDays(campaign.end_date, campaign.start_date);
         if (diff < 1) {
           throw new ConstraintError("The end date must at least be a day after start date");
         }
-        const defaulters = await DefaulterRepo.all({
-          conditions: {
-            workspace: req.session.workspace,
-            request_id: campaign.target_audience
-          }
-        });
-
-        await mapConcurrently(defaulters, async defaulter => {
-          const user = await UserRepo.byID(defaulter.user);
-          await CampaignServ.send(campaign, user);
-        });
 
         return await CampaignRepo.startCampaign(id);
       } else {
@@ -52,7 +40,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
 
       const users = await Defaulter.getDefaultUsers(defaulters);
       const data = await mapConcurrently(users, async u => {
-        return await CampaignServ.send(body, u)
+        return await CampaignServ.send(body, u);
       });
 
       this.handleSuccess(req, res, data);

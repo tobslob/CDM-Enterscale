@@ -2,7 +2,6 @@ import { BaseRepository } from "@random-guys/bucket";
 import { Campaign, CampaignDTO } from "./campaign.model";
 import mongoose from "mongoose";
 import { CampaignSchema } from "./campaign.schema";
-import { addDays } from "date-fns";
 
 class CampaignRepository extends BaseRepository<Campaign> {
   constructor() {
@@ -42,7 +41,7 @@ class CampaignRepository extends BaseRepository<Campaign> {
     return this.atomicUpdate(id, {
       $set: {
         status: "START",
-        start_date: addDays(new Date(), 1)
+        start_date: new Date()
       }
     });
   }
@@ -51,7 +50,7 @@ class CampaignRepository extends BaseRepository<Campaign> {
     return this.atomicUpdate(id, {
       $set: {
         status: "STOP",
-        end_date: addDays(new Date(), 1)
+        end_date: new Date()
       }
     });
   }
