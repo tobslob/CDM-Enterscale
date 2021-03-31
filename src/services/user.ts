@@ -2,10 +2,14 @@ import { RoleServ } from "./role";
 import { UserRepo, UserDTO } from "@app/data/user";
 import { Passwords } from "./password";
 import AdapterInstance from "@app/server/adapter/mail";
-import { UnauthorizedError } from "@app/data/util";
+import { UnauthorizedError, ConflictError } from "@app/data/util";
 
 class UserService {
   async createUser(workspace: string, dto: UserDTO) {
+    const usr = await UserRepo.byQuery({ workspace, email_address: dto.email_address });
+
+    if (usr) throw new ConflictError(`user with ${usr.email_address} exist`);
+
     const role = await RoleServ.createRole(
       workspace,
       dto.permissions.loan_admin,
