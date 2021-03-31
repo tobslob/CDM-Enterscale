@@ -5,3 +5,12 @@ export const isDefaulterQuery = joi.object({
   title: JoiValidator.validateString(),
   request_id: JoiValidator.validateString()
 });
+
+export const isDefaulterDTO = joi.object({
+  total_loan_amount: JoiValidator.validateNumber(),
+  loan_outstanding_balance: JoiValidator.validateNumber(),
+  loan_tenure: JoiValidator.validateNumber(),
+  time_since_default: JoiValidator.validDate(),
+  time_since_last_payment: JoiValidator.validDate(),
+  last_contacted_date: JoiValidator.validDate()
+});
