@@ -26,6 +26,29 @@ class CampaignRepository extends BaseRepository<Campaign> {
     });
   }
 
+  async editCampaign(workspace: string, id: string, campaignDTO: CampaignDTO) {
+    return this.atomicUpdate(
+      {
+        _id: id,
+        workspace
+      },
+      {
+        $set: {
+          name: campaignDTO.name,
+          subject: campaignDTO.subject,
+          description: campaignDTO.description,
+          channel: campaignDTO.channel,
+          amount: campaignDTO.amount,
+          frequency: campaignDTO.frequency,
+          start_date: campaignDTO.start_date,
+          end_date: campaignDTO.end_date,
+          target_audience: campaignDTO.target_audience,
+          message: campaignDTO.message
+        }
+      }
+    );
+  }
+
   async getCampaigns(workspace: string) {
     return this.all({
       conditions: {
