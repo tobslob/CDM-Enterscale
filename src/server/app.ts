@@ -12,7 +12,6 @@ import { errors } from "@app/data/util";
 import cors from "cors";
 import dotenv from "dotenv";
 
-
 dotenv.config();
 
 export class App {
@@ -35,14 +34,19 @@ export class App {
       app.use(bodyparser.json());
 
       // CORS
-      app.use(cors());
-      app.options("*", cors());
+      const domains = ["enterscale--client.herokuapp.com"];
+      const corsConf = {
+        origin: [/localhost/, ...domains.map(domain => new RegExp(`${domain}$`))],
+        credentials: true
+      };
+
+      app.use(cors(corsConf));
+      app.options("*", cors(corsConf));
     });
 
     this.server.setErrorConfig((app: Application) => {
       // expose index endpoint
       app.get("/", (_req: Request, res: Response) => {
-        
         if (mongoose.connections.every(conn => conn.readyState !== 1)) {
           return res.status(500).send("MongoDB is not ready");
         }
@@ -76,11 +80,13 @@ export class App {
   async connectDB() {
     await Store.connect();
     await mongoose.connect(process.env.mongodb_url, {
-      ...(process.env.is_production ? secureMongoOpts({
-        mongodb_url: process.env.mongodb_url,
-        mongodb_username: process.env.mongodb_username,
-        mongodb_password: process.env.mongodb_password
-      }) : defaultMongoOpts)
+      ...(process.env.is_production
+        ? secureMongoOpts({
+            mongodb_url: process.env.mongodb_url,
+            mongodb_username: process.env.mongodb_username,
+            mongodb_password: process.env.mongodb_password
+          })
+        : defaultMongoOpts)
     });
     this.db = mongoose.connection;
   }
