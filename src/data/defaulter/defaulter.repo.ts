@@ -5,7 +5,7 @@ import { DefaulterSchema } from "./defaulter.schema";
 import { Passwords } from "@app/services/password";
 import { User, UserRepo } from "../user";
 import { Request } from "express";
-import { fromQueryMap } from "../util";
+import { fromQueryMap, DuplicateModelError } from "../util";
 import { RoleRepo } from "../role";
 
 class DefaulterRepository extends BaseRepository<Defaulters> {
@@ -18,6 +18,10 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
   }
 
   async createDefaulters(req: Request, workspace: string, user: User, defaulter: DefaulterDTO) {
+    if (!user) {
+      throw new DuplicateModelError("We only added non duplicate")
+    }
+
     return this.create({
       title: req.file.originalname,
       total_loan_amount: defaulter.total_loan_amount,
