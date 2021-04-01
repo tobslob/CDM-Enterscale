@@ -9,7 +9,7 @@ class UserService {
 
     const usr = await UserRepo.model.exists({ workspace, email_address: dto.email_address });
 
-    if (usr) throw new ConflictError(`user with ${dto.email_address} exist`);
+    if (usr) throw new ConflictError(`user with ${dto.email_address} exists already`);
 
     const role = await RoleServ.createRole(
       workspace,
