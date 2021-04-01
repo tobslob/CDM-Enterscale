@@ -40,6 +40,12 @@ export class App {
         credentials: true
       };
 
+      app.use(function (_req, res, next) {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        next();
+      });
+
       app.use(cors(corsConf));
       app.options("*", cors(corsConf));
     });
