@@ -2,14 +2,13 @@ import { RoleServ } from "./role";
 import { UserRepo, UserDTO } from "@app/data/user";
 import { Passwords } from "./password";
 import AdapterInstance from "@app/server/adapter/mail";
-import { UnauthorizedError, ConflictError } from "@app/data/util";
+import { UnauthorizedError } from "@app/data/util";
 
 class UserService {
   async createUser(workspace: string, dto: UserDTO) {
 
     const usr = await UserRepo.model.exists({ workspace, email_address: dto.email_address });
-
-    if (usr) throw new ConflictError(`user with ${dto.email_address} exists already`);
+    if (usr) return;
 
     const role = await RoleServ.createRole(
       workspace,
