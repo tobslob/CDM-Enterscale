@@ -17,6 +17,7 @@ import { Request, Response } from "express";
 import { Defaulter } from "@app/services/defaulter";
 import { DefaulterRepo, Defaulters, DefaulterQuery, DefaulterDTO } from "@app/data/defaulter";
 import { isDefaulterQuery, isDefaulterDTO } from "./defaulter.validator";
+import { CustomerRepo } from "@app/data/customer-list/customer-list.repo";
 
 type ControllerResponse = ExtractedDefaulter[] | Defaulters[] | Defaulters;
 
@@ -27,6 +28,11 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     try {
       const workspace = req.session.workspace;
       const defaulters = await Extractions.extractDefaulters(req.file);
+
+      await CustomerRepo.createCustomerList(req, workspace, {
+        request_id: defaulters[0].request_id,
+        title: req.file.originalname,
+      })
 
       const cratedDefaulters = await mapConcurrently(defaulters, async defaulter => {
         return await Defaulter.createDefaulters(req, workspace, defaulter);

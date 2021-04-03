@@ -16,6 +16,7 @@ import { canCreateCampaign } from "./campaign.middleware";
 import { SendMessageResponse } from "africastalking-ts";
 import { isCampaignDTO } from "./campaign.validator";
 import { differenceInCalendarDays } from "date-fns";
+import { WorkspaceRepo } from "@app/data/workspace";
 
 type ControllerResponse = Campaign[] | Campaign | SendMessageResponse | any;
 
@@ -34,7 +35,9 @@ export class CampaignController extends BaseController<ControllerResponse> {
         }
       }
 
-      const campaign = await CampaignRepo.createCampaign(workspace, user, body);
+      const wrkspace = await WorkspaceRepo.byID(workspace);
+
+      const campaign = await CampaignRepo.createCampaign(wrkspace, user, body);
       this.handleSuccess(req, res, campaign);
     } catch (error) {
       this.handleError(req, res, error);

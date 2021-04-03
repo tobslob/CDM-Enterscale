@@ -23,8 +23,10 @@ export interface Campaign extends Model {
   message: string;
   user: string;
   workspace: string;
+  workspace_name: string;
   status?: Status;
   sent?: boolean;
+  organisation?: string;
 }
 
 export interface CampaignDTO {
@@ -38,4 +40,5 @@ export interface CampaignDTO {
   end_date?: Date;
   target_audience: string;
   message: string;
+  organisation?: string;
 }
