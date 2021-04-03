@@ -26,7 +26,6 @@ class DefaulterService {
   async getDefaultUsers(cratedDefaulters: Defaulters[]) {
     return mapConcurrently(cratedDefaulters, async defaulter => {
       const user = await UserRepo.byID(defaulter.user);
-
       return {
         id: defaulter.id,
         title: defaulter.title,
@@ -46,6 +45,8 @@ class DefaulterService {
         status: defaulter.status
       };
     });
+
+    
   }
 
   async sha256Defaulter(req: Request) {

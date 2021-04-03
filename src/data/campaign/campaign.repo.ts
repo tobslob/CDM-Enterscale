@@ -2,13 +2,14 @@ import { BaseRepository } from "@random-guys/bucket";
 import { Campaign, CampaignDTO } from "./campaign.model";
 import mongoose from "mongoose";
 import { CampaignSchema } from "./campaign.schema";
+import { Workspace } from "../workspace";
 
 class CampaignRepository extends BaseRepository<Campaign> {
   constructor() {
     super(mongoose.connection, "Campaign", CampaignSchema);
   }
 
-  async createCampaign(workspace: string, user: string, campaignDTO: CampaignDTO) {
+  async createCampaign(workspace: Workspace, user: string, campaignDTO: CampaignDTO) {
     return this.create({
       name: campaignDTO.name,
       subject: campaignDTO.subject,
@@ -21,8 +22,10 @@ class CampaignRepository extends BaseRepository<Campaign> {
       target_audience: campaignDTO.target_audience,
       message: campaignDTO.message,
       user: user,
-      workspace,
-      status: "STOP"
+      workspace: workspace.id,
+      workspace_name: workspace.name,
+      status: "STOP",
+      organisation: campaignDTO.organisation
     });
   }
 
@@ -72,7 +75,7 @@ class CampaignRepository extends BaseRepository<Campaign> {
   async stopCampaign(id: string) {
     return this.atomicUpdate(id, {
       $set: {
-        status: "STOP",
+        status: "STOP"
       }
     });
   }
