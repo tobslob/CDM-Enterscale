@@ -22,7 +22,7 @@ export class CustomerController extends BaseController<ControllerResponse> {
     try {
       const workspace = req.session.workspace;
 
-      // await CustomerRepo.deleteCustomerList(workspace, title, request_id);
+      await CustomerRepo.deleteCustomerList(workspace, title, request_id);
       const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, request_id);
 
       if (defaulters.length === 0) {
