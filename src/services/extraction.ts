@@ -25,7 +25,7 @@ export interface ExtractedDefaulter {
   last_contacted_date: Date;
   BVN: string;
   request_id: string;
-  status: StatusType 
+  status: StatusType;
 }
 
 class ExtractionService {
@@ -46,13 +46,13 @@ class ExtractionService {
         if (Object.keys(row).length !== 11) return;
 
         // ignore headers
-        if (!EMAIL.test(row[3])) return;
+        if (!EMAIL.test(row[3].trim())) return;
 
-        row[5] = typeof row[5] === "string" ? row[5].replace(/\,/g,'') : row[5];
-        row[6] = typeof row[6] === "string" ? row[6].replace(/\,/g,'') : row[6];
-        row[7] = typeof row[7] === "string" ? row[7].replace(/\,/g,'') : row[7];
+        row[5] = typeof row[5] === "string" ? row[5].replace(/\,/g, "") : row[5];
+        row[6] = typeof row[6] === "string" ? row[6].replace(/\,/g, "") : row[6];
+        row[7] = typeof row[7] === "string" ? row[7].replace(/\,/g, "") : row[7];
 
-        row[4] = typeof row[4] === "number" ? row[4].toString() : row[4].trim();
+        row[4] = typeof row[4] === "string" ? Number(row[4]) : row[4];
         row[5] = typeof row[5] === "string" ? Number(row[5]) : row[5];
         row[6] = typeof row[6] === "string" ? Number(row[6]) : row[6];
         row[7] = typeof row[7] === "string" ? Number(row[7]) : row[7];
@@ -61,11 +61,10 @@ class ExtractionService {
         row[10] = typeof row[10] === "string" ? new Date(row[10]) : row[10];
 
         if (row[11]) {
-          if (!BVN.test(row[11])) return;
+          if (!BVN.test(row[11].trim())) return;
         }
 
-        row[4] = row[4].padStart(14, "+234")
-
+        row[4] = row[4].toString().padStart(14, "+234");
 
         results = uniqBy(results, result => {
           return `${result.phone_number}:${result.BVN}`;
@@ -94,7 +93,7 @@ class ExtractionService {
 
       return results;
     } catch (error) {
-      throw new Error(error.message)
+      throw new Error(error.message);
     }
   }
 

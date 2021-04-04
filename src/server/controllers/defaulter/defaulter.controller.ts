@@ -29,16 +29,17 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       const workspace = req.session.workspace;
       const defaulters = await Extractions.extractDefaulters(req.file);
 
-      await CustomerRepo.createCustomerList(req, workspace, {
-        request_id: defaulters[0].request_id,
-        title: req.file.originalname,
-      })
-
+      const title = req.file.originalname.split(".");
       const cratedDefaulters = await mapConcurrently(defaulters, async defaulter => {
         return await Defaulter.createDefaulters(req, workspace, defaulter);
       });
 
       const defaultUsers = await Defaulter.getDefaultUsers(cratedDefaulters);
+
+      await CustomerRepo.createCustomerList(workspace, {
+        request_id: defaulters[0].request_id,
+        title: title[0]
+      });
 
       this.handleSuccess(req, res, defaultUsers);
     } catch (error) {
