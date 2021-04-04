@@ -2,6 +2,9 @@ import { BaseRepository } from "@random-guys/bucket";
 import { Customers, CustomerDTO } from "./customer-list.model";
 import mongoose from "mongoose";
 import { CustomerSchema } from "./customer-list.schema";
+import { fromQueryMap } from "../util";
+import { DefaulterQuery } from "../defaulter";
+import { Request } from "express";
 
 class CustomerRepository extends BaseRepository<Customers> {
   constructor() {
@@ -16,12 +19,20 @@ class CustomerRepository extends BaseRepository<Customers> {
     });
   }
 
-  async getAllCustomerList(workspace: string) {
-    return this.all({
-      conditions: {
-        workspace
-      }
-    });
+  async getAllCustomerList(req: Request, query?: DefaulterQuery) {
+      const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
+  
+      let conditions = fromQueryMap(query, {
+        request_id: { request_id: query.request_id },
+        title: { title: nameRegex }
+      });
+  
+      conditions = {
+        ...conditions,
+        workspace: req.session.workspace
+      };
+  
+      return this.model.find(conditions);
   }
 
   async deleteCustomerList(workspace: string, title: string, request_id: string) {
