@@ -1,11 +1,4 @@
-import {
-  controller,
-  request,
-  response,
-  requestParam,
-  httpDelete,
-  httpGet
-} from "inversify-express-utils";
+import { controller, request, response, requestParam, httpDelete, httpGet } from "inversify-express-utils";
 import { BaseController, mapConcurrently, NotFoundError } from "@app/data/util";
 import { ExtractedDefaulter } from "@app/services/extraction";
 import { Request, Response } from "express";
@@ -29,7 +22,7 @@ export class CustomerController extends BaseController<ControllerResponse> {
     try {
       const workspace = req.session.workspace;
 
-      await CustomerRepo.deleteCustomerList(workspace, title, request_id)
+      // await CustomerRepo.deleteCustomerList(workspace, title, request_id);
       const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, request_id);
 
       if (defaulters.length === 0) {
@@ -47,10 +40,7 @@ export class CustomerController extends BaseController<ControllerResponse> {
   }
 
   @httpGet("/", canCreateDefaulters)
-  async getAllCustomerList(
-    @request() req: Request,
-    @response() res: Response,
-  ) {
+  async getAllCustomerList(@request() req: Request, @response() res: Response) {
     try {
       const workspace = req.session.workspace;
       const customerList = await CustomerRepo.getAllCustomerList(workspace);

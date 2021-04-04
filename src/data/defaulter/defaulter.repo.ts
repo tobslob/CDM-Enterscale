@@ -22,8 +22,10 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
       throw new DuplicateModelError("We only added non duplicate")
     }
 
+    const title = req.file.originalname.split(".")
+
     return this.create({
-      title: req.file.originalname,
+      title: title[0],
       total_loan_amount: defaulter.total_loan_amount,
       loan_outstanding_balance: defaulter.loan_outstanding_balance,
       loan_tenure: defaulter.loan_tenure,
