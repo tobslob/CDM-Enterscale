@@ -25,7 +25,9 @@ class CampaignRepository extends BaseRepository<Campaign> {
       workspace: workspace.id,
       workspace_name: workspace.name,
       status: "STOP",
-      organisation: campaignDTO.organisation
+      organisation: campaignDTO.organisation,
+      subtype: campaignDTO.subtype,
+      customer_file_source: campaignDTO.customer_file_source
     });
   }
 

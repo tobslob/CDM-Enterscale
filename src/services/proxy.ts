@@ -1,15 +1,37 @@
-import * as queryString from "query-string";
 import dotenv from "dotenv";
 import { Axios } from "@app/data/util/proxy";
+import { CampaignDTO } from "@app/data/campaign";
+import { Defaulter } from "./defaulter";
+import { DefaulterRepo } from "@app/data/defaulter";
+import { Request } from "express";
+import uuid from "uuid/v4";
 
 dotenv.config();
 
 export const customAudience = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
+export const subType = <const>[
+  "CUSTOM",
+  "WEBSITE",
+  "APP",
+  "OFFLINE_CONVERSION",
+  "CLAIM",
+  "PARTNER",
+  "MANAGED",
+  "VIDEO",
+  "LOOKALIKE",
+  "ENGAGEMENT",
+  "BAG_OF_ACCOUNTS",
+  "STUDY_RULE_AUDIENCE",
+  "FOX",
+  "MEASUREMENT",
+  "REGULATED_CATEGORIES_AUDIENCE"
+];
 export type CustomAudienceType = typeof customAudience[number];
+export type SubType = typeof subType[number];
 
 class ProxyServices {
   async verifyBVN(bvn: string) {
-    const data = Axios(`${process.env.flutter_url}/${bvn}`, "get", null, null, {
+    const data = await Axios(`${process.env.flutter_url}/${bvn}`, "get", null, null, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `${process.env.auth_scheme} ${process.env.sec_key}`
@@ -19,56 +41,36 @@ class ProxyServices {
     return data;
   }
 
-  stringifiedParams = queryString.stringify({
-    client_id: process.env.fb_client_id,
-    redirect_uri: `${process.env.fb_login_url}`,
-    scope: ["email"].join(","),
-    response_type: "code",
-    auth_type: "rerequest",
-    display: "popup"
-  });
-
-  facebookLoginUrl = `${process.env.fb_url}/dialog/oauth?${this.stringifiedParams}`;
-
-  async getAccessTokenFromCode(code: string) {
-    const data = await Axios(`${process.env.fb_url}/oauth/access_token`, "get", null, null, {
-      client_id: process.env.fb_client_id,
-      client_secret: process.env.fb_app_secret,
-      redirect_uri: `${process.env.fb_login_url}`,
-      code
-    });
-
-    return data;
-  }
-
-  async getFacebookUserData(access_token: string) {
-    const { data } = await Axios(`${process.env.fb_graph_url}/me`, "get", null, null, {
-      fields: ["id", "email", "first_name", "last_name"].join(","),
-      access_token
-    });
-
-    return data;
-  }
-
-  async createCustomAudience(
-    access_token: string,
-    name: string,
-    subtype: string,
-    description: string,
-    customer_file_source: CustomAudienceType
-  ) {
-    const data = await Axios(
+  async createCustomAudience(campaign: CampaignDTO) {
+    const response = await Axios(
       `${process.env.fb_graph_url}/v10.0/act_${process.env.fb_account_id}/customaudiences`,
       "post",
       {
-        name,
-        subtype,
-        description,
-        customer_file_source,
-        access_token
+        name: campaign.name,
+        subtype: campaign.subtype,
+        description: campaign.description,
+        customer_file_source: campaign.customer_file_source,
+        access_token: process.env.fb_access_token
       }
     );
-    return data;
+    return response.data;
+  }
+
+  async uploadCustomFile(req: Request, request_id: string, audience_id: string) {
+    const workspace = req.session.workspace;
+
+    const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, request_id);
+    const users = await Defaulter.getDefaultUsers(defaulters);
+    const hashedInfo = await Defaulter.sha256Users(users);
+
+    const response = await Axios(`${process.env.fb_graph_url}/v10.0/${audience_id}/users `, "post", {
+      payload: {
+        schema: ["EXTERN_ID", "EMAIL", "FN", "LN", "PHONE"],
+        data: [[uuid(), ...hashedInfo.values()]]
+      },
+      access_token: process.env.fb_access_token
+    });
+    return response.data;
   }
 }
 

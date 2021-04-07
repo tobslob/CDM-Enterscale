@@ -4,6 +4,8 @@ import { User } from "@app/data/user";
 import Africastalking from "africastalking";
 import dotenv from "dotenv";
 import { NotFoundError } from "@app/data/util";
+import { Proxy } from "@app/services/proxy";
+import { Request } from "express";
 
 dotenv.config();
 
@@ -20,7 +22,7 @@ class CampaignService {
   }
 
   private async email(campaign: CampaignDTO, user: any) {
-    AdapterInstance.send({
+    return await AdapterInstance.send({
       subject: campaign.subject,
       channel: "mail",
       recipient: user.email_address,
@@ -42,10 +44,15 @@ class CampaignService {
     }).SMS;
 
     return await sms.send({
-      to: user.phone_number, 
+      to: user.phone_number,
       message: campaign.message,
       from: process.env.sms_sender
     });
+  }
+
+  async facebook(req: Request, campaign: CampaignDTO) {
+    const { audience_id } = await Proxy.createCustomAudience(campaign);
+    return await Proxy.uploadCustomFile(req, campaign.target_audience, audience_id)
   }
 }
 
