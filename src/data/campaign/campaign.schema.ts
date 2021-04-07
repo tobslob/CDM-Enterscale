@@ -21,6 +21,8 @@ export const CampaignSchema = new Schema(
     status: { ...trimmedString, index: true, default: "STOP" },
     sent: { type: SchemaTypes.Boolean, required: true, index: true, default: false },
     organisation: { ...trimmedString, index: true, },
+    subtype: { ...trimmedString, index: true, },
+    customer_file_source: { ...trimmedString, index: true, },
   },
   {
     ...readMapper,

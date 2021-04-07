@@ -19,7 +19,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
 
   async createDefaulters(req: Request, workspace: string, user: User, defaulter: DefaulterDTO) {
     if (!user) {
-      throw new DuplicateModelError("We only added non duplicate")
+      throw new DuplicateModelError("We can only add non-existing customers in your list.")
     }
 
     const title = req.file.originalname.split(".")

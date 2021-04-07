@@ -23,8 +23,8 @@ class DefaulterService {
     return await DefaulterRepo.createDefaulters(req, workspace, user, defaulter);
   }
 
-  async getDefaultUsers(cratedDefaulters: Defaulters[]) {
-    return mapConcurrently(cratedDefaulters, async defaulter => {
+  async getDefaultUsers(createdDefaulters: Defaulters[]) {
+    return mapConcurrently(createdDefaulters, async defaulter => {
       const user = await UserRepo.byID(defaulter.user);
       return {
         id: defaulter.id,
@@ -45,20 +45,15 @@ class DefaulterService {
         status: defaulter.status
       };
     });
-
-    
   }
 
-  async sha256Defaulter(req: Request) {
-    const defaulters = await DefaulterRepo.getDefaulters(req);
-
-    return mapConcurrently(defaulters, async defaulter => {
-      const user = await UserRepo.byID(defaulter.user);
+  async sha256Users(users: any[]) {
+    return mapConcurrently(users, async usr => {
       return {
-        email: sha256(user.email_address.toLowerCase().trim()),
-        first_name: sha256(user.first_name.toLowerCase().trim()),
-        last_name: sha256(user.last_name.toLowerCase().trim()),
-        phone_number: sha256(user.phone_number.toLowerCase().trim())
+        EMAIL: sha256(usr.email_address.toLowerCase().trim()),
+        FN: sha256(usr.first_name.toLowerCase().trim()),
+        LN: sha256(usr.last_name.toLowerCase().trim()),
+        PHONE: sha256(usr.phone_number.toLowerCase().trim())
       };
     });
   }

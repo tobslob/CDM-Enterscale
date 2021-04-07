@@ -1,5 +1,6 @@
 import { Model } from "@random-guys/bucket";
 import { Frequency } from "@app/services/scheduler";
+import { SubType, CustomAudienceType } from "@app/services/proxy";
 
 const channel = <const>["FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM"]
 export type Channel = typeof channel[number]
@@ -27,6 +28,8 @@ export interface Campaign extends Model {
   status?: Status;
   sent?: boolean;
   organisation?: string;
+  subtype?: SubType;
+  customer_file_source?: CustomAudienceType;
 }
 
 export interface CampaignDTO {
@@ -41,4 +44,6 @@ export interface CampaignDTO {
   target_audience: string;
   message: string;
   organisation?: string;
+  subtype?: SubType;
+  customer_file_source?: CustomAudienceType;
 }

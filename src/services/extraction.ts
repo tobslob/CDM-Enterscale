@@ -46,7 +46,7 @@ class ExtractionService {
         if (Object.keys(row).length !== 11) return;
 
         // ignore headers
-        if (!EMAIL.test(row[3].trim())) return;
+        if (!EMAIL.test(row[3]?.trim())) return;
 
         row[5] = typeof row[5] === "string" ? row[5].replace(/\,/g, "") : row[5];
         row[6] = typeof row[6] === "string" ? row[6].replace(/\,/g, "") : row[6];
