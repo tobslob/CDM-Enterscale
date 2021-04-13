@@ -1,7 +1,7 @@
-import { Model } from "@random-guys/bucket";
+import { Model, PaginationQuery } from "@random-guys/bucket";
 
-const status = <const>["paid part", "owning", "completed"]
-export type StatusType = typeof status[number]
+const status = <const>["paid part", "owning", "completed"];
+export type StatusType = typeof status[number];
 
 export interface Defaulters extends Model {
   title: string;
@@ -36,7 +36,7 @@ export interface DefaulterDTO {
   status: StatusType;
 }
 
-export interface DefaulterQuery {
+export interface DefaulterQuery extends PaginationQuery {
   request_id?: string;
   title?: string;
 }

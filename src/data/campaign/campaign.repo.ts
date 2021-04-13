@@ -1,4 +1,4 @@
-import { BaseRepository } from "@random-guys/bucket";
+import { BaseRepository, PaginationQuery } from "@random-guys/bucket";
 import { Campaign, CampaignDTO } from "./campaign.model";
 import mongoose from "mongoose";
 import { CampaignSchema } from "./campaign.schema";
@@ -54,14 +54,16 @@ class CampaignRepository extends BaseRepository<Campaign> {
     );
   }
 
-  async getCampaigns(workspace: string) {
-    return this.all({
+  async getCampaigns(workspace: string, query: PaginationQuery) {
+    return this.list({
       conditions: {
         workspace
       },
       sort: {
         created_at: -1
-      }
+      },
+      page: query.page,
+      per_page: query.per_page
     });
   }
 
