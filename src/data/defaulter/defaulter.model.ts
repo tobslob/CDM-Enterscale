@@ -1,4 +1,5 @@
-import { Model, PaginationQuery } from "@random-guys/bucket";
+import { Model } from "@random-guys/bucket";
+import { PaginationQuery } from "../util";
 
 const status = <const>["paid part", "owning", "completed"];
 export type StatusType = typeof status[number];

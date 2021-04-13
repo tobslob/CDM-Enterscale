@@ -58,6 +58,8 @@ export interface PaginationQuery {
    * Sort order in which the documents are returned. Defaults to `created_at`
    */
   sort?: string | object;
+  limit?: number;
+  offset?: number;
 }
 
 /**

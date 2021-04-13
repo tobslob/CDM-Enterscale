@@ -10,7 +10,7 @@ import {
   httpPatch,
   queryParam
 } from "inversify-express-utils";
-import { BaseController, validate, ConstraintError } from "@app/data/util";
+import { BaseController, validate, ConstraintError, PaginationQuery } from "@app/data/util";
 import { Request, Response } from "express";
 import { Campaign, CampaignDTO, CampaignRepo } from "@app/data/campaign";
 import { canCreateCampaign } from "./campaign.middleware";
@@ -18,7 +18,6 @@ import { SendMessageResponse } from "africastalking-ts";
 import { isCampaignDTO } from "./campaign.validator";
 import { differenceInCalendarDays } from "date-fns";
 import { WorkspaceRepo } from "@app/data/workspace";
-import { PaginationQuery } from "@random-guys/bucket";
 
 type ControllerResponse = Campaign[] | Campaign | SendMessageResponse | any;
 
