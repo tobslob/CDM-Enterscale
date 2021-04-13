@@ -56,6 +56,27 @@ class ProxyServices {
     return response.data;
   }
 
+  async voice(users: any[]) {
+    const response = await Axios(
+      `${process.env.voice_url}`,
+      "post",
+      {
+        username: process.env.sms_username,
+        from: process.env.phone_number,
+        to: users.map(u => u.phone_number),
+        clientRequestId: uuid()
+      },
+      null,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `${process.env.auth_scheme} ${process.env.sec_key}`
+        }
+      }
+    );
+    return response.data;
+  }
+
   async uploadCustomFile(req: Request, request_id: string, audience_id: string) {
     const workspace = req.session.workspace;
 

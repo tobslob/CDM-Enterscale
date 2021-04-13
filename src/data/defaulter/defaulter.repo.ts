@@ -5,7 +5,7 @@ import { DefaulterSchema } from "./defaulter.schema";
 import { Passwords } from "@app/services/password";
 import { User, UserRepo } from "../user";
 import { Request } from "express";
-import { fromQueryMap, DuplicateModelError, paginate } from "../util";
+import { fromQueryMap, DuplicateModelError } from "../util";
 import { RoleRepo } from "../role";
 
 class DefaulterRepository extends BaseRepository<Defaulters> {
@@ -65,8 +65,23 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
       workspace: req.session.workspace
     };
 
-    const [per_page, offset] = paginate(query);
-    return this.model.find(conditions).limit(per_page).skip(offset).sort({ created_at: -1 }).exec();
+    const limit = Number(query.limit);
+    const offset = Number(query.offset);
+
+    return new Promise<Defaulters[]>((resolve, reject) => {
+      let directQuery = this.model.find(conditions).skip(offset).sort({ created_at: -1 });
+
+      if (query.limit !== 0) {
+        directQuery = directQuery.limit(limit);
+      }
+
+      return directQuery.exec((err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(result);
+      });
+    });
   }
 
   async deleteDefaulter(defaulter: Defaulters) {

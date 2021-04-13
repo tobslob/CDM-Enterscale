@@ -36,6 +36,10 @@ class CampaignService {
     });
   }
 
+  protected async roboCall(users: any[]) {
+    return await Proxy.voice(users);
+  }
+
   private async sms(campaign: CampaignDTO, user: User) {
     const sms = Africastalking({
       apiKey: process.env.sms_api_key,
@@ -50,7 +54,7 @@ class CampaignService {
     });
   }
 
-  async facebook(req: Request, campaign: CampaignDTO) {
+  protected async facebook(req: Request, campaign: CampaignDTO) {
     const { audience_id } = await Proxy.createCustomAudience(campaign);
     return await Proxy.uploadCustomFile(req, campaign.target_audience, audience_id)
   }

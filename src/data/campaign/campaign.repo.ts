@@ -1,8 +1,9 @@
-import { BaseRepository, PaginationQuery } from "@random-guys/bucket";
+import { BaseRepository } from "@random-guys/bucket";
 import { Campaign, CampaignDTO } from "./campaign.model";
 import mongoose from "mongoose";
 import { CampaignSchema } from "./campaign.schema";
 import { Workspace } from "../workspace";
+import { PaginationQuery } from "../util";
 
 class CampaignRepository extends BaseRepository<Campaign> {
   constructor() {
@@ -55,15 +56,21 @@ class CampaignRepository extends BaseRepository<Campaign> {
   }
 
   async getCampaigns(workspace: string, query: PaginationQuery) {
-    return this.list({
-      conditions: {
-        workspace
-      },
-      sort: {
-        created_at: -1
-      },
-      page: query.page,
-      per_page: query.per_page
+    const limit = Number(query.limit);
+    const offset = Number(query.offset);
+    return new Promise<Campaign[]>((resolve, reject) => {
+      let directQuery = this.model.find({ workspace }).skip(offset).sort({ created_at: -1 });
+
+      if (query.limit !== 0) {
+        directQuery = directQuery.limit(limit);
+      }
+
+      return directQuery.exec((err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(result);
+      });
     });
   }
 
