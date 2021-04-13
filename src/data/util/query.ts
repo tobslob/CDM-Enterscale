@@ -138,3 +138,11 @@ export function orFromQueryMap(query: any, queryMap: object) {
 
   return mongoQuery;
 }
+
+export function paginate(query: PaginationQuery) {
+  const page = Number(query.page) > 1 ? Number(query.page) - 1 : 1;
+  const per_page = Number(query.per_page) || 20;
+  const offset = page * per_page;
+
+  return [per_page, offset];
+}

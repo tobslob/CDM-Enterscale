@@ -5,7 +5,7 @@ import { DefaulterSchema } from "./defaulter.schema";
 import { Passwords } from "@app/services/password";
 import { User, UserRepo } from "../user";
 import { Request } from "express";
-import { fromQueryMap, DuplicateModelError } from "../util";
+import { fromQueryMap, DuplicateModelError, paginate } from "../util";
 import { RoleRepo } from "../role";
 
 class DefaulterRepository extends BaseRepository<Defaulters> {
@@ -19,10 +19,10 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
 
   async createDefaulters(req: Request, workspace: string, user: User, defaulter: DefaulterDTO) {
     if (!user) {
-      throw new DuplicateModelError("We can only add non-existing customers in your list.")
+      throw new DuplicateModelError("We can only add non-existing customers in your list.");
     }
 
-    const title = req.file.originalname.split(".")
+    const title = req.file.originalname.split(".");
 
     return this.create({
       title: title[0],
@@ -65,7 +65,8 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
       workspace: req.session.workspace
     };
 
-    return this.model.find(conditions);
+    const [per_page, offset] = paginate(query);
+    return this.model.find(conditions).limit(per_page).skip(offset).sort({ created_at: -1 }).exec();
   }
 
   async deleteDefaulter(defaulter: Defaulters) {

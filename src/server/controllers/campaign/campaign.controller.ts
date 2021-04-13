@@ -7,7 +7,8 @@ import {
   requestBody,
   requestParam,
   httpDelete,
-  httpPatch
+  httpPatch,
+  queryParam
 } from "inversify-express-utils";
 import { BaseController, validate, ConstraintError } from "@app/data/util";
 import { Request, Response } from "express";
@@ -17,6 +18,7 @@ import { SendMessageResponse } from "africastalking-ts";
 import { isCampaignDTO } from "./campaign.validator";
 import { differenceInCalendarDays } from "date-fns";
 import { WorkspaceRepo } from "@app/data/workspace";
+import { PaginationQuery } from "@random-guys/bucket";
 
 type ControllerResponse = Campaign[] | Campaign | SendMessageResponse | any;
 
@@ -45,10 +47,10 @@ export class CampaignController extends BaseController<ControllerResponse> {
   }
 
   @httpGet("/", canCreateCampaign)
-  async getCampaigns(@request() req: Request, @response() res: Response) {
+  async getCampaigns(@request() req: Request, @response() res: Response, @queryParam() query: PaginationQuery) {
     try {
       const workspace = req.session.workspace;
-      const campaigns = await CampaignRepo.getCampaigns(workspace);
+      const campaigns = await CampaignRepo.getCampaigns(workspace, query);
 
       this.handleSuccess(req, res, campaigns);
     } catch (error) {
