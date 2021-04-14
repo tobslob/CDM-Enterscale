@@ -5,7 +5,7 @@ import { DefaulterSchema } from "./defaulter.schema";
 import { Passwords } from "@app/services/password";
 import { User, UserRepo } from "../user";
 import { Request } from "express";
-import { fromQueryMap, DuplicateModelError } from "../util";
+import { fromQueryMap } from "../util";
 import { RoleRepo } from "../role";
 
 class DefaulterRepository extends BaseRepository<Defaulters> {
@@ -18,9 +18,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
   }
 
   async createDefaulters(req: Request, workspace: string, user: User, defaulter: DefaulterDTO) {
-    if (!user) {
-      throw new DuplicateModelError("We can only add non-existing customers in your list.");
-    }
+    if (!user) return
 
     const title = req.file.originalname.split(".");
 

@@ -25,6 +25,7 @@ class DefaulterService {
 
   async getDefaultUsers(createdDefaulters: Defaulters[]) {
     return mapConcurrently(createdDefaulters, async defaulter => {
+      if (!defaulter) return;
       const user = await UserRepo.byID(defaulter.user);
       return {
         id: defaulter.id,
