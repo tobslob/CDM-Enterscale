@@ -6,9 +6,11 @@ import { NotFoundError } from "@app/data/util";
 import { Proxy } from "@app/services/proxy";
 import { Request } from "express";
 import { connect } from "./africaistalking";
-import { rAmqp } from "@app/common/services/amqp";
+import { Store } from "@app/common/services";
 
 dotenv.config();
+
+export const VOICE_CAMPAIGN = "enterscale-robo-call";
 
 class CampaignService {
   async send(campaign: CampaignDTO, user: any) {
@@ -57,7 +59,7 @@ class CampaignService {
       callTo: phone_numbers
     });
 
-    await rAmqp.publish(process.env.queue_name, campaign);
+    await Store.hset(VOICE_CAMPAIGN, "campain_key", JSON.stringify(campaign));
   }
 
   protected async facebook(req: Request, campaign: CampaignDTO) {

@@ -3,17 +3,15 @@ import { BaseController, mapConcurrently, ConstraintError } from "@app/data/util
 import { Request, Response } from "express";
 import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
-import { CampaignServ } from "@app/services/campaign";
+import { CampaignServ, VOICE_CAMPAIGN } from "@app/services/campaign";
 import { DefaulterRepo } from "@app/data/defaulter";
 import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
 import { Voice, VoiceRepo } from "@app/data/voice";
 import xml from "xml";
-import { rAmqp } from "@app/common/services/amqp";
-import { Message } from "amqplib";
-import { Log } from "@app/common/services/logger";
+import { Store } from "@app/common/services";
 
-type ControllerResponse = Campaign[] | Campaign | string;
+type ControllerResponse = Campaign[] | Campaign | string | string[];
 
 @controller("/actions")
 export class ActionsController extends BaseController<ControllerResponse> {
@@ -40,32 +38,30 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/", canCreateCampaign)
   async sendInstantMessage(@request() req: Request, @response() res: Response, @requestBody() body: CampaignDTO) {
     try {
-      let data;
-      let phone_numbers;
       const workspace = req.session.workspace;
       const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, body.target_audience);
 
       const users = await Defaulter.getDefaultUsers(defaulters);
 
       if (body.channel !== "CALL") {
-        data = await mapConcurrently(users, async u => {
+        const data = await mapConcurrently(users, async u => {
           if (u.status !== "completed") {
             return await CampaignServ.send(body, u);
           }
         });
+
+        return this.handleSuccess(req, res, data);
       }
 
       if (body.channel === "CALL") {
-        phone_numbers = await mapConcurrently(users, async u => {
+        const phone_numbers = await mapConcurrently(users, async u => {
           if (u.status !== "completed") {
             return u.phone_number;
           }
         });
-
         CampaignServ.send(body, phone_numbers);
+        return this.handleSuccess(req, res, phone_numbers);
       }
-
-      this.handleSuccess(req, res, data);
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -74,30 +70,21 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/voice")
   async voiceCallback(@request() req: Request, @response() res: Response, @requestBody() body: Voice) {
     try {
-      let data;
-      await rAmqp.subscribe(
-        process.env.queue_name,
-        async (message: Message) => {
-          if (message === null) {
-            Log.info("Consumer cancelled by server. Ignoring");
-            return;
-          }
+      const campaign = await Store.hget(VOICE_CAMPAIGN, "campain_key");
 
-          const campaign: CampaignDTO = JSON.parse(message.content.toString());
+      if (campaign == null) {
+        return null;
+      }
+      const objCampaign: CampaignDTO = JSON.parse(campaign);
 
-          data = xml({
-            Response: [{ Say: [{ _attr: { voice: "woman", playBeep: true } }, `${campaign.message}`] }]
-          });
+      const data = xml({
+        Response: [{ Say: [{ _attr: { voice: "woman", playBeep: true } }, `${objCampaign.message}`] }]
+      });
 
-          rAmqp.acknowledgeMessage(message);
-          Log.info({ campaign, ...data }, "Successfully sent voice campaign");
-
-          await VoiceRepo.createVoice(body);
-        },
-        30
-      );
+      await VoiceRepo.createVoice(body);
 
       this.handleSuccess(req, res, data);
+      return data;
     } catch (error) {
       this.handleError(req, res, error);
     }
