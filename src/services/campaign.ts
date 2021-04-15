@@ -57,8 +57,6 @@ class CampaignService {
       callTo: user.phone_number
     });
 
-    const voi = await voice.fetchQuedCalls({ phoneNumber: process.env.phone_number });
-    console.log(voi)
     const rr = await rAmqp.publish(process.env.queue_name, campaign);
     console.log(rr)
   }
