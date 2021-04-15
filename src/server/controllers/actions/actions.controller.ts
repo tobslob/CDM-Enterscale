@@ -82,6 +82,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
       });
 
       await VoiceRepo.createVoice(body);
+      await Store.del(VOICE_CAMPAIGN, "campain_key");
 
       this.handleSuccess(req, res, data);
       return data;

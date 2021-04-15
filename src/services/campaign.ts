@@ -52,6 +52,8 @@ class CampaignService {
   }
 
   private async voice(campaign: CampaignDTO, phone_numbers: any[]) {
+    console.log(phone_numbers);
+    
     const voice = await connect.VOICE;
 
     await voice.call({
