@@ -40,15 +40,30 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/", canCreateCampaign)
   async sendInstantMessage(@request() req: Request, @response() res: Response, @requestBody() body: CampaignDTO) {
     try {
+      let data;
+      let phone_numbers;
       const workspace = req.session.workspace;
       const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, body.target_audience);
 
       const users = await Defaulter.getDefaultUsers(defaulters);
-      const data = await mapConcurrently(users, async u => {
-        if (u.status !== "completed") {
-          return await CampaignServ.send(body, u);
-        }
-      });
+
+      if (body.channel !== "CALL") {
+        data = await mapConcurrently(users, async u => {
+          if (u.status !== "completed") {
+            return await CampaignServ.send(body, u);
+          }
+        });
+      }
+
+      if (body.channel === "CALL") {
+        phone_numbers = await mapConcurrently(users, async u => {
+          if (u.status !== "completed") {
+            return u.phone_number;
+          }
+        });
+
+        CampaignServ.send(body, phone_numbers);
+      }
 
       this.handleSuccess(req, res, data);
     } catch (error) {
@@ -63,24 +78,19 @@ export class ActionsController extends BaseController<ControllerResponse> {
       await rAmqp.subscribe(
         process.env.queue_name,
         async (message: Message) => {
-          console.log("Message FROM PUBLISHER", message)
           if (message === null) {
             Log.info("Consumer cancelled by server. Ignoring");
             return;
           }
 
-          console.log("Message FROM PUBLISHER IS NOT EMPTY", message)
-
           const campaign: CampaignDTO = JSON.parse(message.content.toString());
-
-          console.log("CAMPAIGN FROM PUBLISHER", campaign)
 
           data = xml({
             Response: [{ Say: [{ _attr: { voice: "woman", playBeep: true } }, `${campaign.message}`] }]
           });
 
           rAmqp.acknowledgeMessage(message);
-          Log.info({ campaign }, "Successfully sent voice campaign");
+          Log.info({ campaign, ...data }, "Successfully sent voice campaign");
 
           await VoiceRepo.createVoice(body);
         },

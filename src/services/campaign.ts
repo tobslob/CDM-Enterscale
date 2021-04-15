@@ -49,16 +49,15 @@ class CampaignService {
     });
   }
 
-  private async voice(campaign: CampaignDTO, user: User) {
+  private async voice(campaign: CampaignDTO, phone_numbers: any[]) {
     const voice = await connect.VOICE;
 
     await voice.call({
       callFrom: process.env.phone_number,
-      callTo: user.phone_number
+      callTo: phone_numbers
     });
 
-    const rr = await rAmqp.publish(process.env.queue_name, campaign);
-    console.log(rr)
+    await rAmqp.publish(process.env.queue_name, campaign);
   }
 
   protected async facebook(req: Request, campaign: CampaignDTO) {
