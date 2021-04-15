@@ -9,7 +9,6 @@ import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
 import { Voice, VoiceRepo } from "@app/data/voice";
 import xml from "xml";
-import { connect } from "@app/services/africaistalking";
 import { rAmqp } from "@app/common/services/amqp";
 import { Message } from "amqplib";
 import { Log } from "@app/common/services/logger";
@@ -64,14 +63,17 @@ export class ActionsController extends BaseController<ControllerResponse> {
       await rAmqp.subscribe(
         process.env.queue_name,
         async (message: Message) => {
+          console.log("Message FROM PUBLISHER", message)
           if (message === null) {
             Log.info("Consumer cancelled by server. Ignoring");
             return;
           }
 
+          console.log("Message FROM PUBLISHER IS NOT EMPTY", message)
+
           const campaign: CampaignDTO = JSON.parse(message.content.toString());
 
-          await connect.VOICE.fetchQuedCalls({ phoneNumber: process.env.phone_number });
+          console.log("CAMPAIGN FROM PUBLISHER", campaign)
 
           data = xml({
             Response: [{ Say: [{ _attr: { voice: "woman", playBeep: true } }, `${campaign.message}`] }]
