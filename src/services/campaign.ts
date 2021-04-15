@@ -57,8 +57,10 @@ class CampaignService {
       callTo: user.phone_number
     });
 
-    console.log(await connect.VOICE.fetchQuedCalls({ phoneNumber: process.env.phone_number }));
-    console.log(await rAmqp.publish(process.env.queue_name, campaign))
+    const voi = await voice.fetchQuedCalls({ phoneNumber: process.env.phone_number });
+    console.log(voi)
+    const rr = await rAmqp.publish(process.env.queue_name, campaign);
+    console.log(rr)
   }
 
   protected async facebook(req: Request, campaign: CampaignDTO) {
