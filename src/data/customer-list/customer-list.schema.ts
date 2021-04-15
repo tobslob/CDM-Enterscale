@@ -5,7 +5,7 @@ import { uuid } from "@app/data/util";
 export const CustomerSchema = new Schema(
   {
     _id: { ...uuid },
-    title: { ...trimmedString, required: true, index: true },
+    title: { ...trimmedString, required: true, index: true, unique: true },
     request_id: { ...trimmedString, index: true },
     workspace: { ...trimmedString, index: true }
   },

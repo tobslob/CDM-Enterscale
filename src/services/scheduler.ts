@@ -72,8 +72,10 @@ export async function job(done?: (err?: Error) => void) {
       });
 
       await mapConcurrently(defaulters, async d => {
-        const user = await UserRepo.byID(d.user);
-        await CampaignServ.send(c, user);
+        if (d.status !== "completed") {
+          const user = await UserRepo.byID(d.user);
+          await CampaignServ.send(c, user);
+        }
       });
     }
 
@@ -155,4 +157,4 @@ export async function job(done?: (err?: Error) => void) {
   } catch (error) {
     done(error.message);
   }
-};
+}

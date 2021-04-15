@@ -8,6 +8,8 @@ import uuid from "uuid/v4";
 
 dotenv.config();
 
+const clientId = uuid()
+
 export const customAudience = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
 export const subType = <const>[
   "CUSTOM",
@@ -56,15 +58,16 @@ class ProxyServices {
     return response.data;
   }
 
-  async voice(users: any[]) {
+  async voice(user: any) {
     const response = await Axios(
       `${process.env.voice_url}`,
       "post",
       {
         username: process.env.sms_username,
         from: process.env.phone_number,
-        to: users.map(u => u.phone_number),
-        clientRequestId: uuid()
+        to: user.phone_number,
+        clientRequestId: clientId,
+        isActive: true
       },
       null,
       {

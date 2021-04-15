@@ -1,9 +1,8 @@
-import amqp, { ConsumeMessage } from 'amqplib';
+import amqp, { ConsumeMessage } from "amqplib";
 
 type RabbitMQCallback = (msg: amqp.ConsumeMessage) => any;
 
 class Amqp {
-
   protected connection: amqp.Connection;
   protected channel: amqp.Channel;
 
@@ -24,7 +23,7 @@ class Amqp {
     if (this.connection) return true; // prevents us from carelessly creating multiple AMQP connections in our app.
 
     // set connection heartbeat to 60
-    const connectionUrl = amqp_url + '?heartbeat=60';
+    const connectionUrl = amqp_url + "?heartbeat=60";
 
     // create connection
     this.connection = await amqp.connect(connectionUrl);
@@ -43,12 +42,12 @@ class Amqp {
    * @return {boolean}
    */
   async publish(queueName: string, data: object, options?: amqp.Options.Publish) {
-    this.isEventBusInitialized()
+    this.isEventBusInitialized();
     await this.channel.assertQueue(queueName, { durable: true });
     const message = Buffer.from(JSON.stringify(data));
     return this.channel.sendToQueue(queueName, message, {
       persistent: true,
-      ...options,
+      ...options
     });
   }
 
@@ -67,7 +66,7 @@ class Amqp {
     limit: number = 5,
     options?: amqp.Options.Consume
   ): Promise<amqp.Replies.Consume> {
-    this.isEventBusInitialized()
+    this.isEventBusInitialized();
 
     // limit number of concurrent jobs
     this.channel.prefetch(limit);
@@ -83,7 +82,7 @@ class Amqp {
    * @param message The message to be acknowledged
    */
   acknowledgeMessage(message: ConsumeMessage) {
-    this.isEventBusInitialized()
+    this.isEventBusInitialized();
     this.channel.ack(message);
   }
 
@@ -93,7 +92,7 @@ class Amqp {
    * @param requeue Boolean flag on if the message should be requeued. Defaults to true
    */
   rejectMessage(message: ConsumeMessage, requeue: boolean = true) {
-    this.isEventBusInitialized()
+    this.isEventBusInitialized();
     this.channel.nack(message, false, requeue);
   }
 
@@ -101,7 +100,7 @@ class Amqp {
    * Closes AMQP connection and invalidate any unnresolved operations.
    */
   async close() {
-    this.isEventBusInitialized()
+    this.isEventBusInitialized();
     await this.connection.close();
   }
 }

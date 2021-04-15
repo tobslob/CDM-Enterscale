@@ -7,8 +7,14 @@ import { CampaignServ } from "@app/services/campaign";
 import { DefaulterRepo } from "@app/data/defaulter";
 import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
+import { Voice, VoiceRepo } from "@app/data/voice";
+import xml from "xml";
+import { connect } from "@app/services/africaistalking";
+import { rAmqp } from "@app/common/services/amqp";
+import { Message } from "amqplib";
+import { Log } from "@app/common/services/logger";
 
-type ControllerResponse = Campaign[] | Campaign;
+type ControllerResponse = Campaign[] | Campaign | string;
 
 @controller("/actions")
 export class ActionsController extends BaseController<ControllerResponse> {
@@ -40,8 +46,44 @@ export class ActionsController extends BaseController<ControllerResponse> {
 
       const users = await Defaulter.getDefaultUsers(defaulters);
       const data = await mapConcurrently(users, async u => {
-        return await CampaignServ.send(body, u);
+        if (u.status !== "completed") {
+          return await CampaignServ.send(body, u);
+        }
       });
+
+      this.handleSuccess(req, res, data);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPost("/voice")
+  async voiceCallback(@request() req: Request, @response() res: Response, @requestBody() body: Voice) {
+    try {
+      let data;
+      await rAmqp.subscribe(
+        process.env.queue_name,
+        async (message: Message) => {
+          if (message === null) {
+            Log.info("Consumer cancelled by server. Ignoring");
+            return;
+          }
+
+          const campaign: CampaignDTO = JSON.parse(message.content.toString());
+
+          await connect.VOICE.fetchQuedCalls({ phoneNumber: process.env.phone_number });
+
+          data = xml({
+            Response: [{ Say: [{ _attr: { voice: "woman", playBeep: true } }, `${campaign.message}`] }]
+          });
+
+          rAmqp.acknowledgeMessage(message);
+          Log.info({ campaign }, "Successfully sent voice campaign");
+
+          await VoiceRepo.createVoice(body);
+        },
+        30
+      );
 
       this.handleSuccess(req, res, data);
     } catch (error) {
