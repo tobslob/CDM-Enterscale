@@ -2,11 +2,11 @@ import { Model } from "@random-guys/bucket";
 import { Frequency } from "@app/services/scheduler";
 import { SubType, CustomAudienceType } from "@app/services/proxy";
 
-const channel = <const>["FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM"]
-export type Channel = typeof channel[number]
+const channel = <const>["FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM", "CALL"];
+export type Channel = typeof channel[number];
 
-const status = <const>["START", "STOP"]
-export type Status = typeof status[number]
+const status = <const>["START", "STOP"];
+export type Status = typeof status[number];
 
 export interface Campaign extends Model {
   name?: string;

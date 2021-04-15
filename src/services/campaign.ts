@@ -1,11 +1,12 @@
 import AdapterInstance from "@app/server/adapter/mail";
 import { CampaignDTO } from "@app/data/campaign";
 import { User } from "@app/data/user";
-import Africastalking from "africastalking";
 import dotenv from "dotenv";
 import { NotFoundError } from "@app/data/util";
 import { Proxy } from "@app/services/proxy";
 import { Request } from "express";
+import { connect } from "./africaistalking";
+import { rAmqp } from "@app/common/services/amqp";
 
 dotenv.config();
 
@@ -16,6 +17,8 @@ class CampaignService {
         return await this.email(campaign, user);
       case "SMS":
         return await this.sms(campaign, user);
+      case "CALL":
+        return await this.voice(campaign, user);
       default:
         return new NotFoundError("channel not found");
     }
@@ -36,16 +39,8 @@ class CampaignService {
     });
   }
 
-  protected async roboCall(users: any[]) {
-    return await Proxy.voice(users);
-  }
-
   private async sms(campaign: CampaignDTO, user: User) {
-    const sms = Africastalking({
-      apiKey: process.env.sms_api_key,
-      username: process.env.sms_username,
-      enqueue: true
-    }).SMS;
+    const sms = await connect.SMS;
 
     return await sms.send({
       to: user.phone_number,
@@ -54,9 +49,19 @@ class CampaignService {
     });
   }
 
+  private async voice(campaign: CampaignDTO, user: User) {
+    const voice = await connect.VOICE;
+
+    await voice.call({
+      callFrom: process.env.phone_number,
+      callTo: user.phone_number
+    });
+    await rAmqp.publish(process.env.queue_name, campaign)
+  }
+
   protected async facebook(req: Request, campaign: CampaignDTO) {
     const { audience_id } = await Proxy.createCustomAudience(campaign);
-    return await Proxy.uploadCustomFile(req, campaign.target_audience, audience_id)
+    return await Proxy.uploadCustomFile(req, campaign.target_audience, audience_id);
   }
 }
 
