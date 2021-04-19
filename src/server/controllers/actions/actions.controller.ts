@@ -12,6 +12,8 @@ import { Store } from "@app/common/services";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
 
+const ISACTIVE = "is-active";
+
 @controller("/actions")
 export class ActionsController extends BaseController<ControllerResponse> {
   @httpGet("/:id", canCreateCampaign)
@@ -37,13 +39,29 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/", canCreateCampaign)
   async sendInstantMessage(@request() req: Request, @response() res: Response, @requestBody() body: CampaignDTO) {
     try {
+      let voiceObj: Voice;
       const workspace = req.session.workspace;
       const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, body.target_audience);
+
+      if (body.channel == "CALL") {
+        const voice = await Store.hget(ISACTIVE, "voice-key");
+
+        if (voice == null) {
+          return voiceObj["isActive"] == 0;
+        }
+
+        voiceObj = JSON.parse(voice);
+      }
 
       const users = await Defaulter.getDefaultUsers(defaulters);
 
       const data = await mapConcurrently(users, async u => {
         if (u.status !== "completed") {
+          if (body.channel == "CALL" && voiceObj.isActive === 0) {
+            const calls = await CampaignServ.send(body, u);
+            await Store.hdel(ISACTIVE, "voice-key");
+            return calls;
+          }
           return await CampaignServ.send(body, u);
         }
       });
@@ -64,9 +82,12 @@ export class ActionsController extends BaseController<ControllerResponse> {
       }
       const objCampaign: CampaignDTO = JSON.parse(campaign);
 
-      const data = `<Response><Say voice="woman" playBeep="true">${objCampaign.message}</Say></Response>`;
+      const data = `<Response><Say voice="man" playBeep="true">${objCampaign.message}</Say></Response>`;
+
+      await Store.hset(ISACTIVE, "voice-key", JSON.stringify(body));
 
       await VoiceRepo.createVoice(body);
+
       await Store.del(VOICE_CAMPAIGN, "campaign_key");
       return data;
     } catch (error) {

@@ -1,7 +1,7 @@
 import { Model } from "@random-guys/bucket";
 
 export interface Voice extends Model {
-  isActive?: boolean | string;
+  isActive?: number;
   sessionId?: string;
   direction?: string;
   callerNumber?: string;
