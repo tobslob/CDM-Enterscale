@@ -39,7 +39,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/", canCreateCampaign)
   async sendInstantMessage(@request() req: Request, @response() res: Response, @requestBody() body: CampaignDTO) {
     try {
-      let voiceObj: Voice;
+      let isActive: number;
       const workspace = req.session.workspace;
       const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, body.target_audience);
 
@@ -47,17 +47,18 @@ export class ActionsController extends BaseController<ControllerResponse> {
         const voice = await Store.hget(ISACTIVE, "voice-key");
 
         if (voice == null) {
-          return voiceObj["isActive"] == 0;
+          return isActive == 0;
         }
 
-        voiceObj = JSON.parse(voice);
+        const voiceObj: Voice = JSON.parse(voice);
+        isActive = voiceObj.isActive;
       }
 
       const users = await Defaulter.getDefaultUsers(defaulters);
 
       const data = await mapConcurrently(users, async u => {
         if (u.status !== "completed") {
-          if (body.channel == "CALL" && voiceObj.isActive === 0) {
+          if (body.channel == "CALL" && isActive === 0) {
             const calls = await CampaignServ.send(body, u);
             await Store.hdel(ISACTIVE, "voice-key");
             return calls;
