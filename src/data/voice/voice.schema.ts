@@ -5,7 +5,7 @@ import { uuid } from "@app/data/util";
 export const VoiceSchema = new Schema(
   {
     _id: { ...uuid },
-    isActive: { type: SchemaTypes.Mixed, index: true, unique: true },
+    isActive: { type: SchemaTypes.Mixed, index: true },
     sessionId: { ...trimmedString, index: true },
     direction: { ...trimmedString, index: true },
     channel: { ...trimmedString, index: true },

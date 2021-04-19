@@ -51,17 +51,16 @@ class CampaignService {
     });
   }
 
-  private async voice(campaign: CampaignDTO, phone_numbers: any[]) {
-    console.log(phone_numbers);
-    
+  private async voice(campaign: CampaignDTO, user: User) {
     const voice = await connect.VOICE;
 
-    await voice.call({
+    const call = await voice.call({
       callFrom: process.env.phone_number,
-      callTo: phone_numbers
+      callTo: user.phone_number
     });
 
-    await Store.hset(VOICE_CAMPAIGN, "campain_key", JSON.stringify(campaign));
+    await Store.hset(VOICE_CAMPAIGN, "campaign_key", JSON.stringify(campaign));
+    return call;
   }
 
   protected async facebook(req: Request, campaign: CampaignDTO) {

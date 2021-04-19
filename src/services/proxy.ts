@@ -5,7 +5,6 @@ import { Defaulter } from "./defaulter";
 import { DefaulterRepo } from "@app/data/defaulter";
 import { Request } from "express";
 import uuid from "uuid/v4";
-
 dotenv.config();
 
 const clientId = uuid()
@@ -64,16 +63,15 @@ class ProxyServices {
       "post",
       {
         username: process.env.sms_username,
-        from: process.env.phone_number,
-        to: user.phone_number,
+        callFrom: process.env.phone_number,
+        callTto: user.phone_number,
         clientRequestId: clientId,
         isActive: true
       },
       null,
       {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `${process.env.auth_scheme} ${process.env.sec_key}`
+          "content-type": "application/x-www-form-urlencoded",
         }
       }
     );
