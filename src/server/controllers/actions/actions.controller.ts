@@ -42,23 +42,19 @@ export class ActionsController extends BaseController<ControllerResponse> {
       let isActive: number;
       const workspace = req.session.workspace;
       const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, body.target_audience);
-
-      if (body.channel == "CALL") {
-        const voice = await Store.hget(ISACTIVE, "voice-key");
-
-        if (voice == null) {
-          return isActive == 0;
-        }
-
-        const voiceObj: Voice = JSON.parse(voice);
-        isActive = voiceObj.isActive;
-      }
-
       const users = await Defaulter.getDefaultUsers(defaulters);
 
       const data = await mapConcurrently(users, async u => {
         if (u.status !== "completed") {
           if (body.channel == "CALL" && isActive === 0) {
+            const voice = await Store.hget(ISACTIVE, "voice-key");
+
+            if (voice == null) {
+              isActive == 0;
+            }
+
+            const voiceObj: Voice = JSON.parse(voice);
+            isActive = voiceObj ? voiceObj.isActive : isActive;
             const calls = await CampaignServ.send(body, u);
             await Store.hdel(ISACTIVE, "voice-key");
             return calls;
