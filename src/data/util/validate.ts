@@ -59,5 +59,9 @@ export const JoiValidator = {
 
   validDate() {
     return Joi.date().min(new Date());
+  },
+
+  validArray() {
+    return Joi.array().items(JoiValidator.validateString()).single();
   }
 };

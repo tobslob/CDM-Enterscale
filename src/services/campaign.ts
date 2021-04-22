@@ -7,6 +7,7 @@ import { Proxy } from "@app/services/proxy";
 import { Request } from "express";
 import { connect } from "./africaistalking";
 import { Store } from "@app/common/services";
+import { DefaulterQuery } from "@app/data/defaulter";
 
 dotenv.config();
 
@@ -63,9 +64,9 @@ class CampaignService {
     return call;
   }
 
-  protected async facebook(req: Request, campaign: CampaignDTO) {
+  protected async facebook(req: Request, query: DefaulterQuery, campaign: CampaignDTO, ) {
     const { audience_id } = await Proxy.createCustomAudience(campaign);
-    return await Proxy.uploadCustomFile(req, campaign.target_audience, audience_id);
+    return await Proxy.uploadCustomFile(req, query, audience_id);
   }
 }
 

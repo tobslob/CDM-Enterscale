@@ -16,7 +16,7 @@ import { Extractions, ExtractedDefaulter } from "@app/services/extraction";
 import { Request, Response } from "express";
 import { Defaulter } from "@app/services/defaulter";
 import { DefaulterRepo, Defaulters, DefaulterQuery, DefaulterDTO } from "@app/data/defaulter";
-import { isDefaulterQuery, isDefaulterDTO } from "./defaulter.validator";
+import { isDefaulterQuery, isDefaulterDTO, isIDs } from "./defaulter.validator";
 import { CustomerRepo } from "@app/data/customer-list/customer-list.repo";
 
 type ControllerResponse = ExtractedDefaulter[] | Defaulters[] | Defaulters;
@@ -72,13 +72,15 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpDelete("/:id", canCreateDefaulters)
-  async deleteDefaulter(@request() req: Request, @response() res: Response, @requestParam("id") _id: string) {
+  @httpDelete("/", canCreateDefaulters, validate(isIDs))
+  async deleteDefaulter(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
     try {
       const workspace = req.session.workspace;
-      const defaulter = await DefaulterRepo.byQuery({ workspace, _id });
+      const defaulters = await DefaulterRepo.all({ conditions: { workspace, _id: { $in: query.id } } });
 
-      await DefaulterRepo.deleteDefaulter(defaulter);
+      await mapConcurrently(defaulters, async d => {
+        await DefaulterRepo.deleteDefaulter(d);
+      });
 
       this.handleSuccess(req, res, null);
     } catch (error) {
