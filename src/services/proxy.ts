@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { Axios } from "@app/data/util/proxy";
 import { CampaignDTO } from "@app/data/campaign";
 import { Defaulter } from "./defaulter";
-import { DefaulterRepo } from "@app/data/defaulter";
+import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
 import { Request } from "express";
 import uuid from "uuid/v4";
 dotenv.config();
@@ -78,10 +78,10 @@ class ProxyServices {
     return response.data;
   }
 
-  async uploadCustomFile(req: Request, request_id: string, audience_id: string) {
+  async uploadCustomFile(req: Request, query: DefaulterQuery, audience_id: string) {
     const workspace = req.session.workspace;
 
-    const defaulters = await DefaulterRepo.getUniqueDefaulters(workspace, request_id);
+    const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
     const users = await Defaulter.getDefaultUsers(defaulters);
     const hashedInfo = await Defaulter.sha256Users(users);
 

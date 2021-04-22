@@ -2,6 +2,7 @@ import { JoiValidator } from "@app/data/util/validate";
 import joi from "@hapi/joi";
 
 export const isDefaulterQuery = joi.object({
+  id: JoiValidator.validArray(),
   title: JoiValidator.validateString(),
   request_id: JoiValidator.validateString()
 });
@@ -13,4 +14,8 @@ export const isDefaulterDTO = joi.object({
   time_since_default: JoiValidator.validDate(),
   time_since_last_payment: JoiValidator.validDate(),
   last_contacted_date: JoiValidator.validDate()
+});
+
+export const isIDs = joi.object({
+  id: JoiValidator.validArray().required()
 });

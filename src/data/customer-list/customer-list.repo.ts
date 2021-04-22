@@ -2,7 +2,7 @@ import { BaseRepository } from "@random-guys/bucket";
 import { Customers, CustomerDTO } from "./customer-list.model";
 import mongoose from "mongoose";
 import { CustomerSchema } from "./customer-list.schema";
-import { fromQueryMap } from "../util";
+import { fromQueryMap, loopConcurrently } from "../util";
 import { DefaulterQuery } from "../defaulter";
 import { Request } from "express";
 
@@ -51,8 +51,23 @@ class CustomerRepository extends BaseRepository<Customers> {
     });
   }
 
-  async deleteCustomerList(workspace: string, title: string, request_id: string) {
-    return this.destroy({ workspace, title, request_id });
+  async deleteCustomerList(workspace: string, query: DefaulterQuery) {
+    const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
+    let conditions = fromQueryMap(query, {
+      request_id: { request_id: query.request_id },
+      title: { title: nameRegex },
+      id: { _id: { $in: query.id } }
+    });
+
+    conditions = {
+      ...conditions,
+      workspace
+    };
+    const customerList = await this.model.find(conditions);
+
+    await loopConcurrently(customerList, async l => {
+      await this.destroy({ workspace, title: l.title, request_id: l.request_id });
+    });
   }
 }
 

@@ -18,7 +18,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
   }
 
   async createDefaulters(req: Request, workspace: string, user: User, defaulter: DefaulterDTO) {
-    if (!user) return
+    if (!user) return;
 
     const title = req.file.originalname.split(".");
 
@@ -38,24 +38,13 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     });
   }
 
-  async getUniqueDefaulters(workspace: string, request_id: string) {
-    return this.all({
-      conditions: {
-        workspace,
-        request_id
-      },
-      sort: {
-        created_at: -1
-      }
-    });
-  }
-
   getDefaulters(req: Request, query?: DefaulterQuery) {
     const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
 
     let conditions = fromQueryMap(query, {
       request_id: { request_id: query.request_id },
-      title: { title: nameRegex }
+      title: { title: nameRegex },
+      id: { _id: { $in: query.id } }
     });
 
     conditions = {
