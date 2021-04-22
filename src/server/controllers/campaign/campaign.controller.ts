@@ -10,14 +10,15 @@ import {
   httpPatch,
   queryParam
 } from "inversify-express-utils";
-import { BaseController, validate, ConstraintError, PaginationQuery } from "@app/data/util";
+import { BaseController, validate, ConstraintError, mapConcurrently } from "@app/data/util";
 import { Request, Response } from "express";
-import { Campaign, CampaignDTO, CampaignRepo } from "@app/data/campaign";
+import { Campaign, CampaignDTO, CampaignRepo, CampaignQuery } from "@app/data/campaign";
 import { canCreateCampaign } from "./campaign.middleware";
 import { SendMessageResponse } from "africastalking-ts";
-import { isCampaignDTO } from "./campaign.validator";
+import { isCampaignDTO, isCampaignQuery } from "./campaign.validator";
 import { differenceInCalendarDays } from "date-fns";
 import { WorkspaceRepo } from "@app/data/workspace";
+import { isIDs } from "../defaulter/defaulter.validator";
 
 type ControllerResponse = Campaign[] | Campaign | SendMessageResponse | any;
 
@@ -45,8 +46,8 @@ export class CampaignController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpGet("/", canCreateCampaign)
-  async getCampaigns(@request() req: Request, @response() res: Response, @queryParam() query: PaginationQuery) {
+  @httpGet("/", canCreateCampaign, validate(isCampaignQuery))
+  async getCampaigns(@request() req: Request, @response() res: Response, @queryParam() query: CampaignQuery) {
     try {
       const workspace = req.session.workspace;
       const campaigns = await CampaignRepo.getCampaigns(workspace, query);
@@ -69,11 +70,15 @@ export class CampaignController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpDelete("/:id", canCreateCampaign)
-  async deleteCampaign(@request() req: Request, @response() res: Response, @requestParam("id") _id: string) {
+  @httpDelete("/", canCreateCampaign, validate(isIDs))
+  async deleteCampaign(@request() req: Request, @response() res: Response, @queryParam() query: CampaignQuery) {
     try {
       const workspace = req.session.workspace;
-      const campaigns = await CampaignRepo.destroy({ workspace, _id });
+      const campaigns = await CampaignRepo.all({ conditions: { workspace, _id: { $in: query.id } } });
+
+      await mapConcurrently(campaigns, async d => {
+        await CampaignRepo.destroy(d.id);
+      });
 
       this.handleSuccess(req, res, campaigns);
     } catch (error) {

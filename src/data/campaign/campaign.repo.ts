@@ -1,9 +1,9 @@
 import { BaseRepository } from "@random-guys/bucket";
-import { Campaign, CampaignDTO } from "./campaign.model";
+import { Campaign, CampaignDTO, CampaignQuery } from "./campaign.model";
 import mongoose from "mongoose";
 import { CampaignSchema } from "./campaign.schema";
 import { Workspace } from "../workspace";
-import { PaginationQuery } from "../util";
+import { fromQueryMap } from "../util";
 
 class CampaignRepository extends BaseRepository<Campaign> {
   constructor() {
@@ -55,7 +55,32 @@ class CampaignRepository extends BaseRepository<Campaign> {
     );
   }
 
-  async getCampaigns(workspace: string, query: PaginationQuery) {
+  async getCampaigns(workspace: string, query: CampaignQuery) {
+    const subjectRegex = query.subject && new RegExp(`.*${query.subject}.*`, "i");
+    const descriptionRegex = new RegExp(`.*${query.subject}.*`, "i");
+    const nameRegex = new RegExp(`.*${query.name}.*`, "i");
+    const organisationRegex = new RegExp(`.*${query.organisation}.*`, "i");
+
+    let conditions = fromQueryMap(query, {
+      $always: {
+        start_date: {
+          $gte: query.from,
+          $lte: query.to
+        }
+      },
+      name: { name: nameRegex },
+      subject: { subject: subjectRegex },
+      description: { description: descriptionRegex },
+      channel: { channel: query.channel },
+      frequency: { frequency: query.frequency },
+      organisation: { organisation: organisationRegex }
+    });
+
+    conditions = {
+      ...conditions,
+      workspace
+    };
+
     const limit = Number(query.limit);
     const offset = Number(query.offset);
     return new Promise<Campaign[]>((resolve, reject) => {

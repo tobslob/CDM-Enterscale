@@ -1,6 +1,7 @@
 import { Model } from "@random-guys/bucket";
 import { Frequency } from "@app/services/scheduler";
 import { SubType, CustomAudienceType } from "@app/services/proxy";
+import { PaginationQuery } from "../util";
 
 const channel = <const>["FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM", "CALL"];
 export type Channel = typeof channel[number];
@@ -46,4 +47,16 @@ export interface CampaignDTO {
   organisation?: string;
   subtype?: SubType;
   customer_file_source?: CustomAudienceType;
+}
+
+export interface CampaignQuery extends PaginationQuery {
+  id?: string;
+  name?: string;
+  subject?: string;
+  frequency?: Frequency;
+  from?: Date;
+  to?: Date;
+  organisation?: string;
+  channel?: Channel;
+  description?: string;
 }

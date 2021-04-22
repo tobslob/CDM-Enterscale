@@ -24,7 +24,8 @@ class CustomerRepository extends BaseRepository<Customers> {
 
     let conditions = fromQueryMap(query, {
       request_id: { request_id: query.request_id },
-      title: { title: nameRegex }
+      title: { title: nameRegex },
+      id: { _id: { $in: query.id } }
     });
 
     conditions = {
