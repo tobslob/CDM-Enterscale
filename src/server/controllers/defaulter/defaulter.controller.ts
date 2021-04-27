@@ -73,7 +73,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
   }
 
   @httpDelete("/", canCreateDefaulters, validate(isIDs))
-  async deleteDefaulter(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
+  async deleteDefaulters(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
     try {
       const workspace = req.session.workspace;
       const defaulters = await DefaulterRepo.all({ conditions: { workspace, _id: { $in: query.id } } });
