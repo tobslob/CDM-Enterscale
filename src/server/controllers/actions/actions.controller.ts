@@ -18,6 +18,7 @@ import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
 import { Voice, VoiceRepo } from "@app/data/voice";
 import { Store } from "@app/common/services";
+import { SMSReportsDTO, SMSReportRepo } from "@app/data/sms";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
 
@@ -82,6 +83,16 @@ export class ActionsController extends BaseController<ControllerResponse> {
       await VoiceRepo.createVoice(body);
       await Store.del(VOICE_CAMPAIGN, "campaign_key");
       return data;
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPost("/sms")
+  async smsCallback(@request() req: Request, @response() res: Response, @requestBody() body: SMSReportsDTO) {
+    try {
+      const report = await SMSReportRepo.smsReport(req, body);
+      return report;
     } catch (error) {
       this.handleError(req, res, error);
     }
