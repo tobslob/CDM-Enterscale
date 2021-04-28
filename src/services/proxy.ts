@@ -7,8 +7,6 @@ import { Request } from "express";
 import uuid from "uuid/v4";
 dotenv.config();
 
-const clientId = uuid()
-
 export const customAudience = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
 export const subType = <const>[
   "CUSTOM",
@@ -57,25 +55,21 @@ class ProxyServices {
     return response.data;
   }
 
-  async voice(user: any) {
+  async emailActivity(query: any) {
     const response = await Axios(
-      `${process.env.voice_url}`,
-      "post",
-      {
-        username: process.env.sms_username,
-        callFrom: process.env.phone_number,
-        callTto: user.phone_number,
-        clientRequestId: clientId,
-        isActive: true
-      },
+      `${process.env.email_activity}`,
+      "get",
       null,
       {
+        limit: query.limit
+      },
+      {
         headers: {
-          "content-type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${process.env.activity_token}`
         }
       }
     );
-    return response.data;
+    return response;
   }
 
   async uploadCustomFile(req: Request, query: DefaulterQuery, audience_id: string) {

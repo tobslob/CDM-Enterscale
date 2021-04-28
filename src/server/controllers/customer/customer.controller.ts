@@ -1,5 +1,5 @@
 import { controller, request, response, httpDelete, httpGet, queryParam } from "inversify-express-utils";
-import { BaseController, mapConcurrently, NotFoundError, validate } from "@app/data/util";
+import { BaseController, mapConcurrently, validate } from "@app/data/util";
 import { ExtractedDefaulter } from "@app/services/extraction";
 import { Request, Response } from "express";
 import { DefaulterRepo, Defaulters, DefaulterQuery } from "@app/data/defaulter";
@@ -24,9 +24,7 @@ export class CustomerController extends BaseController<ControllerResponse> {
       await CustomerRepo.deleteCustomerList(workspace, query);
       const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
 
-      if (defaulters.length === 0) {
-        throw new NotFoundError("We could not find any defaulter with the query");
-      }
+      if (defaulters.length === 0) return;
 
       await mapConcurrently(defaulters, async d => {
         await DefaulterRepo.deleteDefaulter(d);

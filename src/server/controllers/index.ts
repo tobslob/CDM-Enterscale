@@ -5,3 +5,4 @@ export * from "./defaulter/defaulter.controller";
 export * from "./campaign/campaign.controller";
 export * from "./actions/actions.controller";
 export * from "./customer/customer.controller";
+export * from "./activity/activity.controller";
