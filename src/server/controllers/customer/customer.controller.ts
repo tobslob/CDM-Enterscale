@@ -25,7 +25,7 @@ export class CustomerController extends BaseController<ControllerResponse> {
       const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
 
       if (defaulters.length === 0) {
-        throw new NotFoundError("We could not find any defaulter with such request id");
+        throw new NotFoundError("We could not find any defaulter with the query");
       }
 
       await mapConcurrently(defaulters, async d => {

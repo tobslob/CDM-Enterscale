@@ -50,7 +50,8 @@ export class DefaultersController extends BaseController<ControllerResponse> {
   @httpGet("/", canCreateDefaulters, validate(isDefaulterQuery))
   async getAllDefaulters(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
     try {
-      const defaulters = await DefaulterRepo.getDefaulters(req, query);
+      const workspace = req.session.workspace;
+      const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
 
       const defaultUsers = await Defaulter.getDefaultUsers(defaulters);
 
