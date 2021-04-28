@@ -12,18 +12,19 @@ import { DefaulterQuery } from "@app/data/defaulter";
 dotenv.config();
 
 export const VOICE_CAMPAIGN = "enterscale-robo-call";
+export const SMS_CAMPAIGN = "enterscale-sms";
 
 class CampaignService {
-  async send(campaign: CampaignDTO, user: any) {
+  async send(campaign: CampaignDTO, user: any, req?: Request) {
     switch (campaign.channel) {
       case "EMAIL":
         return await this.email(campaign, user);
       case "SMS":
-        return await this.sms(campaign, user);
+        return await this.sms(campaign, user, req);
       case "CALL":
         return await this.voice(campaign, user);
       default:
-        return new NotFoundError("channel not found");
+        throw new NotFoundError("channel not found");
     }
   }
 
@@ -42,14 +43,17 @@ class CampaignService {
     });
   }
 
-  private async sms(campaign: CampaignDTO, user: User) {
+  private async sms(campaign: CampaignDTO, user: User, req: Request) {
     const sms = await connect.SMS;
 
-    return await sms.send({
+    const smsResponse = await sms.send({
       to: user.phone_number,
       message: campaign.message,
       from: process.env.sms_sender
     });
+
+    await Store.hset(SMS_CAMPAIGN, "sms_key", JSON.stringify(req.session));
+    return smsResponse;
   }
 
   private async voice(campaign: CampaignDTO, user: User) {
@@ -64,7 +68,7 @@ class CampaignService {
     return call;
   }
 
-  protected async facebook(req: Request, query: DefaulterQuery, campaign: CampaignDTO, ) {
+  protected async facebook(req: Request, query: DefaulterQuery, campaign: CampaignDTO) {
     const { audience_id } = await Proxy.createCustomAudience(campaign);
     return await Proxy.uploadCustomFile(req, query, audience_id);
   }
