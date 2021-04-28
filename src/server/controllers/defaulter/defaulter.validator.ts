@@ -1,11 +1,13 @@
 import { JoiValidator } from "@app/data/util/validate";
 import joi from "@hapi/joi";
 
-export const isDefaulterQuery = joi.object({
-  id: JoiValidator.validArray(),
-  title: JoiValidator.validateString(),
-  request_id: JoiValidator.validateString()
-});
+export const isDefaulterQuery = joi
+  .object({
+    id: JoiValidator.validArray(),
+    title: JoiValidator.validateString(),
+    request_id: JoiValidator.validateString()
+  })
+  .xor("id", "title", "request_id");
 
 export const isDefaulterDTO = joi.object({
   total_loan_amount: JoiValidator.validateNumber(),

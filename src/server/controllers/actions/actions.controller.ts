@@ -8,7 +8,7 @@ import {
   requestBody,
   queryParam
 } from "inversify-express-utils";
-import { BaseController, ConstraintError, mapConcurrently } from "@app/data/util";
+import { BaseController, ConstraintError, mapConcurrently, validate } from "@app/data/util";
 import { Request, Response } from "express";
 import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
@@ -19,6 +19,7 @@ import { Defaulter } from "@app/services/defaulter";
 import { Voice, VoiceRepo } from "@app/data/voice";
 import { Store } from "@app/common/services";
 import { SMSReportsDTO, SMSReportRepo } from "@app/data/sms";
+import { isDefaulterQuery } from "../defaulter/defaulter.validator";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
 
@@ -44,7 +45,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPost("/", canCreateCampaign)
+  @httpPost("/", canCreateCampaign, validate(isDefaulterQuery))
   async sendInstantMessage(
     @request() req: Request,
     @response() res: Response,

@@ -38,7 +38,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     });
   }
 
-  getDefaulters(req: Request, query?: DefaulterQuery) {
+  getDefaulters(workspace: string, query?: DefaulterQuery) {
     const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
 
     let conditions = fromQueryMap(query, {
@@ -49,7 +49,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
 
     conditions = {
       ...conditions,
-      workspace: req.session.workspace
+      workspace
     };
 
     const limit = Number(query.limit);
