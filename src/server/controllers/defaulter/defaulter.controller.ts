@@ -16,7 +16,7 @@ import { Extractions, ExtractedDefaulter } from "@app/services/extraction";
 import { Request, Response } from "express";
 import { Defaulter } from "@app/services/defaulter";
 import { DefaulterRepo, Defaulters, DefaulterQuery, DefaulterDTO } from "@app/data/defaulter";
-import { isDefaulterQuery, isDefaulterDTO, isIDs } from "./defaulter.validator";
+import { isDefaulterDTO, isIDs } from "./defaulter.validator";
 import { CustomerRepo } from "@app/data/customer-list/customer-list.repo";
 
 type ControllerResponse = ExtractedDefaulter[] | Defaulters[] | Defaulters;
@@ -47,7 +47,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpGet("/", canCreateDefaulters, validate(isDefaulterQuery))
+  @httpGet("/", canCreateDefaulters)
   async getAllDefaulters(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
     try {
       const workspace = req.session.workspace;
