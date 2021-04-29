@@ -55,23 +55,6 @@ class ProxyServices {
     return response.data;
   }
 
-  async emailActivity(query: any) {
-    const response = await Axios(
-      `${process.env.email_activity}`,
-      "get",
-      null,
-      {
-        limit: query.limit
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.activity_token}`
-        }
-      }
-    );
-    return response;
-  }
-
   async uploadCustomFile(req: Request, query: DefaulterQuery, audience_id: string) {
     const workspace = req.session.workspace;
 

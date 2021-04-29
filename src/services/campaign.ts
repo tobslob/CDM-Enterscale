@@ -13,12 +13,13 @@ dotenv.config();
 
 export const VOICE_CAMPAIGN = "enterscale-robo-call";
 export const SMS_CAMPAIGN = "enterscale-sms";
+export const EMAIL_CAMPAIGN = ""
 
 class CampaignService {
   async send(campaign: CampaignDTO, user: any, req?: Request) {
     switch (campaign.channel) {
       case "EMAIL":
-        return await this.email(campaign, user);
+        return await this.email(campaign, user, req);
       case "SMS":
         return await this.sms(campaign, user, req);
       case "CALL":
@@ -28,8 +29,8 @@ class CampaignService {
     }
   }
 
-  private async email(campaign: CampaignDTO, user: any) {
-    return await AdapterInstance.send({
+  private async email(campaign: CampaignDTO, user: any, req: Request) {
+    const email = await AdapterInstance.send({
       subject: campaign.subject,
       channel: "mail",
       recipient: user.email_address,
@@ -41,6 +42,9 @@ class CampaignService {
         message: campaign.message
       }
     });
+
+    await Store.hset(EMAIL_CAMPAIGN, "email_key", JSON.stringify(req.session));
+    return email;
   }
 
   private async sms(campaign: CampaignDTO, user: User, req: Request) {
