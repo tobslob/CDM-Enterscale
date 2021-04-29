@@ -12,7 +12,7 @@ import { BaseController, ConstraintError, mapConcurrently, validate } from "@app
 import { Request, Response } from "express";
 import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
-import { CampaignServ, VOICE_CAMPAIGN, SMS_CAMPAIGN } from "@app/services/campaign";
+import { CampaignServ, VOICE_CAMPAIGN, SMS_CAMPAIGN, EMAIL_CAMPAIGN } from "@app/services/campaign";
 import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
 import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
@@ -21,6 +21,7 @@ import { Store } from "@app/common/services";
 import { SMSReportsDTO, SMSReportRepo } from "@app/data/sms";
 import { isDefaulterQuery } from "../defaulter/defaulter.validator";
 import { Session } from "@app/data/user";
+import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
 
@@ -71,7 +72,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
   }
 
   @httpPost("/voice")
-  async voiceCallback(@request() req: Request, @response() res: Response, @requestBody() body: Voice) {
+  async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: Voice) {
     try {
       const campaign = await Store.hget(VOICE_CAMPAIGN, "campaign_key");
 
@@ -91,7 +92,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
   }
 
   @httpPost("/sms")
-  async smsCallback(@request() req: Request, @response() res: Response, @requestBody() body: SMSReportsDTO) {
+  async smsReport(@request() req: Request, @response() res: Response, @requestBody() body: SMSReportsDTO) {
     try {
       const session = await Store.hget(SMS_CAMPAIGN, "sms_key");
 
@@ -103,6 +104,22 @@ export class ActionsController extends BaseController<ControllerResponse> {
       const report = await SMSReportRepo.smsReport(objSession.workspace, body);
       await Store.del(SMS_CAMPAIGN, "sms_key");
       return report;
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPost("/email")
+  async emailReport(@request() req: Request, @response() res: Response, @requestBody() body: EmailReportsDTO) {
+    try {
+      const session = await Store.hget(EMAIL_CAMPAIGN, "email_key");
+
+      if (session == null) {
+        return null;
+      }
+      const objSession: EmailReports = JSON.parse(session);
+      await EmailReportRepo.emailReport(objSession.workspace, body);
+      await Store.del(EMAIL_CAMPAIGN, "email_key");
     } catch (error) {
       this.handleError(req, res, error);
     }
