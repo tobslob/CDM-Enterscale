@@ -38,7 +38,7 @@ export interface DefaulterDTO {
 }
 
 export interface DefaulterQuery extends PaginationQuery {
-  id?: string;
+  id?: string[];
   request_id?: string;
   title?: string;
 }

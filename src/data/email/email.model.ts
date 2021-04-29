@@ -32,3 +32,17 @@ export interface EmailReportsDTO {
   response?: string;
   reason?: string;
 }
+
+export interface EmailReportsQuery {
+  email?: string;
+  timestamp?: string;
+  event?: string;
+  category?: number;
+  useragent?: string;
+  ip?: string;
+  url?: string;
+  response?: string;
+  reason?: string;
+  limit?: number;
+  offset?: number;
+}
