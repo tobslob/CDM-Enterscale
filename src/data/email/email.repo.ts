@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import { BaseRepository } from "@random-guys/bucket";
-import { EmailReports, EmailReportsDTO } from "./email.model";
+import { EmailReports, EmailReportsQuery, EmailReportsDTO } from "./email.model";
 import { EmailReportsSchema } from "./email.schema";
+import { fromQueryMap } from "../util";
 
 export class EmailReportRepository extends BaseRepository<EmailReports> {
   constructor() {
@@ -24,6 +25,43 @@ export class EmailReportRepository extends BaseRepository<EmailReports> {
       response: report.response,
       reason: report.reason,
       workspace
+    });
+  }
+
+  async searchEmailReports(workspace: string, query: EmailReportsQuery) {
+    let conditions = fromQueryMap(query, {
+      email: {email: query.email },
+      timestamp: {timestamp: query.timestamp},
+      event: {event: query.event},
+      category: {category: query.category},
+      useragent: {useragent: query.useragent},
+      ip: {ip: query.ip},
+      url: {url: query.url},
+      response: {response: query.url},
+      reason: {reason: query.reason}
+    });
+
+    conditions = {
+      ...conditions,
+      workspace
+    };
+
+    const limit = Number(query.limit);
+    const offset = Number(query.offset);
+
+    return new Promise<EmailReports[]>((resolve, reject) => {
+      let directQuery = this.model.find(conditions).skip(offset).sort({ created_at: -1 });
+
+      if (query.limit !== 0) {
+        directQuery = directQuery.limit(limit);
+      }
+
+      return directQuery.exec((err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(result);
+      });
     });
   }
 }

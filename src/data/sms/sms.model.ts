@@ -34,3 +34,13 @@ export interface SMSReportsDTO {
   retryCount?: number;
   status?: SMSStatus;
 }
+
+export interface SMSReportQuery {
+  phoneNumber?: string;
+  networkCode?: string;
+  failureReason?: FailureReason;
+  retryCount?: number;
+  status?: SMSStatus;
+  limit?: number;
+  offset?: number;
+}
