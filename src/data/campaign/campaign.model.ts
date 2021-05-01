@@ -3,10 +3,10 @@ import { Frequency } from "@app/services/scheduler";
 import { SubType, CustomAudienceType } from "@app/services/proxy";
 import { PaginationQuery } from "../util";
 
-const channel = <const>["FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM", "CALL"];
+export const channel = <const>["FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM", "CALL"];
 export type Channel = typeof channel[number];
 
-const status = <const>["START", "STOP"];
+export const status = <const>["START", "STOP"];
 export type Status = typeof status[number];
 
 export interface Campaign extends Model {
