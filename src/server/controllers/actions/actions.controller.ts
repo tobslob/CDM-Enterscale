@@ -110,7 +110,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
   }
 
   @httpPost("/email")
-  async emailReport(@request() req: Request, @response() res: Response, @requestBody() body: EmailReportsDTO) {
+  async emailReport(@request() req: Request, @response() res: Response, @requestBody() body: EmailReportsDTO[]) {
     try {
       const session = await Store.hget(EMAIL_CAMPAIGN, "email_key");
 
@@ -118,7 +118,11 @@ export class ActionsController extends BaseController<ControllerResponse> {
         return null;
       }
       const objSession: EmailReports = JSON.parse(session);
-      await EmailReportRepo.emailReport(objSession.workspace, body);
+
+      await mapConcurrently(body, async r => {
+        await EmailReportRepo.emailReport(objSession.workspace, r);
+      })
+      
       await Store.del(EMAIL_CAMPAIGN, "email_key");
     } catch (error) {
       this.handleError(req, res, error);
