@@ -8,12 +8,13 @@ import { Request } from "express";
 import { connect } from "./africaistalking";
 import { Store } from "@app/common/services";
 import { DefaulterQuery } from "@app/data/defaulter";
+import { Mail } from "@app/data/email/email.repo";
 
 dotenv.config();
 
 export const VOICE_CAMPAIGN = "enterscale-robo-call";
 export const SMS_CAMPAIGN = "enterscale-sms";
-export const EMAIL_CAMPAIGN = ""
+export const EMAIL_CAMPAIGN = "";
 
 class CampaignService {
   async send(campaign: CampaignDTO, user: any, req?: Request) {
@@ -42,6 +43,8 @@ class CampaignService {
         message: campaign.message
       }
     });
+
+    await Mail.tracker(req.session.workspace, email.headers["x-message-id"]);
 
     await Store.hset(EMAIL_CAMPAIGN, "email_key", JSON.stringify(req.session));
     return email;

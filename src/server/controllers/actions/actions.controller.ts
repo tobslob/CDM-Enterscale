@@ -21,7 +21,8 @@ import { Store } from "@app/common/services";
 import { SMSReportsDTO, SMSReportRepo } from "@app/data/sms";
 import { isDefaulterQuery } from "../defaulter/defaulter.validator";
 import { Session } from "@app/data/user";
-import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email";
+import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-report";
+import { isCampaign } from "./actions.validator";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
 
@@ -47,7 +48,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPost("/", canCreateCampaign, validate(isDefaulterQuery))
+  @httpPost("/", canCreateCampaign, validate(isDefaulterQuery), validate(isCampaign))
   async sendInstantMessage(
     @request() req: Request,
     @response() res: Response,
@@ -120,9 +121,12 @@ export class ActionsController extends BaseController<ControllerResponse> {
       const objSession: EmailReports = JSON.parse(session);
 
       await mapConcurrently(body, async r => {
+        const message_id = r.sg_message_id.split(".");
+        r["sg_message_id"] = message_id[0];
+
         await EmailReportRepo.emailReport(objSession.workspace, r);
-      })
-      
+      });
+
       await Store.del(EMAIL_CAMPAIGN, "email_key");
     } catch (error) {
       this.handleError(req, res, error);

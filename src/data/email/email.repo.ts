@@ -1,69 +1,19 @@
 import mongoose from "mongoose";
 import { BaseRepository } from "@random-guys/bucket";
-import { EmailReports, EmailReportsQuery, EmailReportsDTO } from "./email.model";
-import { EmailReportsSchema } from "./email.schema";
-import { fromQueryMap } from "../util";
+import { Email } from "./email.model";
+import { EmailTrackerSchema } from "./email.schema";
 
-export class EmailReportRepository extends BaseRepository<EmailReports> {
+export class MailRepository extends BaseRepository<Email> {
   constructor() {
-    super(mongoose.connection, "EmailReport", EmailReportsSchema);
+    super(mongoose.connection, "EmailTracker", EmailTrackerSchema);
   }
 
-  async emailReport(workspace: string, report: EmailReportsDTO) {
+  async tracker(workspace: string, message_id: string) {
     return this.create({
-      email: report.email,
-      timestamp: report.timestamp,
-      "smtp-id": report["smtp-id"],
-      event: report.event,
-      category: report.category,
-      sg_event_id: report.sg_event_id,
-      sg_message_id: report.sg_message_id,
-      useragent: report.useragent,
-      ip: report.ip,
-      url: report.url,
-      asm_group_id: report.asm_group_id,
-      response: report.response,
-      reason: report.reason,
+      message_id,
       workspace
-    });
-  }
-
-  async searchEmailReports(workspace: string, query: EmailReportsQuery) {
-    let conditions = fromQueryMap(query, {
-      email: {email: query.email },
-      timestamp: {timestamp: query.timestamp},
-      event: {event: query.event},
-      category: {category: query.category},
-      useragent: {useragent: query.useragent},
-      ip: {ip: query.ip},
-      url: {url: query.url},
-      response: {response: query.url},
-      reason: {reason: query.reason}
-    });
-
-    conditions = {
-      ...conditions,
-      workspace
-    };
-
-    const limit = Number(query.limit);
-    const offset = Number(query.offset);
-
-    return new Promise<EmailReports[]>((resolve, reject) => {
-      let directQuery = this.model.find(conditions).skip(offset).sort({ created_at: -1 });
-
-      if (query.limit !== 0) {
-        directQuery = directQuery.limit(limit);
-      }
-
-      return directQuery.exec((err, result) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(result);
-      });
     });
   }
 }
 
-export const EmailReportRepo = new EmailReportRepository();
+export const Mail = new MailRepository();
