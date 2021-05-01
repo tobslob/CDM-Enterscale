@@ -2,7 +2,7 @@ import { controller, request, response, httpGet, queryParam } from "inversify-ex
 import { BaseController } from "@app/data/util";
 import { Request, Response } from "express";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
-import { EmailReports, EmailReportsQuery, EmailReportRepo } from "@app/data/email";
+import { EmailReports, EmailReportsQuery, EmailReportRepo } from "@app/data/email-report";
 import { SMSReports, SMSReportQuery, SMSReportRepo } from "@app/data/sms";
 
 type ControllerResponse = EmailReports | SMSReports | EmailReports[] | SMSReports[];

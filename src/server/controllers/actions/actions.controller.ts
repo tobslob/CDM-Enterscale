@@ -21,7 +21,7 @@ import { Store } from "@app/common/services";
 import { SMSReportsDTO, SMSReportRepo } from "@app/data/sms";
 import { isDefaulterQuery } from "../defaulter/defaulter.validator";
 import { Session } from "@app/data/user";
-import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email";
+import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-report";
 import { isCampaign } from "./actions.validator";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
