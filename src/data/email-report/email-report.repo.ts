@@ -28,22 +28,22 @@ export class EmailReportRepository extends BaseRepository<EmailReports> {
     });
   }
 
-  async searchEmailReports(workspace: string, query: EmailReportsQuery) {
+  async searchEmailReports(message_ids: string[], query: EmailReportsQuery) {
     let conditions = fromQueryMap(query, {
-      email: {email: query.email },
-      timestamp: {timestamp: query.timestamp},
-      event: {event: query.event},
-      category: {category: query.category},
-      useragent: {useragent: query.useragent},
-      ip: {ip: query.ip},
-      url: {url: query.url},
-      response: {response: query.url},
-      reason: {reason: query.reason}
+      email: { email: query.email },
+      timestamp: { timestamp: query.timestamp },
+      event: { event: query.event },
+      category: { category: query.category },
+      useragent: { useragent: query.useragent },
+      ip: { ip: query.ip },
+      url: { url: query.url },
+      response: { response: query.url },
+      reason: { reason: query.reason }
     });
 
     conditions = {
       ...conditions,
-      workspace
+      sg_message_id: { sg_message_id: { $in: message_ids } },
     };
 
     const limit = Number(query.limit);

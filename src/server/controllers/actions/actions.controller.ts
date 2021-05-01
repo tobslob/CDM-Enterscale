@@ -121,6 +121,9 @@ export class ActionsController extends BaseController<ControllerResponse> {
       const objSession: EmailReports = JSON.parse(session);
 
       await mapConcurrently(body, async r => {
+        const message_id = r.sg_message_id.split(".");
+        r["sg_message_id"] = message_id[0];
+
         await EmailReportRepo.emailReport(objSession.workspace, r);
       });
 
