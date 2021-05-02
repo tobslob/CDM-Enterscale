@@ -102,6 +102,15 @@ export class ActionsController extends BaseController<ControllerResponse> {
       }
       const objSession: Session = JSON.parse(session);
 
+      const networkCode = {
+        "62120": "Airtel",
+        "62130": "MTN",
+        "62150": "Glo",
+        "62160": "Etisalat"
+      };
+
+      body["network"] = networkCode[body.networkCode];
+
       const report = await SMSReportRepo.smsReport(objSession.workspace, body);
       await Store.del(SMS_CAMPAIGN, "sms_key");
       return report;
