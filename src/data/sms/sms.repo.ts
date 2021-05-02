@@ -24,7 +24,7 @@ export class SMSReportRepository extends BaseRepository<SMSReports> {
   async searchSmsReports(workspace: string, query: SMSReportQuery) {
     let conditions = fromQueryMap(query, {
       phoneNumber: { phoneNumber: query.phoneNumber },
-      networkCode: { networkCode: query.networkCode },
+      network: { networkCode: query.network },
       failureReason: { failureReason: query.failureReason },
       status: { status: query.status }
     });
