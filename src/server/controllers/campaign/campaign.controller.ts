@@ -41,6 +41,13 @@ export class CampaignController extends BaseController<ControllerResponse> {
 
       const campaign = await CampaignRepo.createCampaign(wrkspace, user, body);
       this.handleSuccess(req, res, campaign);
+
+      this.log(req, {
+        object_id: campaign.id,
+        activity: "create.campaign",
+        message: `create a campaign`,
+        channel: body.channel
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -81,6 +88,11 @@ export class CampaignController extends BaseController<ControllerResponse> {
       });
 
       this.handleSuccess(req, res, campaigns);
+
+      this.log(req, {
+        activity: "delete.campaigns",
+        message: `delete campaigns`
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -105,6 +117,12 @@ export class CampaignController extends BaseController<ControllerResponse> {
 
       const campaign = await CampaignRepo.editCampaign(workspace, id, body);
       this.handleSuccess(req, res, campaign);
+
+      this.log(req, {
+        object_id: campaign.id,
+        activity: "edit.campaign",
+        message: `edit campaign`
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }

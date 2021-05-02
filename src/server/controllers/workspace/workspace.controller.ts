@@ -20,6 +20,12 @@ export class WorkspaceController extends BaseController<Workspace> {
       const workspace = await WorkspaceServ.createWorkspaceWithAdmin(body);
 
       this.handleSuccess(req, res, workspace);
+
+      this.log(req, {
+        object_id: workspace.id,
+        activity: "create.workspace",
+        message: "created workspace"
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }

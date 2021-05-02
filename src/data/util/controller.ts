@@ -74,8 +74,11 @@ export type PaginationOptions = Pick<Query, Exclude<keyof Query, "conditions" | 
 
 export class BaseController<T> extends Controller<T> {
   async log(req: Request, action: AuditLogDTO) {
-    const ipAddr = req.headers["x-forwarded-for"] || req["connection"].remoteAddress;
-
-    await AuditLogRepo.saveLog(req, {...action, ip_address: ipAddr})
+    await AuditLogRepo.saveLog(req, {
+      activity: action.activity,
+      message: action.message,
+      object_id: action.object_id,
+      channel: action.channel
+    });
   }
 }

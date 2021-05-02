@@ -39,9 +39,21 @@ export class ActionsController extends BaseController<ControllerResponse> {
           throw new ConstraintError("The end date must at least be a day after start date");
         }
 
-        return await CampaignRepo.startCampaign(id);
+        await CampaignRepo.startCampaign(id);
+        this.log(req, {
+          object_id: campaign.id,
+          activity: "start.campaign",
+          message: "Started a campaign",
+          channel: campaign.channel
+        });
       } else {
-        return await CampaignRepo.stopCampaign(id);
+        await CampaignRepo.stopCampaign(id);
+        this.log(req, {
+          object_id: campaign.id,
+          activity: "stop.campaign",
+          message: "Stopped a campaign",
+          channel: campaign.channel
+        });
       }
     } catch (error) {
       this.handleError(req, res, error);
@@ -67,6 +79,11 @@ export class ActionsController extends BaseController<ControllerResponse> {
       });
 
       this.handleSuccess(req, res, data);
+      this.log(req, {
+        activity: "send.instant.campaign",
+        message: `Sent out ${body.channel} campaign`,
+        channel: body.channel
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }
