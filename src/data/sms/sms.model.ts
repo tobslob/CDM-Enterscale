@@ -34,6 +34,7 @@ export interface SMSReportsDTO {
   id: string;
   phoneNumber?: string;
   networkCode?: string;
+  network?: NetworkProvider;
   failureReason?: FailureReason;
   retryCount?: number;
   status?: SMSStatus;

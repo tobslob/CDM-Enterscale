@@ -14,6 +14,7 @@ export class SMSReportRepository extends BaseRepository<SMSReports> {
       sms_id: report.id,
       phoneNumber: report.phoneNumber,
       networkCode: report.networkCode,
+      network: report.network,
       failureReason: report.failureReason,
       retryCount: report.retryCount,
       status: report.status,
