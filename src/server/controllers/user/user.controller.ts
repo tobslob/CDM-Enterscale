@@ -29,6 +29,12 @@ export class UserController extends BaseController<User> {
       const workspace = req.session.workspace;
       const user = await UserServ.createUser(workspace, body);
       this.handleSuccess(req, res, user);
+
+      this.log(req, {
+        object_id: user.id,
+        activity: "create.user",
+        message: `create user`
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -60,6 +66,12 @@ export class UserController extends BaseController<User> {
       await UserRepo.setPassword(req.session.user, body.new_password);
 
       this.handleSuccess(req, res, user);
+
+      this.log(req, {
+        object_id: user.id,
+        activity: "edit.password",
+        message: `edited password`
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -71,6 +83,11 @@ export class UserController extends BaseController<User> {
       await UserServ.resetPassword(body.email_address);
 
       this.handleSuccess(req, res, null);
+
+      this.log(req, {
+        activity: "reset.password",
+        message: "reset password"
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -82,6 +99,12 @@ export class UserController extends BaseController<User> {
       const user = await UserServ.editUser(req.session.user, body);
 
       this.handleSuccess(req, res, user);
+
+      this.log(req, {
+        object_id: user.id,
+        activity: "edit.user",
+        message: "edited profile"
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }

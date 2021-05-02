@@ -84,6 +84,12 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       });
 
       this.handleSuccess(req, res, null);
+
+      this.log(req, {
+        object_id: query.request_id,
+        activity: "delete.defaulters",
+        message: `delete defaulters`
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -101,6 +107,12 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       const defaulter = await DefaulterRepo.editDefulter(workspace, id, body);
 
       this.handleSuccess(req, res, defaulter);
+
+      this.log(req, {
+        object_id: defaulter.id,
+        activity: "delete.defaulter",
+        message: `delete defaulter`
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }
