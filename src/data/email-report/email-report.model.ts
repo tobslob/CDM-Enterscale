@@ -1,11 +1,27 @@
 import { Model } from "@random-guys/bucket";
 
+export const event = <const>[
+  "open",
+  "click",
+  "spamreport",
+  "unsubscribe",
+  "group_unsubscribe",
+  "group_resubscribe",
+  "blocked",
+  "bounce",
+  "deferred",
+  "delivered",
+  "dropped",
+  "processed"
+];
+export type Event = typeof event[number];
+
 export interface EmailReports extends Model {
   email: string;
   timestamp?: string;
   "smtp-id"?: string;
-  event?: string;
-  category?: number;
+  event?: Event;
+  category?: string;
   sg_event_id?: string;
   sg_message_id?: string;
   useragent?: string;
@@ -21,8 +37,8 @@ export interface EmailReportsDTO {
   email: string;
   timestamp?: string;
   "smtp-id"?: string;
-  event?: string;
-  category?: number;
+  event?: Event;
+  category?: string;
   sg_event_id?: string;
   sg_message_id?: string;
   useragent?: string;
@@ -36,8 +52,8 @@ export interface EmailReportsDTO {
 export interface EmailReportsQuery {
   email?: string;
   timestamp?: string;
-  event?: string;
-  category?: number;
+  event?: Event;
+  category?: string;
   useragent?: string;
   ip?: string;
   url?: string;
