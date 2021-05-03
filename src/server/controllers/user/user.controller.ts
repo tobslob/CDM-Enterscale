@@ -33,7 +33,7 @@ export class UserController extends BaseController<User> {
       this.log(req, {
         object_id: user.id,
         activity: "create.user",
-        message: `create user`
+        message: `created user`
       });
     } catch (error) {
       this.handleError(req, res, error);

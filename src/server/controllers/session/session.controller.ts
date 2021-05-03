@@ -38,6 +38,12 @@ export class SessionController extends BaseController<Session> {
         permissions: role.permissions,
         workspace: user.workspace
       });
+
+      this.log(req, {
+        object_id: user.id,
+        activity: "session.user",
+        message: `Logged in`
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }
