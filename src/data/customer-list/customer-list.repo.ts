@@ -14,7 +14,7 @@ class CustomerRepository extends BaseRepository<Customers> {
   async createCustomerList(workspace: string, customer: CustomerDTO) {
     return this.create({
       title: customer.title,
-      request_id: customer.request_id,
+      batch_id: customer.batch_id,
       workspace
     });
   }
@@ -23,7 +23,7 @@ class CustomerRepository extends BaseRepository<Customers> {
     const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
 
     let conditions = fromQueryMap(query, {
-      request_id: { request_id: query.request_id },
+      batch_id: { batch_id: query.batch_id },
       title: { title: nameRegex },
       id: { _id: { $in: query.id } }
     });
@@ -55,7 +55,7 @@ class CustomerRepository extends BaseRepository<Customers> {
   async deleteCustomerList(workspace: string, query: DefaulterQuery) {
     const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
     let conditions = fromQueryMap(query, {
-      request_id: { request_id: query.request_id },
+      batch_id: { batch_id: query.batch_id },
       title: { title: nameRegex },
       id: { _id: { $in: query.id } }
     });
@@ -67,7 +67,7 @@ class CustomerRepository extends BaseRepository<Customers> {
     const customerList = await this.model.find(conditions);
 
     await loopConcurrently(customerList, async l => {
-      await this.destroy({ workspace, title: l.title, request_id: l.request_id });
+      await this.destroy({ workspace, title: l.title, batch_id: l.batch_id });
     });
   }
 }

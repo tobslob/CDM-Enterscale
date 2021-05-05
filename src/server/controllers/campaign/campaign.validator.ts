@@ -1,11 +1,12 @@
 import { JoiValidator } from "@app/data/util/validate";
 import joi from "@hapi/joi";
+import { channel } from "@app/data/campaign";
 
 export const isCampaignDTO = joi.object({
   name: JoiValidator.validateString().required(),
   description: JoiValidator.validateString().required(),
   channel: JoiValidator.validateString()
-    .valid("FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM", "VOICE", "LINKEDIN")
+    .valid(...channel)
     .required(),
   amount: JoiValidator.validateNumber().required(),
   frequency: JoiValidator.validateString().valid("DAILY", "WEEKLY", "MONTHLY").required(),
@@ -23,6 +24,6 @@ export const isCampaignQuery = joi.object({
   from: JoiValidator.validDate(),
   to: JoiValidator.validDate(),
   organisation: JoiValidator.validateString(),
-  channel: JoiValidator.validateString().valid("FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM", "VOICE", "LINKEDIN"),
+  channel: JoiValidator.validateString().valid(...channel),
   description: JoiValidator.validateString()
 });

@@ -7,6 +7,7 @@ import uuid from "uuid/v4";
 //@ts-ignore
 import { Multer } from "multer";
 import { StatusType } from "@app/data/defaulter";
+import { Gender } from "@app/data/user";
 
 export const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 export const CSV_MIME = "text/csv";
@@ -17,14 +18,18 @@ export interface ExtractedDefaulter {
   last_name: string;
   email_address: string;
   phone_number: string;
-  total_loan_amount: number;
-  loan_outstanding_balance: number;
+  DOB: Date;
+  gender: Gender;
+  location: string;
+  loan_id: number;
+  actual_disbursement_date: Date;
+  is_first_loan: boolean;
+  loan_amount: number;
   loan_tenure: number;
-  time_since_default: number;
-  time_since_last_payment: number;
-  last_contacted_date: Date;
-  BVN: string;
-  request_id: string;
+  days_in_default: number;
+  amount_repaid: number;
+  amount_outstanding: number;
+  batch_id?: string;
   status: StatusType;
 }
 
@@ -33,56 +38,60 @@ class ExtractionService {
     try {
       const rows = await this.loadSheetValues(file.mimetype, file.buffer);
 
-      const BVN = /^\d{1,11}$/;
       const EMAIL = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/;
       let results = [];
-      let request_id = uuid();
+      let batch_id = uuid();
 
       rows.forEach(row => {
         // ignore empty rows
         if (!row) return;
 
-        // rows must all have 12 items
-        if (Object.keys(row).length !== 11) return;
+        // rows must all have 14 items
+        if (Object.keys(row).length !== 14) return;
 
         // ignore headers
-        if (!EMAIL.test(row[3]?.trim())) return;
+        if (!EMAIL.test(row[2]?.trim())) return;
 
-        row[5] = typeof row[5] === "string" ? row[5].replace(/\,/g, "") : row[5];
-        row[6] = typeof row[6] === "string" ? row[6].replace(/\,/g, "") : row[6];
+        // remove any comma separated string
+        row[1] = typeof row[1] === "string" ? row[1].replace(/\,/g, "") : row[1];
+        row[6] = typeof row[6] === "string" ? row[7].replace(/\,/g, "") : row[6];
         row[7] = typeof row[7] === "string" ? row[7].replace(/\,/g, "") : row[7];
 
-        row[4] = typeof row[4] === "string" ? Number(row[4]) : row[4];
-        row[5] = typeof row[5] === "string" ? Number(row[5]) : row[5];
+        row[4] = typeof row[4] === "string" ? new Date(row[4]) : row[4];
+        row[5] = JSON.parse(row[5].toLowerCase().trim());
         row[6] = typeof row[6] === "string" ? Number(row[6]) : row[6];
         row[7] = typeof row[7] === "string" ? Number(row[7]) : row[7];
-        row[8] = typeof row[8] === "string" ? new Date(row[8]) : row[8];
-        row[9] = typeof row[9] === "string" ? new Date(row[9]) : row[9];
-        row[10] = typeof row[10] === "string" ? new Date(row[10]) : row[10];
+        row[8] = typeof row[8] === "string" ? Number(row[8]) : row[8];
+        row[9] = typeof row[9] === "string" ? Number(row[9]) : row[9];
+        row[10] = typeof row[10] === "string" ? Number(row[10]) : row[10];
+        row[12] = typeof row[12] === "string" ? new Date(row[12]) : row[12];
 
-        if (row[11]) {
-          if (!BVN.test(row[11].trim())) return;
-        }
-
-        row[4] = row[4].toString().padStart(14, "+234");
+        row[3] =
+          typeof row[3] === "number" ? row[3].toString().padStart(14, "+234") : row[3]?.trim().padStart(14, "+234");
 
         results = uniqBy(results, result => {
-          return `${result.phone_number}:${result.BVN}`;
+          return `${result.phone_number}:${result.email_address}`;
         });
 
+        const name = row[11]?.trim()?.split(" ");
+
         results.push({
-          first_name: row[1],
-          last_name: row[2],
-          email_address: row[3],
-          phone_number: row[4],
-          total_loan_amount: row[5],
-          loan_outstanding_balance: row[6],
+          loan_id: row[1],
+          email_address: row[2]?.trim(),
+          phone_number: row[3],
+          actual_disbursement_date: row[4],
+          is_first_loan: row[5],
+          loan_amount: row[6],
           loan_tenure: row[7],
-          time_since_default: row[8],
-          time_since_last_payment: row[9],
-          last_contacted_date: row[10],
-          BVN: row[11],
-          request_id,
+          days_in_default: row[8],
+          amount_repaid: row[9],
+          amount_outstanding: row[10],
+          first_name: name[0],
+          last_name: name[1],
+          DOB: row[12],
+          gender: row[13]?.trim(),
+          location: row[14],
+          batch_id,
           status: "owning"
         });
       });
@@ -110,6 +119,9 @@ class ExtractionService {
       case 8:
       case 9:
       case 10:
+      case 11:
+      case 12:
+      case 13:
         return value;
     }
   }

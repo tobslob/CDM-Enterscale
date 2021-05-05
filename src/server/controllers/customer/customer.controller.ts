@@ -29,7 +29,7 @@ export class CustomerController extends BaseController<ControllerResponse> {
       this.handleSuccess(req, res, null);
 
       this.log(req, {
-        object_id: query.request_id,
+        object_id: query.batch_id,
         activity: "delete.customer list",
         message: `delete customer list`
       });

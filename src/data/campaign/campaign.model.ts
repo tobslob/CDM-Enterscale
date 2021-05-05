@@ -19,7 +19,7 @@ export interface Campaign extends Model {
   start_date?: Date;
   end_date?: Date;
   /**
-   * request_id from uploaded file or array of defaulters IDs
+   * batch_id from uploaded file or array of defaulters IDs
    */
   target_audience: string;
   message: string;

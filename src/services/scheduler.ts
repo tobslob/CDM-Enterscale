@@ -32,7 +32,7 @@ export async function job() {
       if (c.status == "STOP" && isToday(c.start_date)) {
         const defaulters = await DefaulterRepo.all({
           conditions: {
-            request_id: c.target_audience
+            batch_id: c.target_audience
           }
         });
 
@@ -67,7 +67,7 @@ export async function job() {
   async function runCampaign(c: Campaign) {
     const defaulters = await DefaulterRepo.all({
       conditions: {
-        request_id: c.target_audience
+        batch_id: c.target_audience
       }
     });
 

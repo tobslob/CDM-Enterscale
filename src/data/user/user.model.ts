@@ -1,5 +1,10 @@
 import { Model } from "@random-guys/bucket";
-import { Permissions } from "@app/data/role"
+import { Permissions } from "@app/data/role";
+
+export enum Gender {
+  Male = "M",
+  Female = "F"
+}
 
 /**
  * Model of a Enterscale user.
@@ -10,6 +15,9 @@ export interface User extends Model {
   password: string;
   email_address: string;
   phone_number: string;
+  DOB: Date;
+  gender: Gender;
+  location: string;
   role_id: string;
   role_name: string;
   workspace: string;
@@ -20,6 +28,9 @@ export interface UserDTO {
   last_name: string;
   email_address: string;
   phone_number: string;
+  DOB: Date;
+  gender: Gender;
+  location: string;
   permissions: Permissions;
 }
 
