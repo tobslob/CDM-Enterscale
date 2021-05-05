@@ -2,7 +2,7 @@ import { Model } from "@random-guys/bucket";
 import { PaginationQuery } from "../util";
 import { Gender } from "../user";
 
-const status = <const>["part payment", "owning", "completed"];
+export const status = <const>["part payment", "owning", "completed"];
 export type StatusType = typeof status[number];
 
 export interface Defaulters extends Model {
@@ -47,4 +47,5 @@ export interface DefaulterQuery extends PaginationQuery {
   id?: string[];
   batch_id?: string;
   title?: string;
+  status: StatusType;
 }

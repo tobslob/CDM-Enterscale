@@ -44,7 +44,8 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     let conditions = fromQueryMap(query, {
       batch_id: { batch_id: query.batch_id },
       title: { title: nameRegex },
-      id: { _id: { $in: query.id } }
+      id: { _id: { $in: query.id } },
+      status: { status: query.status }
     });
 
     conditions = {
