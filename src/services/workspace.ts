@@ -14,6 +14,9 @@ class WorkspaceService {
       last_name: dto.last_name,
       email_address: dto.email_address,
       phone_number: dto.phone_number,
+      DOB: dto.DOB,
+      gender: dto.gender,
+      location: dto.location,
       permissions: {
         loan_admin: true,
         super_admin: false,

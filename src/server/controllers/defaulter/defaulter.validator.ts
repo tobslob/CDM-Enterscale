@@ -5,9 +5,9 @@ export const isDefaulterQuery = joi
   .object({
     id: JoiValidator.validArray(),
     title: JoiValidator.validateString(),
-    request_id: JoiValidator.validateString()
+    batch_id: JoiValidator.validateString()
   })
-  .xor("id", "title", "request_id");
+  .xor("id", "title", "batch_id");
 
 export const isDefaulterDTO = joi.object({
   total_loan_amount: JoiValidator.validateNumber(),

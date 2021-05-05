@@ -37,7 +37,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       const defaultUsers = await Defaulter.getDefaultUsers(cratedDefaulters);
 
       await CustomerRepo.createCustomerList(workspace, {
-        request_id: defaulters[0].request_id,
+        batch_id: defaulters[0].batch_id,
         title: title[0]
       });
 
@@ -86,7 +86,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       this.handleSuccess(req, res, null);
 
       this.log(req, {
-        object_id: query.request_id,
+        object_id: query.batch_id,
         activity: "delete.defaulters",
         message: `delete defaulters`
       });

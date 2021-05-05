@@ -6,7 +6,7 @@ export const CustomerSchema = new Schema(
   {
     _id: { ...uuid },
     title: { ...trimmedString, required: true, index: true, unique: true },
-    request_id: { ...trimmedString, index: true },
+    batch_id: { ...trimmedString, index: true },
     workspace: { ...trimmedString, index: true }
   },
   {

@@ -1,21 +1,23 @@
 import { Model } from "@random-guys/bucket";
 import { PaginationQuery } from "../util";
+import { Gender } from "../user";
 
-const status = <const>["paid part", "owning", "completed"];
+const status = <const>["part payment", "owning", "completed"];
 export type StatusType = typeof status[number];
 
 export interface Defaulters extends Model {
   title: string;
-  total_loan_amount: number;
-  loan_outstanding_balance: number;
+  loan_id: number;
+  actual_disbursement_date: Date;
+  is_first_loan: boolean;
+  loan_amount: number;
   loan_tenure: number;
-  time_since_default: number;
-  time_since_last_payment: number;
-  last_contacted_date: Date;
-  BVN: string;
+  days_in_default: number;
+  amount_repaid: number;
+  amount_outstanding: number;
   workspace: string;
   user: string;
-  request_id: string;
+  batch_id: string;
   role_id: string;
   status: StatusType;
 }
@@ -26,19 +28,23 @@ export interface DefaulterDTO {
   last_name: string;
   email_address: string;
   phone_number: string;
-  total_loan_amount: number;
-  loan_outstanding_balance: number;
+  DOB?: Date;
+  gender?: Gender;
+  location?: string;
+  loan_id: number;
+  actual_disbursement_date: Date;
+  is_first_loan: boolean;
+  loan_amount: number;
   loan_tenure: number;
-  time_since_default: number;
-  time_since_last_payment: number;
-  last_contacted_date: Date;
-  BVN: string;
-  request_id?: string;
+  days_in_default: number;
+  amount_repaid: number;
+  amount_outstanding: number;
+  batch_id?: string;
   status: StatusType;
 }
 
 export interface DefaulterQuery extends PaginationQuery {
   id?: string[];
-  request_id?: string;
+  batch_id?: string;
   title?: string;
 }
