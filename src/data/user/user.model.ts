@@ -59,3 +59,24 @@ export interface Session {
   permissions: Permissions;
   workspace: string;
 }
+
+export interface SessionRequest {
+  user: string;
+  first_name: string;
+  last_name: string;
+  email_address: string;
+  workspace: string;
+  workspace_name: string;
+  phone_number: string;
+  DOB: Date;
+  gender: Gender;
+  location: string;
+  loan_id: number;
+  actual_disbursement_date: Date;
+  is_first_loan: boolean;
+  loan_amount: number;
+  loan_tenure: number;
+  days_in_default: number;
+  amount_repaid: number;
+  amount_outstanding: number;
+}

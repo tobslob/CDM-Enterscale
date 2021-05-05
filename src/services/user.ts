@@ -1,8 +1,9 @@
 import { RoleServ } from "./role";
-import { UserRepo, UserDTO } from "@app/data/user";
+import { UserRepo, UserDTO, SessionRequest } from "@app/data/user";
 import { Passwords } from "./password";
 import AdapterInstance from "@app/server/adapter/mail";
 import { UnauthorizedError } from "@app/data/util";
+import { Auth } from "@app/common/services";
 
 class UserService {
   async createUser(workspace: string, dto: UserDTO) {
@@ -72,6 +73,13 @@ class UserService {
     });
 
     return updatedUser;
+  }
+
+  async generateRePaymentLink(request: SessionRequest) {
+    const token = await Auth.commission(request, "1200m");
+    return {
+      link: `${process.env.repayment_page}/${token}`,
+    };
   }
 }
 
