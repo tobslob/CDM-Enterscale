@@ -73,12 +73,12 @@ export class Controller<T> {
 export type PaginationOptions = Pick<Query, Exclude<keyof Query, "conditions" | "archived">>;
 
 export class BaseController<T> extends Controller<T> {
-  async log(req: Request, action: AuditLogDTO) {
+  async log(req: Request, action: AuditLogDTO, value?: any) {
     await AuditLogRepo.saveLog(req, {
       activity: action.activity,
       message: action.message,
       object_id: action.object_id,
       channel: action.channel
-    });
+    }, value);
   }
 }
