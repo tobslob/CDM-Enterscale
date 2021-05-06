@@ -62,14 +62,15 @@ export interface Session {
 }
 
 export interface SessionRequest {
+  id?: string;
   title: string;
   first_name: string;
   last_name: string;
   email_address: string;
   phone_number: string;
-  DOB?: Date;
-  gender?: Gender;
-  location?: string;
+  DOB: Date;
+  gender: Gender;
+  location: string;
   loan_id: number;
   actual_disbursement_date: Date;
   is_first_loan: boolean;

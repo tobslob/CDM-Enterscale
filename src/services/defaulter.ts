@@ -57,7 +57,8 @@ class DefaulterService {
 
   async generateDefaulterLink(user: User, req: Request) {
     const defaulter = await DefaulterRepo.byQuery({ user: user.id, workspace: req.session.workspace });
-    const usr = pick(user, "first_name", "last_name", "phone_number", "email_address");
+    const usr = pick(user, "first_name", "last_name", "phone_number", "email_address", "id");
+    // @ts-ignore
     const link = await UserServ.generateRePaymentLink({ ...usr, ...defaulter });
 
     return link;
