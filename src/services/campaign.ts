@@ -9,6 +9,7 @@ import { connect } from "./africaistalking";
 import { Store } from "@app/common/services";
 import { DefaulterQuery } from "@app/data/defaulter";
 import { Mail } from "@app/data/email/email.repo";
+import { Defaulter } from "./defaulter";
 
 dotenv.config();
 
@@ -31,6 +32,7 @@ class CampaignService {
   }
 
   private async email(campaign: CampaignDTO, user: any, req: Request) {
+    const link = await Defaulter.generateDefaulterLink(user, req);
     const email = await AdapterInstance.send({
       subject: campaign.subject,
       channel: "mail",
@@ -40,7 +42,8 @@ class CampaignService {
         firstname: user.first_name,
         emailaddress: user.email_address,
         subject: campaign.subject,
-        message: campaign.message
+        message: campaign.message,
+        link
       }
     });
 
@@ -53,9 +56,12 @@ class CampaignService {
   private async sms(campaign: CampaignDTO, user: User, req: Request) {
     const sms = await connect.SMS;
 
+    const link = await Defaulter.generateDefaulterLink(user, req);
+    const message = `${campaign.message}\n\n${link}`;
+
     const smsResponse = await sms.send({
       to: user.phone_number,
-      message: campaign.message,
+      message,
       from: process.env.sms_sender
     });
 

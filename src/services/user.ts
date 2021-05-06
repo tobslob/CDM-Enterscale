@@ -1,12 +1,13 @@
 import { RoleServ } from "./role";
-import { UserRepo, UserDTO } from "@app/data/user";
+import { UserRepo, UserDTO, SessionRequest } from "@app/data/user";
 import { Passwords } from "./password";
 import AdapterInstance from "@app/server/adapter/mail";
-import { UnauthorizedError } from "@app/data/util";
+import { UnauthorizedError, ForbiddenError } from "@app/data/util";
+import { Auth } from "@app/common/services";
+import { Log } from "@app/common/services/logger";
 
 class UserService {
   async createUser(workspace: string, dto: UserDTO) {
-
     const usr = await UserRepo.model.exists({ workspace, email_address: dto.email_address });
     if (usr) return;
 
@@ -72,6 +73,26 @@ class UserService {
     });
 
     return updatedUser;
+  }
+
+  async generateRePaymentLink(request: SessionRequest) {
+    const token = await Auth.commission(request, "1200m");
+    return {
+      link: `${process.env.repayment_page}/${token}`
+    };
+  }
+
+  /**
+   * Returns the SessionToken
+   * @param requestToken This is the request token that should be viewed
+   */
+  async viewSessionToken(requestToken: string): Promise<SessionRequest> {
+    try {
+      return await Auth.peek(requestToken);
+    } catch (err) {
+      Log.error({ err });
+      throw new ForbiddenError("Failed to validate defaulter token");
+    }
   }
 }
 
