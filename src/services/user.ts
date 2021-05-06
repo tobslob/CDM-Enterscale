@@ -77,9 +77,7 @@ class UserService {
 
   async generateRePaymentLink(request: SessionRequest) {
     const token = await Auth.commission(request, "1200m");
-    return {
-      link: `${process.env.repayment_page}/${token}`
-    };
+    return `${process.env.repayment_page}/${token}`
   }
 
   /**

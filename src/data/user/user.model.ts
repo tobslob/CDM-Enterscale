@@ -62,7 +62,7 @@ export interface Session {
 }
 
 export interface SessionRequest {
-  id?: string;
+  user: string;
   title: string;
   first_name: string;
   last_name: string;

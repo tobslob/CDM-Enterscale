@@ -53,11 +53,11 @@ class CampaignService {
     return email;
   }
 
-  private async sms(campaign: CampaignDTO, user: User, req: Request) {
+  private async sms(campaign: CampaignDTO, user: any, req: Request) {
     const sms = await connect.SMS;
 
     const link = await Defaulter.generateDefaulterLink(user, req);
-    const message = `${campaign.message}\n\n${link}`;
+    const message = `${campaign.message}\n${link}`;
 
     const smsResponse = await sms.send({
       to: user.phone_number,

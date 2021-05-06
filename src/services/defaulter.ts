@@ -3,7 +3,7 @@ import { DefaulterRepo, Defaulters } from "@app/data/defaulter";
 import { mapConcurrently } from "@app/data/util";
 import { ExtractedDefaulter } from "@app/services/extraction";
 import { Request } from "express";
-import { UserRepo, User } from "@app/data/user";
+import { UserRepo } from "@app/data/user";
 import sha256 from "sha256";
 import { pick } from "lodash";
 
@@ -55,13 +55,11 @@ class DefaulterService {
     });
   }
 
-  async generateDefaulterLink(user: User, req: Request) {
-    const defaulter = await DefaulterRepo.byQuery({ user: user.id, workspace: req.session.workspace });
+  async generateDefaulterLink(user: any, req: Request) {
+    const defaulter = await DefaulterRepo.byQuery({ _id: user.id, workspace: req.session.workspace });
     const usr = pick(user, "first_name", "last_name", "phone_number", "email_address", "id");
     // @ts-ignore
-    const link = await UserServ.generateRePaymentLink({ ...usr, ...defaulter });
-
-    return link;
+    return await UserServ.generateRePaymentLink({ ...usr, ...defaulter });
   }
 
   async sha256Users(users: any[]) {

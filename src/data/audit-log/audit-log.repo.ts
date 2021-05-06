@@ -13,9 +13,8 @@ export class AuditLogRepository extends BaseRepository<AuditLog> {
   async saveLog(req: Request, log: AuditLogDTO, value?: any) {
     const ipAddr = req.headers["x-forwarded-for"] || req["connection"].remoteAddress;
 
-    if (req.session.user) {
+    if (req.session?.user) {
       const user = await UserRepo.byID(req.session.user);
-
       return this.create({
         user_id: user.id,
         user_name: `${user.first_name} ${user.last_name}`,
@@ -30,7 +29,7 @@ export class AuditLogRepository extends BaseRepository<AuditLog> {
       });
     }
     return this.create({
-      user_id: value?.id,
+      user_id: value.user,
       user_name: `${value.first_name} ${value.last_name}`,
       workspace: value.workspace,
       role_id: value.role_id,

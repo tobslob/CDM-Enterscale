@@ -8,7 +8,7 @@ export const AuditLogSchema = new Schema(
     user_name: { ...trimmedLowercaseString, required: true, index: true },
     workspace: { ...trimmedLowercaseString, required: true, index: true },
     role_id: { ...trimmedLowercaseString, required: true, index: true },
-    role_name: { ...trimmedString, required: true, index: true },
+    role_name: { ...trimmedString, index: true },
     activity: { ...trimmedLowercaseString, required: true, index: true },
     object_id: { ...trimmedLowercaseString, index: true },
     message: { ...trimmedString, required: true },

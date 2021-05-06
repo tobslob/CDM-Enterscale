@@ -27,7 +27,7 @@ export class SessionController extends BaseController<Session> {
         workspace: user.workspace
       });
 
-      this.handleSuccess(req, res, {
+      const value = {
         first_name: user.first_name,
         last_name: user.last_name,
         email_address: user.email_address,
@@ -37,13 +37,19 @@ export class SessionController extends BaseController<Session> {
         role: role.id,
         permissions: role.permissions,
         workspace: user.workspace
-      });
+      };
 
-      this.log(req, {
-        object_id: user.id,
-        activity: "session.user",
-        message: `Logged in`
-      });
+      this.handleSuccess(req, res, value);
+
+      this.log(
+        req,
+        {
+          object_id: user.id,
+          activity: "session.user",
+          message: `Logged in`
+        },
+        { ...value, role_id: value.role }
+      );
     } catch (error) {
       this.handleError(req, res, error);
     }
