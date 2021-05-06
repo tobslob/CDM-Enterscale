@@ -1,5 +1,6 @@
 import { Model } from "@random-guys/bucket";
 import { Permissions } from "@app/data/role";
+import { StatusType } from "../defaulter";
 
 export enum Gender {
   Male = "M",
@@ -61,16 +62,14 @@ export interface Session {
 }
 
 export interface SessionRequest {
-  user: string;
+  title: string;
   first_name: string;
   last_name: string;
   email_address: string;
-  workspace: string;
-  workspace_name: string;
   phone_number: string;
-  DOB: Date;
-  gender: Gender;
-  location: string;
+  DOB?: Date;
+  gender?: Gender;
+  location?: string;
   loan_id: number;
   actual_disbursement_date: Date;
   is_first_loan: boolean;
@@ -79,4 +78,11 @@ export interface SessionRequest {
   days_in_default: number;
   amount_repaid: number;
   amount_outstanding: number;
+  batch_id?: string;
+  status: StatusType;
+}
+
+export interface SessionRequestWithToken {
+  request: SessionRequest;
+  token: string;
 }
