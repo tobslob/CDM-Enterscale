@@ -17,8 +17,8 @@ export class AuditLogRepository extends BaseRepository<AuditLog> {
       const user = await UserRepo.byID(req.session.user);
 
       return this.create({
-        user_id: user?.id,
-        user_name: `${user?.first_name} ${user?.last_name}`,
+        user_id: user.id,
+        user_name: `${user.first_name} ${user.last_name}`,
         workspace: req.session.workspace,
         role_id: user.role_id,
         role_name: user.role_name,
@@ -30,7 +30,7 @@ export class AuditLogRepository extends BaseRepository<AuditLog> {
       });
     }
     return this.create({
-      user_id: value.id,
+      user_id: value?.id,
       user_name: `${value.first_name} ${value.last_name}`,
       workspace: value.workspace,
       role_id: value.role_id,

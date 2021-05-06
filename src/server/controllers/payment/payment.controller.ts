@@ -22,7 +22,7 @@ export class PaymentController extends BaseController<ControllerResponse> {
       this.log(req, {
         activity: "Click.link",
         message: `${value.first_name} ${value.last_name} clicked on payment link`
-      });
+      }, value);
     } catch (error) {
       this.handleError(req, res, error);
     }
