@@ -63,7 +63,7 @@ export interface Session {
 
 export interface SessionRequest {
   user: string;
-  title: string;
+  title?: string;
   first_name: string;
   last_name: string;
   email_address: string;

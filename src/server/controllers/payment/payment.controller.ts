@@ -12,7 +12,7 @@ export class PaymentController extends BaseController<ControllerResponse> {
   @httpPost("/")
   async repayment(@request() req: Request, @response() res: Response, @requestBody() body: Token) {
     try {
-      const value = await Payment.confirmPaymentLink(body.token);
+      let value = await Payment.confirmPaymentLink(body.token);
 
       if (!value) {
         throw new ForbiddenError("Failed to validate this user");

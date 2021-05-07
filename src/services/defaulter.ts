@@ -5,7 +5,6 @@ import { ExtractedDefaulter } from "@app/services/extraction";
 import { Request } from "express";
 import { UserRepo } from "@app/data/user";
 import sha256 from "sha256";
-import { pick } from "lodash";
 
 class DefaulterService {
   async createDefaulters(req: Request, workspace: string, defaulter: ExtractedDefaulter) {
@@ -57,9 +56,8 @@ class DefaulterService {
 
   async generateDefaulterLink(user: any, req: Request) {
     const defaulter = await DefaulterRepo.byQuery({ _id: user.id, workspace: req.session.workspace });
-    const usr = pick(user, "first_name", "last_name", "phone_number", "email_address", "id");
-    // @ts-ignore
-    return await UserServ.generateRePaymentLink({ ...usr, ...defaulter });
+    const value = { ...defaulter, ...user };
+    return await UserServ.generateRePaymentLink({ ...value });
   }
 
   async sha256Users(users: any[]) {
