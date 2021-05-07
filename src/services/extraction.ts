@@ -58,7 +58,8 @@ class ExtractionService {
         row[7] = typeof row[7] === "string" ? row[7].replace(/\,/g, "") : row[7];
 
         row[4] = typeof row[4] === "string" ? new Date(row[4]) : row[4];
-        row[5] = JSON.parse(row[5]?.toLowerCase().trim());
+
+        row[5] = JSON.parse(row[5].toString().toLowerCase());
         row[6] = typeof row[6] === "string" ? Number(row[6]) : row[6];
         row[7] = typeof row[7] === "string" ? Number(row[7]) : row[7];
         row[8] = typeof row[8] === "string" ? Number(row[8]) : row[8];
@@ -130,7 +131,8 @@ class ExtractionService {
     const workbook = new Workbook();
 
     if (mime === XLSX_MIME) {
-      await workbook.xlsx.load(buffer);
+      console.log(" 🥵 🥵🥵🥵🥵🥵🥵🥵🥵", await workbook.xlsx.load(buffer))
+      // await workbook.xlsx.load(buffer);
       return workbook.getWorksheet(1).getSheetValues();
     } else if (mime === CSV_MIME) {
       const sheet = await workbook.csv.read(bufferToStream(buffer), {
