@@ -41,7 +41,6 @@ class CampaignService {
       template_vars: {
         firstname: user.first_name,
         emailaddress: user.email_address,
-        subject: campaign.subject,
         message: campaign.message,
         link
       }
