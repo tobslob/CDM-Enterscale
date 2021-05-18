@@ -1,35 +1,120 @@
 <mjml>
-  <mj-head>
-    <mj-title>${ subject }</mj-title>
-    <mj-font name="Roboto" href="https://fonts.googleapis.com/css?family=Roboto&display=swap" />
-    <mj-attributes>
-      <mj-all font-family="Roboto" />
-    </mj-attributes>
-  </mj-head>
-
-  <mj-body background-color="white" width="600px">
-    <mj-section padding="0px">
-      <mj-column>
-        <mj-text line-height="20px" font-size="14px" color="#8593a6">Hi ${ firstname }</mj-text>
+  <mj-body background-color="#F2F2F2">
+    <mj-section padding="60px 0px 0px 0px">
+      <mj-column vertical-align="middle" background-color="#FFFFFF" padding="24px">
+        <mj-image
+          width="125px"
+          align="center"
+          src="https://i.imgur.com/QwkgGAk.png"
+          href="https://www.enterscale.com"
+          alt="enterscale"
+        ></mj-image>
       </mj-column>
     </mj-section>
-
-    <mj-section padding-left="20px" padding-right="20px" padding-top="16px" padding-bottom="24px">
-      <mj-column background-color="#f7f9fc">
-        <mj-text line-height="40px" color="#000000" font-size="14px" padding="20px 20px 0px 20px">
-          ${ message }
-        </mj-text>
+    <mj-section background-color="#FFFACD">
+      <mj-column vertical-align="middle">
+        <mj-image
+          width="60.3px"
+          height="48.22px"
+          align="center"
+          src="https://i.imgur.com/97mxJOI.png"
+          href="https://www.enterscale.com"
+          alt="enterscale"
+        ></mj-image>
       </mj-column>
     </mj-section>
-
-    <mj-section padding="0px">
+    <mj-section background-color="#FFFFFE" padding="30px">
       <mj-column>
-        <mj-text font-size="14px" color="#686868">Supercharge your digital transformation</mj-text>
-
-        <mj-divider padding-top="32px" padding-bottom="16px" border-width="1px" border-color="#f0f3f7" />
-
-        <mj-text padding-bottom="30px" line-height="16px" font-size="10px" color="#8593a6">Be sure to check that you agree with our <a style="text-decoration: none; color: #d92028;" href="#">Terms & Conditions</a>. Need help? Contact One Customer Care on 070#; 01-# or send an email to <a style="text-decoration: none; color: #d92028;" href="mailto:#</a>.
-        </mj-text>
+        <mj-text
+          padding-left="0px"
+          font-family="Poppins"
+          font-weight="300"
+          font-size="20px"
+          line-height="24px"
+          font-style="normal"
+          >Hi ${ firstname } <br
+        /></mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="0px">
+      <mj-column background-color="#FFFFFE" padding="0px">
+        <mj-text font-family="Poppins" font-size="20px" align="center" line-height="54px">${ message }</mj-text>
+        <mj-text
+          font-family="Poppins"
+          font-size="16px"
+          align="center"
+          line-height="24px"
+          font-style="normal"
+          font-weight="300"
+          padding="4px 0px"
+          >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Blandit condimentum tortor.</mj-text
+        >
+        <mj-button
+          color="white"
+          background-color="#5C9997"
+          border-radius="100px"
+          width="241px"
+          height="52px"
+          padding="24px 0"
+          href="${ link }"
+        >
+          <mj-text font-family="Gilroy" font-weight="600" font-size="16px" font-style="normal" line-height="16px"
+            >PAY NOW</mj-text
+          >
+        </mj-button>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="24px" background-color="#FAF9F7"></mj-section>
+    <mj-section padding="0px">
+      <mj-column background-color="#FAF9F7">
+        <mj-text align="center" color="#363636" height="22px" font-family="Gilroy" font-size="13px" line-height="22px"
+          >Follow us on</mj-text
+        >
+      </mj-column>
+    </mj-section>
+    <mj-section padding="0 110px" background-color="#FAF9F7">
+      <mj-column vertical-align="middle">
+        <mj-image src="https://i.imgur.com/KIVi8bW.png" width="18px" height="18px"></mj-image>
+      </mj-column>
+      <mj-column>
+        <mj-image src="https://i.imgur.com/xGVjmYF.png" width="18px" height="18px"></mj-image>
+      </mj-column>
+      <mj-column>
+        <mj-image src="https://i.imgur.com/Ry01vEx.png" width="18px" height="18px"></mj-image>
+      </mj-column>
+      <mj-column>
+        <mj-image src="https://i.imgur.com/I6GNKYk.png" width="18px" height="18px"></mj-image>
+      </mj-column>
+      <mj-column>
+        <mj-image src="https://i.imgur.com/tcpXobz.png" width="18px" height="18px"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#FAF9F7" padding="24px">
+      <mj-column padding="0px">
+        <mj-text align="center">www.enterscale.com</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#FAF9F7" padding="0px">
+      <mj-column>
+        <mj-text align="center" font-family="Gilroy" font-size="13px" line-height="22px" color="#A09F9D"
+          >Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web
+          designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have
+          scrambled parts of Cicero's De Finibus Bonorum et Malorum for use in a type specimen book. It usually begins
+          with</mj-text
+        >
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#FAF9F7" padding="0px 0px 0px 60px">
+      <mj-column>
+        <mj-text
+          align="center"
+          font-size="16px"
+          line-height="28px"
+          font-family="Gilroy"
+          font-weight="normal"
+          padding="32px 0px"
+          >Copyright © 2020 Enterscale</mj-text
+        >
       </mj-column>
     </mj-section>
   </mj-body>

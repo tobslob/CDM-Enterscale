@@ -5,6 +5,7 @@ import AdapterInstance from "@app/server/adapter/mail";
 import { UnauthorizedError, ForbiddenError } from "@app/data/util";
 import { Auth } from "@app/common/services";
 import { Log } from "@app/common/services/logger";
+import { WorkspaceRepo } from "@app/data/workspace";
 
 class UserService {
   async createUser(workspace: string, dto: UserDTO) {
@@ -22,6 +23,7 @@ class UserService {
     const user = await UserRepo.newUser(role, workspace, password, dto);
 
     if (!role.permissions.users) {
+      const wrkspace = await WorkspaceRepo.byID(workspace);
       AdapterInstance.send({
         subject: "Welcome! Supercharge your digital transformation",
         channel: "mail",
@@ -30,7 +32,8 @@ class UserService {
         template_vars: {
           firstname: user.first_name,
           emailaddress: user.email_address,
-          password: generatedPassword
+          password: generatedPassword,
+          company: wrkspace.name
         }
       });
     }
@@ -77,7 +80,7 @@ class UserService {
 
   async generateRePaymentLink(request: SessionRequest) {
     const token = await Auth.commission(request, "1200m");
-    return `${process.env.repayment_page}/${token}`
+    return `${process.env.repayment_page}/${token}`;
   }
 
   /**
