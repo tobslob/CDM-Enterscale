@@ -5,6 +5,7 @@ import { Defaulter } from "./defaulter";
 import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
 import { Request } from "express";
 import uuid from "uuid/v4";
+import { PaymentType } from "@app/data/payment/payment.model";
 dotenv.config();
 
 export const customAudience = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
@@ -29,11 +30,10 @@ export type CustomAudienceType = typeof customAudience[number];
 export type SubType = typeof subType[number];
 
 class ProxyServices {
-  async verifyBVN(bvn: string) {
-    const data = await Axios(`${process.env.flutter_url}/${bvn}`, "get", null, null, {
+  async makePayment(client: string, type: PaymentType) {
+    const data = await Axios(`${process.env.flutter_url}/charges?type=${type}`, "post", { client }, null, {
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `${process.env.auth_scheme} ${process.env.sec_key}`
+        Authorization: process.env.flutter_secret_key
       }
     });
 

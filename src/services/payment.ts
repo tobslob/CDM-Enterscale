@@ -1,9 +1,11 @@
 import { UserServ } from "./user";
+import { PaymentDTO } from "@app/data/payment/payment.model";
+import forge from "node-forge";
 
 class PaymentService {
   async confirmPaymentLink(token: string) {
     const value = await UserServ.viewSessionToken(token);
-    return this.pick(value)
+    return this.pick(value);
   }
 
   private async pick(value: any) {
@@ -26,6 +28,16 @@ class PaymentService {
       status: value.status,
       ...value._doc
     };
+  }
+
+  encryptPayment(key: string, payment: PaymentDTO): string {
+    const payload = JSON.stringify(payment);
+    const cipher = forge.cipher.createCipher("3DES-ECB", forge.util.createBuffer(key));
+    cipher.start({ iv: "" });
+    cipher.update(forge.util.createBuffer(payload, "utf8"));
+    cipher.finish();
+    const encrypted = cipher.output;
+    return forge.util.encode64(encrypted.getBytes());
   }
 }
 

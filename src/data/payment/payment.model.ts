@@ -9,7 +9,7 @@ export enum PaymentType {
   DEBIT_NG_ACCOUNT = "debit_ng_account"
 }
 
-export interface Payment {
+export interface PaymentDTO {
   amount: number;
   currency: string;
   card_number: number;
@@ -20,21 +20,21 @@ export interface Payment {
   tx_ref: string;
   phone_number: string;
   fullname: string;
-  preauthorize: boolean;
+  preauthorize?: boolean;
   redirect_url: string;
   client_ip: string;
-  device_fingerprint: string;
+  device_fingerprint?: string;
   meta: {
-    flightID: string;
-    sideNote: string;
-  };
-  authorization: {
-    mode: string;
-    pin: number;
-    city: string;
-    address: string;
-    state: string;
-    country: string;
-    zipcode: number;
+    flightID?: string;
+    sideNote?: string;
+    authorization?: {
+      mode: string;
+      pin?: number;
+      city?: string;
+      address?: string;
+      state?: string;
+      country?: string;
+      zipcode?: number;
+    };
   };
 }
