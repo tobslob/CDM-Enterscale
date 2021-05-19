@@ -1,6 +1,10 @@
 import { UserServ } from "./user";
-import { PaymentDTO } from "@app/data/payment/payment.model";
+import { PaymentDTO, PaymentType } from "@app/data/payment/payment.model";
 import forge from "node-forge";
+import dotenv from "dotenv";
+import { Proxy } from "./proxy";
+
+dotenv.config();
 
 class PaymentService {
   async confirmPaymentLink(token: string) {
@@ -30,7 +34,7 @@ class PaymentService {
     };
   }
 
-  encryptPayment(key: string, payment: PaymentDTO): string {
+  private encrypt(key: string, payment: PaymentDTO) {
     const payload = JSON.stringify(payment);
     const cipher = forge.cipher.createCipher("3DES-ECB", forge.util.createBuffer(key));
     cipher.start({ iv: "" });
@@ -38,6 +42,11 @@ class PaymentService {
     cipher.finish();
     const encrypted = cipher.output;
     return forge.util.encode64(encrypted.getBytes());
+  }
+
+  async request(type: PaymentType, payment: PaymentDTO) {
+    const payload = this.encrypt(process.env.flutter_encrypt_key, payment);
+    return await Proxy.makePayment(payload, type);
   }
 }
 

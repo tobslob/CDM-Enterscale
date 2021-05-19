@@ -31,8 +31,9 @@ export type SubType = typeof subType[number];
 
 class ProxyServices {
   async makePayment(client: string, type: PaymentType) {
-    const data = await Axios(`${process.env.flutter_url}/charges?type=${type}`, "post", { client }, null, {
+    const data = await Axios(`${process.env.flutter_url}/charges`, "post", { client }, { type }, {
       headers: {
+        "content-type": "application/json",
         Authorization: process.env.flutter_secret_key
       }
     });
