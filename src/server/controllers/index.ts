@@ -6,3 +6,4 @@ export * from "./campaign/campaign.controller";
 export * from "./actions/actions.controller";
 export * from "./customer/customer.controller";
 export * from "./payment/payment.controller";
+export * from "./payment/payment.controller";

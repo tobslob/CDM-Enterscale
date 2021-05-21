@@ -30,11 +30,22 @@ export type CustomAudienceType = typeof customAudience[number];
 export type SubType = typeof subType[number];
 
 class ProxyServices {
-  async makePayment(client: string, type: PaymentType) {
-    const data = await Axios(`${process.env.flutter_url}/charges`, "post", { client }, { type }, {
+  async makePayment(client: string, _type: PaymentType) {
+    const data = await Axios(`${process.env.flutter_url}/charges?type=card`, "post", { client }, null, {
       headers: {
         "content-type": "application/json",
-        Authorization: process.env.flutter_secret_key
+        Authorization: `Bearer ${process.env.flutter_secret_key}`
+      }
+    });
+
+    return data;
+  }
+
+  async validatePayment(client: string, _type: PaymentType) {
+    const data = await Axios(`${process.env.flutter_url}/charges?type=card`, "post", { client }, null, {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${process.env.flutter_secret_key}`
       }
     });
 
@@ -53,7 +64,7 @@ class ProxyServices {
         access_token: process.env.fb_access_token
       }
     );
-    return response.data;
+    return response;
   }
 
   async uploadCustomFile(req: Request, query: DefaulterQuery, audience_id: string) {

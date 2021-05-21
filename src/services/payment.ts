@@ -3,6 +3,7 @@ import { PaymentDTO, PaymentType } from "@app/data/payment/payment.model";
 import forge from "node-forge";
 import dotenv from "dotenv";
 import { Proxy } from "./proxy";
+import { uuid } from "@app/data/util";
 
 dotenv.config();
 
@@ -44,9 +45,14 @@ class PaymentService {
     return forge.util.encode64(encrypted.getBytes());
   }
 
-  async request(type: PaymentType, payment: PaymentDTO) {
+  async authorisePayment(type: PaymentType, payment: PaymentDTO) {
     const payload = this.encrypt(process.env.flutter_encrypt_key, payment);
     return await Proxy.makePayment(payload, type);
+  }
+
+  async request(type: PaymentType, payment: PaymentDTO) {
+    payment = { ...payment, tx_ref: `Mooyi-${uuid.default()}` };
+    return this.authorisePayment(type, payment);
   }
 }
 

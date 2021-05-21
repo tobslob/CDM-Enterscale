@@ -28,7 +28,7 @@ export interface PaymentDTO {
     flightID?: string;
     sideNote?: string;
     authorization?: {
-      mode: string;
+      mode?: string;
       pin?: number;
       city?: string;
       address?: string;
