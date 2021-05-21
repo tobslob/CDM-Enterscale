@@ -14,6 +14,6 @@ export async function Axios(url: string, method: methodType, data?: any, params?
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.message);
+    throw new Error(error.response);
   }
 }

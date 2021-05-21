@@ -1,9 +1,16 @@
 import { UserServ } from "./user";
+import { PaymentDTO, PaymentType } from "@app/data/payment/payment.model";
+import forge from "node-forge";
+import dotenv from "dotenv";
+import { Proxy } from "./proxy";
+import { uuid } from "@app/data/util";
+
+dotenv.config();
 
 class PaymentService {
   async confirmPaymentLink(token: string) {
     const value = await UserServ.viewSessionToken(token);
-    return this.pick(value)
+    return this.pick(value);
   }
 
   private async pick(value: any) {
@@ -26,6 +33,26 @@ class PaymentService {
       status: value.status,
       ...value._doc
     };
+  }
+
+  private encrypt(key: string, payment: PaymentDTO) {
+    const payload = JSON.stringify(payment);
+    const cipher = forge.cipher.createCipher("3DES-ECB", forge.util.createBuffer(key));
+    cipher.start({ iv: "" });
+    cipher.update(forge.util.createBuffer(payload, "utf8"));
+    cipher.finish();
+    const encrypted = cipher.output;
+    return forge.util.encode64(encrypted.getBytes());
+  }
+
+  async authorisePayment(type: PaymentType, payment: PaymentDTO) {
+    const payload = this.encrypt(process.env.flutter_encrypt_key, payment);
+    return await Proxy.makePayment(payload, type);
+  }
+
+  async request(type: PaymentType, payment: PaymentDTO) {
+    payment = { ...payment, tx_ref: `Mooyi-${uuid.default()}` };
+    return this.authorisePayment(type, payment);
   }
 }
 

@@ -37,13 +37,13 @@ export interface CampaignDTO {
   name?: string;
   subject?: string;
   description?: string;
-  channel: Channel;
+  channel?: Channel;
   amount?: number;
   frequency?: Frequency;
   start_date?: Date;
   end_date?: Date;
-  target_audience: string;
-  message: string;
+  target_audience?: string;
+  message?: string;
   organisation?: string;
   subtype?: SubType;
   customer_file_source?: CustomAudienceType;
