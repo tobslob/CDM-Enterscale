@@ -73,7 +73,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpDelete("/", canCreateDefaulters, validate(isIDs))
+  @httpDelete("/", canCreateDefaulters, validate(isIDs, "query"))
   async deleteDefaulters(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
     try {
       const workspace = req.session.workspace;
@@ -95,7 +95,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPatch("/:id", canCreateDefaulters, validate(isDefaulterDTO))
+  @httpPatch("/:id", canCreateDefaulters, validate(isDefaulterDTO, "body"))
   async editDefaulters(
     @request() req: Request,
     @response() res: Response,

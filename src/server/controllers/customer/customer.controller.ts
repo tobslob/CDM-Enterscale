@@ -12,7 +12,7 @@ type ControllerResponse = ExtractedDefaulter[] | Defaulters[] | Defaulters | Cus
 
 @controller("/customers")
 export class CustomerController extends BaseController<ControllerResponse> {
-  @httpDelete("/", canCreateDefaulters, validate(isDefaulterQuery))
+  @httpDelete("/", canCreateDefaulters, validate(isDefaulterQuery, "query"))
   async deleteCustomerList(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
     try {
       const workspace = req.session.workspace;

@@ -24,7 +24,7 @@ type ControllerResponse = Campaign[] | Campaign | SendMessageResponse | any;
 
 @controller("/campaigns")
 export class CampaignController extends BaseController<ControllerResponse> {
-  @httpPost("/", canCreateCampaign, validate(isCampaignDTO))
+  @httpPost("/", canCreateCampaign, validate(isCampaignDTO, "body"))
   async createCampaign(@request() req: Request, @response() res: Response, @requestBody() body: CampaignDTO) {
     try {
       const workspace = req.session.workspace;
@@ -53,7 +53,7 @@ export class CampaignController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpGet("/", canCreateCampaign, validate(isCampaignQuery))
+  @httpGet("/", canCreateCampaign, validate(isCampaignQuery, "query"))
   async getCampaigns(@request() req: Request, @response() res: Response, @queryParam() query: CampaignQuery) {
     try {
       const workspace = req.session.workspace;
@@ -77,7 +77,7 @@ export class CampaignController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpDelete("/", canCreateCampaign, validate(isIDs))
+  @httpDelete("/", canCreateCampaign, validate(isIDs, "query"))
   async deleteCampaign(@request() req: Request, @response() res: Response, @queryParam() query: CampaignQuery) {
     try {
       const workspace = req.session.workspace;
@@ -98,7 +98,7 @@ export class CampaignController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPatch("/:id", canCreateCampaign, validate(isCampaignDTO))
+  @httpPatch("/:id", canCreateCampaign, validate(isCampaignDTO, "body"))
   async editCampaign(
     @request() req: Request,
     @response() res: Response,

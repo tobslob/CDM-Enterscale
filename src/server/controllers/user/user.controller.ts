@@ -23,7 +23,7 @@ import { ForbiddenError } from "@random-guys/siber";
 
 @controller("/users")
 export class UserController extends BaseController<User> {
-  @httpPost("/", canCreateUser, validate(isUserDTO))
+  @httpPost("/", canCreateUser, validate(isUserDTO, "body"))
   async CreateUser(@request() req: Request, @response() res: Response, @requestBody() body: UserDTO) {
     try {
       const workspace = req.session.workspace;
@@ -55,7 +55,7 @@ export class UserController extends BaseController<User> {
     }
   }
 
-  @httpPatch("/change-password", Auth.authCheck, validate(isPasswordDTO))
+  @httpPatch("/change-password", Auth.authCheck, validate(isPasswordDTO, "body"))
   async ChangePassword(@request() req: Request, @response() res: Response, @requestBody() body: PasswordDTO) {
     try {
       const user = await UserRepo.byID(req.session.user);
@@ -93,7 +93,7 @@ export class UserController extends BaseController<User> {
     }
   }
 
-  @httpPut("/", Auth.authCheck, validate(isEditUserDTO))
+  @httpPut("/", Auth.authCheck, validate(isEditUserDTO, "body"))
   async editUser(@request() req: Request, @response() res: Response, @requestBody() body: UserDTO) {
     try {
       const user = await UserServ.editUser(req.session.user, body);

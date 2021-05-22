@@ -2,13 +2,14 @@ import Joi, { SchemaLike } from "@hapi/joi";
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { UNPROCESSABLE_ENTITY } from "http-status-codes";
 
-export function validate(schema: SchemaLike): RequestHandler {
+export const typeOfReq = <const>["body", "params", "query"];
+export type TypeOfReq = typeof typeOfReq[number];
+
+export function validate(schema: SchemaLike, type: TypeOfReq): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!schema) return next();
 
-    const { body, params, query } = req;
-
-    Joi.validate({ ...body, ...params, ...query }, schema, {
+    Joi.validate(req[type], schema, {
       abortEarly: false,
       stripUnknown: true,
       allowUnknown: true

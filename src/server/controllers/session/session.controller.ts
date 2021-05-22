@@ -10,7 +10,7 @@ import { BaseController } from "@app/data/util";
 
 @controller("/sessions")
 export class SessionController extends BaseController<Session> {
-  @httpPost("/login", validate(isLoginDTO))
+  @httpPost("/login", validate(isLoginDTO, "body"))
   async Login(@request() req: Request, @response() res: Response, @requestBody() body: LoginDTO) {
     try {
       const user = await UserRepo.getAuthenticatedUser(body.email_address, body.password);
