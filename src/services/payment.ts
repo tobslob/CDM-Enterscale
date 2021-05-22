@@ -51,7 +51,7 @@ class PaymentService {
   }
 
   async request(type: PaymentType, payment: PaymentDTO) {
-    payment = { ...payment, tx_ref: `Mooyi-${uuid.default()}` };
+    payment["tx_ref"] = `Mooyi-${uuid.default()}`;
     return this.authorisePayment(type, payment);
   }
 }

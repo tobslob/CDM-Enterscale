@@ -60,7 +60,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPost("/", canCreateCampaign, validate(isDefaulterQuery), validate(isCampaign))
+  @httpPost("/", canCreateCampaign, validate(isDefaulterQuery, "query"), validate(isCampaign, "body"))
   async sendInstantMessage(
     @request() req: Request,
     @response() res: Response,

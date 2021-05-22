@@ -1,6 +1,10 @@
 import { JoiValidator } from "@app/data/util/validate";
 import joi from "@hapi/joi";
 
+export const isTypeOfPayment = joi.object({
+  type: JoiValidator.validateString().valid("card", "ussd", "bank_transfer", "debit_ng_account").required()
+});
+
 const isAuthorization = joi.object({
   mode: JoiValidator.validateString().valid("pin", "avs_noauth", "avs"),
   pin: joi.when("mode", {
@@ -27,7 +31,7 @@ const isAuthorization = joi.object({
     is: "avs",
     then: joi.string().required()
   })
-})
+});
 
 export const isPayment = joi.object({
   amount: JoiValidator.validateNumber().required(),
@@ -46,3 +50,9 @@ export const isPayment = joi.object({
   fullname: JoiValidator.validateString().required(),
   authorization: isAuthorization
 });
+
+export const isOTP = joi.object({
+  otp: JoiValidator.validateString().required(),
+  flw_ref: JoiValidator.validateString().required(),
+  type: JoiValidator.validateString()
+})

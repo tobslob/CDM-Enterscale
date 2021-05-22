@@ -1,10 +1,11 @@
 import { controller, httpPost, request, response, requestBody, queryParam } from "inversify-express-utils";
 import { BaseController, ForbiddenError, validate } from "@app/data/util";
 import { Request, Response } from "express";
-import { Token, PaymentDTO, PaymentType } from "@app/data/payment/payment.model";
+import { Token, PaymentDTO, PaymentType, ValidatePaymentDTO } from "@app/data/payment/payment.model";
 import { Payment } from "@app/services/payment";
 import { SessionRequest } from "@app/data/user";
-import { isPayment } from "./payment.validator";
+import { isPayment, isTypeOfPayment, isOTP } from "./payment.validator";
+import { Proxy } from "@app/services/proxy";
 
 type ControllerResponse = SessionRequest;
 
@@ -33,7 +34,7 @@ export class PaymentController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPost("/", validate(isPayment))
+  @httpPost("/", validate(isTypeOfPayment, "query"), validate(isPayment, "body"))
   async createRePayment(
     @request() req: Request,
     @response() res: Response,
@@ -48,7 +49,7 @@ export class PaymentController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPost("/authorise", validate(isPayment))
+  @httpPost("/authorise", validate(isTypeOfPayment, "query"), validate(isPayment, "body"))
   async authorisePayment(
     @request() req: Request,
     @response() res: Response,
@@ -57,7 +58,21 @@ export class PaymentController extends BaseController<ControllerResponse> {
   ) {
     try {
       const payment = await Payment.authorisePayment(type, body);
-      this.handleSuccess(req, res, payment.meta.authorization);
+      this.handleSuccess(req, res, payment.data);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPost("/validate-otp", validate(isOTP, "body"))
+  async validatePayment(
+    @request() req: Request,
+    @response() res: Response,
+    @requestBody() body: ValidatePaymentDTO
+  ) {
+    try {
+      const payment = await Proxy.validatePayment(body);
+      this.handleSuccess(req, res, payment.data);
     } catch (error) {
       this.handleError(req, res, error);
     }
