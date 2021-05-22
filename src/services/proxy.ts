@@ -5,7 +5,7 @@ import { Defaulter } from "./defaulter";
 import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
 import { Request } from "express";
 import uuid from "uuid/v4";
-import { PaymentType } from "@app/data/payment/payment.model";
+import { ValidatePaymentDTO } from "@app/data/payment";
 dotenv.config();
 
 export const customAudience = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
@@ -30,24 +30,39 @@ export type CustomAudienceType = typeof customAudience[number];
 export type SubType = typeof subType[number];
 
 class ProxyServices {
-  async makePayment(client: string, _type: PaymentType) {
-    const data = await Axios(`${process.env.flutter_url}/charges?type=card`, "post", { client }, null, {
-      headers: {
-        "content-type": "application/json",
-        Authorization: `Bearer ${process.env.flutter_secret_key}`
+  async makePayment(client: string, type: string) {
+    const data = await Axios(
+      `${process.env.flutter_url}/charges`,
+      "post",
+      { client },
+      {
+        params: type,
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${process.env.flutter_secret_key}`
+        }
       }
-    });
+    );
 
     return data;
   }
 
-  async validatePayment(client: string, _type: PaymentType) {
-    const data = await Axios(`${process.env.flutter_url}/charges?type=card`, "post", { client }, null, {
-      headers: {
-        "content-type": "application/json",
-        Authorization: `Bearer ${process.env.flutter_secret_key}`
+  async validatePayment(payment: ValidatePaymentDTO) {
+    const data = await Axios(
+      `${process.env.flutter_url}/validate-charge`,
+      "post",
+      {
+        otp: payment.otp,
+        flw_ref: payment.flw_ref,
+        type: payment.type
+      },
+      {
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${process.env.flutter_secret_key}`
+        }
       }
-    });
+    );
 
     return data;
   }

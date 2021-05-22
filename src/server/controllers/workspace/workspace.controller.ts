@@ -10,7 +10,7 @@ import { canCreateWorkspace } from "./workspace.middleware";
 
 @controller("/workspaces")
 export class WorkspaceController extends BaseController<Workspace> {
-  @httpPost("/", canCreateWorkspace, validate(isWorkspaceWihAdminDTO))
+  @httpPost("/", canCreateWorkspace, validate(isWorkspaceWihAdminDTO, "body"))
   async CreateWorkspaceWithAdmin(
     @request() req: Request,
     @response() res: Response,
@@ -31,7 +31,7 @@ export class WorkspaceController extends BaseController<Workspace> {
     }
   }
 
-  @httpGet("/:id", canCreateWorkspace, validate(isValidID))
+  @httpGet("/:id", canCreateWorkspace, validate(isValidID, "params"))
   async GetWorkspace(
     @request() req: Request,
     @response() res: Response,

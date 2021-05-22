@@ -2,12 +2,8 @@ export interface Token {
   token: string;
 }
 
-export enum PaymentType {
-  CARD = "card",
-  BANK_TRANSFER = "bank_transfer",
-  USSD = "ussd",
-  DEBIT_NG_ACCOUNT = "debit_ng_account"
-}
+export const paymentType = <const>["card", "bank_transfer", "ussd", "debit_ng_account"];
+export type PaymentType = typeof paymentType[number]
 
 export interface PaymentDTO {
   amount: number;
@@ -37,4 +33,10 @@ export interface PaymentDTO {
       zipcode?: number;
     };
   };
+}
+
+export interface ValidatePaymentDTO {
+  otp: string;
+  flw_ref: string;
+  type?: string;
 }
