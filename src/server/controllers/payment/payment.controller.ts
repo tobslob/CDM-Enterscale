@@ -1,11 +1,15 @@
 import { controller, httpPost, request, response, requestBody, queryParam } from "inversify-express-utils";
 import { BaseController, ForbiddenError, validate } from "@app/data/util";
 import { Request, Response } from "express";
-import { Token, PaymentDTO, PaymentType, ValidatePaymentDTO } from "@app/data/payment/payment.model";
+import { Token, PaymentDTO, PaymentType, ValidatePaymentDTO, PaymentHookDTO } from "@app/data/payment/payment.model";
 import { Payment } from "@app/services/payment";
 import { SessionRequest } from "@app/data/user";
 import { isPayment, isTypeOfPayment, isOTP } from "./payment.validator";
 import { Proxy } from "@app/services/proxy";
+import { PaymentRepo } from "@app/data/payment";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 type ControllerResponse = SessionRequest;
 
@@ -65,16 +69,29 @@ export class PaymentController extends BaseController<ControllerResponse> {
   }
 
   @httpPost("/validate-otp", validate(isOTP, "body"))
-  async validatePayment(
-    @request() req: Request,
-    @response() res: Response,
-    @requestBody() body: ValidatePaymentDTO
-  ) {
+  async validatePayment(@request() req: Request, @response() res: Response, @requestBody() body: ValidatePaymentDTO) {
     try {
       const payment = await Proxy.validatePayment(body);
       this.handleSuccess(req, res, payment.data);
     } catch (error) {
       this.handleError(req, res, error);
+    }
+  }
+
+  @httpPost("/webhook")
+  async paymentWebhook(@request() req: Request, @response() res: Response, @requestBody() body: PaymentHookDTO) {
+    try {
+      const hash = req.headers["verif-hash"];
+      if (!hash) return;
+
+      if (hash !== process.env.secret_hash) {
+        throw new Error("You are not authorized to call this endpoint");
+      }
+
+      await PaymentRepo.webhook(body);
+      res.send(200);
+    } catch (error) {
+      res.send(400);
     }
   }
 }
