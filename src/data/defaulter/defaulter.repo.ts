@@ -78,7 +78,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     await DefaulterRepo.destroy(defaulter.id);
   }
 
-  async editDefulter(workspace: string, id: string, defaulter: Defaulters) {
+  async editDefulter(workspace: string, id: string, defaulter: any) {
     return this.atomicUpdate(
       {
         _id: id,
