@@ -3,11 +3,12 @@ import { BaseController, ForbiddenError, validate } from "@app/data/util";
 import { Request, Response } from "express";
 import { Token, PaymentDTO, PaymentType, ValidatePaymentDTO, PaymentHookDTO } from "@app/data/payment/payment.model";
 import { Payment } from "@app/services/payment";
-import { SessionRequest } from "@app/data/user";
+import { SessionRequest, UserRepo } from "@app/data/user";
 import { isPayment, isTypeOfPayment, isOTP } from "./payment.validator";
 import { Proxy } from "@app/services/proxy";
 import { PaymentRepo } from "@app/data/payment";
 import dotenv from "dotenv";
+import { DefaulterRepo } from "@app/data/defaulter";
 
 dotenv.config();
 
@@ -83,12 +84,27 @@ export class PaymentController extends BaseController<ControllerResponse> {
     try {
       const hash = req.headers["verif-hash"];
       if (!hash) return;
-
       if (hash !== process.env.secret_hash) {
         throw new Error("You are not authorized to call this endpoint");
       }
 
       await PaymentRepo.webhook(body);
+
+      if (body.data.amount > 0) {
+        const user = await UserRepo.byQuery({
+          email_address: body.data.customer.email,
+          phone_number: body.data.customer.phone_number
+        });
+        const defaulter = await DefaulterRepo.byQuery({ workspace: user.workspace, user: user.id });
+        const amount_outstanding = defaulter.amount_outstanding - body.data.amount;
+        const amount_repaid = defaulter.loan_amount - amount_outstanding;
+
+        defaulter["amount_outstanding"] = amount_outstanding;
+        defaulter["amount_repaid"] = amount_repaid;
+
+        await DefaulterRepo.editDefulter(defaulter.workspace, defaulter.id, defaulter);
+      }
+
       res.send(200);
     } catch (error) {
       res.send(400);
