@@ -68,9 +68,8 @@ class CampaignService {
   }
 
   private async voice(campaign: CampaignDTO, phone_numbers: string[]) {
-    const call = await Proxy.voice(phone_numbers);
     await Store.hset(VOICE_CAMPAIGN, "campaign_key", JSON.stringify(campaign));
-    return call;
+    return await Proxy.voice(phone_numbers);
   }
 
   protected async facebook(req: Request, query: DefaulterQuery, campaign: CampaignDTO) {
