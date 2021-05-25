@@ -1,6 +1,5 @@
 import AdapterInstance from "@app/server/adapter/mail";
 import { CampaignDTO } from "@app/data/campaign";
-import { User } from "@app/data/user";
 import dotenv from "dotenv";
 import { NotFoundError } from "@app/data/util";
 import { Proxy } from "@app/services/proxy";
@@ -68,14 +67,8 @@ class CampaignService {
     return smsResponse;
   }
 
-  private async voice(campaign: CampaignDTO, user: User) {
-    const voice = await connect.VOICE;
-
-    const call = await voice.call({
-      callFrom: process.env.phone_number,
-      callTo: user.phone_number
-    });
-
+  private async voice(campaign: CampaignDTO, phone_numbers: string[]) {
+    const call = await Proxy.voice(phone_numbers);
     await Store.hset(VOICE_CAMPAIGN, "campaign_key", JSON.stringify(campaign));
     return call;
   }

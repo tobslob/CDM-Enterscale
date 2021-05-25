@@ -67,6 +67,28 @@ class ProxyServices {
     return data;
   }
 
+  async voice(recipient: Array<string>) {
+    const data = await Axios(
+      `${process.env.kirusa_url}/${process.env.kirusa_account_id}/Calls`,
+      "post",
+      {
+        id: `Mooyi-${uuid()}`,
+        caller_id: `${process.env.kirusa_caller_id}`,
+        recipient,
+        direction: "outbound",
+        doc_url: "https://enterscale.herokuapp.com/api/v1/actions/voice",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.kirusa_api_token}`
+        }
+      }
+    );
+
+    return data;
+  }
+
   async createCustomAudience(campaign: CampaignDTO) {
     const response = await Axios(
       `${process.env.fb_graph_url}/v10.0/act_${process.env.fb_account_id}/customaudiences`,

@@ -16,7 +16,6 @@ import { CampaignServ, VOICE_CAMPAIGN, SMS_CAMPAIGN, EMAIL_CAMPAIGN } from "@app
 import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
 import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
-import { Voice, VoiceRepo } from "@app/data/voice";
 import { Store } from "@app/common/services";
 import { SMSReportsDTO, SMSReportRepo } from "@app/data/sms";
 import { isDefaulterQuery } from "../defaulter/defaulter.validator";
@@ -72,13 +71,24 @@ export class ActionsController extends BaseController<ControllerResponse> {
       const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
       const users = await Defaulter.getDefaultUsers(defaulters);
 
-      const data = await mapConcurrently(users, async u => {
-        if (u.status !== "completed") {
-          return await CampaignServ.send(body, u, req);
-        }
-      });
+      if (body.channel === "CALL") {
+        const phone_numbers = await mapConcurrently(users, async u => {
+          if (u.status !== "paid") {
+            return u.phone_number;
+          }
+        });
+        await CampaignServ.send(body, phone_numbers, req);
 
-      this.handleSuccess(req, res, data);
+        this.handleSuccess(req, res, []);
+      } else {
+        await mapConcurrently(users, async u => {
+          if (u.status !== "paid") {
+            return await CampaignServ.send(body, u, req);
+          }
+        });
+
+        this.handleSuccess(req, res, []);
+      }
       this.log(req, {
         activity: "send.instant.campaign",
         message: `Sent out ${body.channel} campaign`,
@@ -89,19 +99,24 @@ export class ActionsController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPost("/voice")
-  async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: Voice) {
+  @httpGet("/voice")
+  async voiceReport(@request() req: Request, @response() res: Response) {
     try {
       const campaign = await Store.hget(VOICE_CAMPAIGN, "campaign_key");
 
       if (campaign == null) {
         return null;
       }
+
       const objCampaign: CampaignDTO = JSON.parse(campaign);
 
-      const data = `<Response><Say voice="man" playBeep="true">${objCampaign.message}</Say></Response>`;
+      const data = `<?xml version="1.0" encoding="UTF-8"?>
+      <Response id="r1">
+      <Read>
+      ${objCampaign.message}
+      </Read>
+      </Response>`;
 
-      await VoiceRepo.createVoice(body);
       await Store.del(VOICE_CAMPAIGN, "campaign_key");
       return data;
     } catch (error) {

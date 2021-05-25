@@ -72,7 +72,7 @@ export async function job() {
     });
 
     await mapConcurrently(defaulters, async d => {
-      if (d.status !== "completed") {
+      if (d.status !== "paid") {
         const user = await UserRepo.byID(d.user);
         await CampaignServ.send(c, user);
       }
