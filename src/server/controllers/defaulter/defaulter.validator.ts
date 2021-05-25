@@ -18,7 +18,14 @@ export const isDefaulterDTO = joi.object({
   loan_tenure: JoiValidator.validateNumber(),
   days_in_default: JoiValidator.validateNumber(),
   amount_repaid: JoiValidator.validateNumber(),
-  amount_outstanding: JoiValidator.validateNumber()
+  amount_outstanding: JoiValidator.validateNumber(),
+  first_name: JoiValidator.validateString(),
+  last_name: JoiValidator.validateString(),
+  email_address: JoiValidator.validateString(),
+  DOB: JoiValidator.validateString(),
+  gender: JoiValidator.validateString(),
+  location: JoiValidator.validateString(),
+  phone_number: JoiValidator.validPhoneNumber()
 });
 
 export const isIDs = joi.object({

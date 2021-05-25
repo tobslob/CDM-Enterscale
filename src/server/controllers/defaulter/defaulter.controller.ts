@@ -18,6 +18,7 @@ import { Defaulter } from "@app/services/defaulter";
 import { DefaulterRepo, Defaulters, DefaulterQuery, DefaulterDTO } from "@app/data/defaulter";
 import { isDefaulterDTO, isIDs } from "./defaulter.validator";
 import { CustomerRepo } from "@app/data/customer-list/customer-list.repo";
+import { UserServ } from "@app/services/user";
 
 type ControllerResponse = ExtractedDefaulter[] | Defaulters[] | Defaulters;
 
@@ -105,6 +106,16 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     try {
       const workspace = req.session.workspace;
       const defaulter = await DefaulterRepo.editDefulter(workspace, id, body);
+      // @ts-ignore
+      await UserServ.editUser(defaulter.user, {
+        first_name: body.first_name,
+        last_name: body.last_name,
+        email_address: body.email_address,
+        DOB: body.DOB,
+        gender: body.gender,
+        location: body.location,
+        phone_number: body.phone_number
+      });
 
       this.handleSuccess(req, res, defaulter);
 
