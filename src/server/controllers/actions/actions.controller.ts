@@ -27,80 +27,8 @@ type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
 
 @controller("/actions")
 export class ActionsController extends BaseController<ControllerResponse> {
-  @httpGet("/:id", canCreateCampaign)
-  async startOrStopCampaign(@request() req: Request, @response() res: Response, @requestParam("id") id: string) {
-    try {
-      const campaign = await CampaignRepo.byID(id);
-
-      if (campaign.status == "STOP") {
-        const diff = differenceInCalendarDays(campaign.end_date, campaign.start_date);
-        if (diff < 1) {
-          throw new ConstraintError("The end date must at least be a day after start date");
-        }
-
-        await CampaignRepo.startCampaign(id);
-        this.log(req, {
-          object_id: campaign.id,
-          activity: "start.campaign",
-          message: "Started a campaign",
-          channel: campaign.channel
-        });
-      } else {
-        await CampaignRepo.stopCampaign(id);
-        this.log(req, {
-          object_id: campaign.id,
-          activity: "stop.campaign",
-          message: "Stopped a campaign",
-          channel: campaign.channel
-        });
-      }
-    } catch (error) {
-      this.handleError(req, res, error);
-    }
-  }
-
-  @httpPost("/", canCreateCampaign, validate(isDefaulterQuery, "query"), validate(isCampaign, "body"))
-  async sendInstantMessage(
-    @request() req: Request,
-    @response() res: Response,
-    @queryParam() query: DefaulterQuery,
-    @requestBody() body: CampaignDTO
-  ) {
-    try {
-      const workspace = req.session.workspace;
-      const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
-      const users = await Defaulter.getDefaultUsers(defaulters);
-
-      if (body.channel === "CALL") {
-        const phone_numbers = await mapConcurrently(users, async u => {
-          if (u.status !== "paid") {
-            return u.phone_number;
-          }
-        });
-        await CampaignServ.send(body, phone_numbers, req);
-
-        this.handleSuccess(req, res, []);
-      } else {
-        await mapConcurrently(users, async u => {
-          if (u.status !== "paid") {
-            return await CampaignServ.send(body, u, req);
-          }
-        });
-
-        this.handleSuccess(req, res, []);
-      }
-      this.log(req, {
-        activity: "send.instant.campaign",
-        message: `Sent out ${body.channel} campaign`,
-        channel: body.channel
-      });
-    } catch (error) {
-      this.handleError(req, res, error);
-    }
-  }
-
   @httpGet("/voice")
-  async voiceReport(@request() req: Request, @response() res: Response) {
+  async voiceKML(@request() req: Request, @response() res: Response) {
     try {
       const campaign = await Store.hget(VOICE_CAMPAIGN, "campaign_key");
 
@@ -169,6 +97,78 @@ export class ActionsController extends BaseController<ControllerResponse> {
       });
 
       await Store.del(EMAIL_CAMPAIGN, "email_key");
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpGet("/:id", canCreateCampaign)
+  async startOrStopCampaign(@request() req: Request, @response() res: Response, @requestParam("id") id: string) {
+    try {
+      const campaign = await CampaignRepo.byID(id);
+
+      if (campaign.status == "STOP") {
+        const diff = differenceInCalendarDays(campaign.end_date, campaign.start_date);
+        if (diff < 1) {
+          throw new ConstraintError("The end date must at least be a day after start date");
+        }
+
+        await CampaignRepo.startCampaign(id);
+        this.log(req, {
+          object_id: campaign.id,
+          activity: "start.campaign",
+          message: "Started a campaign",
+          channel: campaign.channel
+        });
+      } else {
+        await CampaignRepo.stopCampaign(id);
+        this.log(req, {
+          object_id: campaign.id,
+          activity: "stop.campaign",
+          message: "Stopped a campaign",
+          channel: campaign.channel
+        });
+      }
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPost("/", canCreateCampaign, validate(isDefaulterQuery, "query"), validate(isCampaign, "body"))
+  async sendInstantMessage(
+    @request() req: Request,
+    @response() res: Response,
+    @queryParam() query: DefaulterQuery,
+    @requestBody() body: CampaignDTO
+  ) {
+    try {
+      const workspace = req.session.workspace;
+      const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
+      const users = await Defaulter.getDefaultUsers(defaulters);
+
+      if (body.channel === "CALL") {
+        const phone_numbers = await mapConcurrently(users, async u => {
+          if (u.status !== "paid") {
+            return u.phone_number;
+          }
+        });
+        await CampaignServ.send(body, phone_numbers, req);
+
+        this.handleSuccess(req, res, []);
+      } else {
+        await mapConcurrently(users, async u => {
+          if (u.status !== "paid") {
+            return await CampaignServ.send(body, u, req);
+          }
+        });
+
+        this.handleSuccess(req, res, []);
+      }
+      this.log(req, {
+        activity: "send.instant.campaign",
+        message: `Sent out ${body.channel} campaign`,
+        channel: body.channel
+      });
     } catch (error) {
       this.handleError(req, res, error);
     }
