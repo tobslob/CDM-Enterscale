@@ -93,7 +93,7 @@ class ExtractionService {
           gender: row[13]?.trim(),
           location: row[14],
           batch_id,
-          status: "owning"
+          status: "owing"
         });
       });
 

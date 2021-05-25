@@ -2,7 +2,7 @@ import { Model } from "@random-guys/bucket";
 import { PaginationQuery } from "../util";
 import { Gender } from "../user";
 
-export const status = <const>["owning", "paid"];
+export const status = <const>["owing", "paid"];
 export type StatusType = typeof status[number];
 
 export interface Defaulters extends Model {

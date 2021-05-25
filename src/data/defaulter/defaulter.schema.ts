@@ -18,7 +18,7 @@ export const DefaulterSchema = new Schema(
     user: { ...trimmedString, required: true, unique: true, index: true },
     batch_id: { ...trimmedString, index: true },
     role_id: { ...trimmedString, index: true, required: true },
-    status: { ...trimmedString, index: true, required: true, default: "owning" }
+    status: { ...trimmedString, index: true, required: true, default: "owing" }
   },
   {
     ...readMapper,
