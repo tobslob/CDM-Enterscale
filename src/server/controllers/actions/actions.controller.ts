@@ -12,7 +12,7 @@ import { BaseController, ConstraintError, mapConcurrently, validate } from "@app
 import { Request, Response } from "express";
 import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
-import { CampaignServ, VOICE_CAMPAIGN, SMS_CAMPAIGN, EMAIL_CAMPAIGN } from "@app/services/campaign";
+import { CampaignServ, SMS_CAMPAIGN, EMAIL_CAMPAIGN, VOICE_CAMPAIGN } from "@app/services/campaign";
 import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
 import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
@@ -22,6 +22,9 @@ import { isDefaulterQuery } from "../defaulter/defaulter.validator";
 import { Session } from "@app/data/user";
 import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-report";
 import { isCampaign } from "./actions.validator";
+import xml from "xml2js";
+import fs from "fs";
+import path from "path";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
 
@@ -38,15 +41,27 @@ export class ActionsController extends BaseController<ControllerResponse> {
 
       const objCampaign: CampaignDTO = JSON.parse(campaign);
 
-      const data = `<?xml version="1.0" encoding="UTF-8"?>
-      <Response id="r1">
-      <Read>
-      ${objCampaign.message}
-      </Read>
-      </Response>`;
+      const builder = new xml.Builder({
+        renderOpts: { pretty: false }
+      });
+
+      const xmlResponse = builder.buildObject({
+        Response: {
+          Read: objCampaign.message
+        }
+      });
+
+      const xmldoc = xmlResponse.toString();
 
       await Store.del(VOICE_CAMPAIGN, "campaign_key");
-      return data;
+
+      fs.unlink("./voice.xml", () => {
+        fs.writeFileSync("./voice.xml", xmldoc);
+      });
+
+      const data = await fs.promises.readFile(path.join(__dirname, "/voice.xml"), "utf8");
+      res.setHeader("Content-type", "application/xml");
+      res.send(data);
     } catch (error) {
       this.handleError(req, res, error);
     }
