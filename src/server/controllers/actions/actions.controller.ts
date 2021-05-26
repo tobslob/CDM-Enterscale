@@ -60,7 +60,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
       });
 
       const data = await fs.promises.readFile(path.join(__dirname, "/voice.xml"), "utf8");
-      res.setHeader("Content-type", "application/xml");
+      res.setHeader("Content-type", "text/plain");
       res.send(data);
     } catch (error) {
       this.handleError(req, res, error);
