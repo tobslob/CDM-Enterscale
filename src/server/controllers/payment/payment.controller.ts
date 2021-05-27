@@ -1,10 +1,36 @@
-import { controller, httpPost, request, response, requestBody, queryParam } from "inversify-express-utils";
+import {
+  controller,
+  httpPost,
+  request,
+  response,
+  requestBody,
+  queryParam,
+  httpGet,
+  requestParam,
+  httpPut
+} from "inversify-express-utils";
 import { BaseController, ForbiddenError, validate } from "@app/data/util";
 import { Request, Response } from "express";
-import { Token, PaymentDTO, PaymentType, ValidatePaymentDTO, PaymentHookDTO } from "@app/data/payment/payment.model";
+import {
+  Token,
+  PaymentDTO,
+  PaymentType,
+  ValidatePaymentDTO,
+  PaymentHookDTO,
+  PaymentPlan,
+  PaymentPlanQuery,
+  UpdatePaymentPlan
+} from "@app/data/payment/payment.model";
 import { Payment } from "@app/services/payment";
 import { SessionRequest, UserRepo } from "@app/data/user";
-import { isPayment, isTypeOfPayment, isOTP } from "./payment.validator";
+import {
+  isPayment,
+  isTypeOfPayment,
+  isOTP,
+  isPaymentPlan,
+  isPaymentPlanQuery,
+  isUpdatePaymentPlan
+} from "./payment.validator";
 import { Proxy } from "@app/services/proxy";
 import { PaymentRepo } from "@app/data/payment";
 import dotenv from "dotenv";
@@ -49,6 +75,56 @@ export class PaymentController extends BaseController<ControllerResponse> {
     try {
       const payment = await Payment.request(type, body);
       this.handleSuccess(req, res, payment.meta.authorization);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPost("/plan", validate(isPaymentPlan, "body"))
+  async paymentPlan(@request() req: Request, @response() res: Response, @requestBody() body: PaymentPlan) {
+    try {
+      const payment = await Proxy.createPaymentPlan(body);
+      this.handleSuccess(req, res, payment);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpGet("/plan", validate(isPaymentPlanQuery, "query"))
+  async getPaymentPlans(@request() req: Request, @response() res: Response, @queryParam() query: PaymentPlanQuery) {
+    try {
+      const payment = await Proxy.getPaymentPlans(query);
+      this.handleSuccess(req, res, payment);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPut("/plan", validate(isUpdatePaymentPlan, "body"))
+  async UpdatePaymentPlan(@request() req: Request, @response() res: Response, @requestBody() body: UpdatePaymentPlan) {
+    try {
+      const payment = await Proxy.updatePaymentPlan(body);
+      this.handleSuccess(req, res, payment);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPut("/plan/cancel")
+  async cancelPaymentPlan(@request() req: Request, @response() res: Response, @requestParam() id: string) {
+    try {
+      const payment = await Proxy.cancelPaymentPlan(id);
+      this.handleSuccess(req, res, payment);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpGet("/plan")
+  async getPaymentPlan(@request() req: Request, @response() res: Response, @requestParam() id: string) {
+    try {
+      const payment = await Proxy.getPaymentPlan(id);
+      this.handleSuccess(req, res, payment);
     } catch (error) {
       this.handleError(req, res, error);
     }

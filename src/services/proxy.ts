@@ -5,7 +5,7 @@ import { Defaulter } from "./defaulter";
 import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
 import { Request } from "express";
 import uuid from "uuid/v4";
-import { ValidatePaymentDTO } from "@app/data/payment";
+import { ValidatePaymentDTO, PaymentPlan, PaymentPlanQuery, UpdatePaymentPlan } from "@app/data/payment";
 dotenv.config();
 
 export const customAudience = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
@@ -67,6 +67,88 @@ class ProxyServices {
     return data;
   }
 
+  async createPaymentPlan(payment: PaymentPlan) {
+    const data = await Axios(
+      `${process.env.flutter_url}/payment-plans`,
+      "post",
+      {
+        amount: payment.amount,
+        name: "Loan Repayment Plan",
+        interval: payment.interval,
+        duration: payment.duration
+      },
+      {
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${process.env.flutter_secret_key}`
+        }
+      }
+    );
+
+    return data;
+  }
+
+  async getPaymentPlans(payment: PaymentPlanQuery) {
+    const data = await Axios(`${process.env.flutter_url}/payment-plans`, "get", {
+      params: {
+        amount: payment.amount,
+        currency: payment.currency,
+        from: payment.from,
+        to: payment.to,
+        interval: payment.interval,
+        page: payment.page,
+        status: payment.status
+      },
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${process.env.flutter_secret_key}`
+      }
+    });
+
+    return data;
+  }
+
+  async getPaymentPlan(id: string) {
+    const data = await Axios(`${process.env.flutter_url}/payment-plans/${id}`, "get", {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${process.env.flutter_secret_key}`
+      }
+    });
+
+    return data;
+  }
+
+  async updatePaymentPlan(payment: UpdatePaymentPlan) {
+    const data = await Axios(
+      `${process.env.flutter_url}/payment-plans/${payment.id}`,
+      "put",
+      {
+        name: payment.name,
+        status: payment.status
+      },
+      {
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${process.env.flutter_secret_key}`
+        }
+      }
+    );
+
+    return data;
+  }
+
+  async cancelPaymentPlan(id: string) {
+    const data = await Axios(`${process.env.flutter_url}/payment-plans/${id}/cancel`, "put", {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${process.env.flutter_secret_key}`
+      }
+    });
+
+    return data;
+  }
+
   async voice(recipient: Array<string>) {
     const data = await Axios(
       `${process.env.kirusa_url}/${process.env.kirusa_account_id}/Calls`,
@@ -76,7 +158,7 @@ class ProxyServices {
         caller_id: `${process.env.kirusa_caller_id}`,
         recipient,
         direction: "outbound",
-        doc_url: "https://enterscale.herokuapp.com/api/v1/actions/voice",
+        doc_url: "https://enterscale.herokuapp.com/api/v1/actions/voice"
       },
       {
         headers: {

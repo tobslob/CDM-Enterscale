@@ -1,5 +1,6 @@
 import { JoiValidator } from "@app/data/util/validate";
 import joi from "@hapi/joi";
+import { paymentInterval } from "@app/data/payment";
 
 export const isTypeOfPayment = joi.object({
   type: JoiValidator.validateString().valid("card", "ussd", "bank_transfer", "debit_ng_account").required()
@@ -55,4 +56,28 @@ export const isOTP = joi.object({
   otp: JoiValidator.validateString().required(),
   flw_ref: JoiValidator.validateString().required(),
   type: JoiValidator.validateString()
+});
+
+export const isPaymentPlan = joi.object({
+  amount: JoiValidator.validateNumber().required(),
+  interval: JoiValidator.validateString()
+    .required()
+    .valid(...paymentInterval),
+  duration: JoiValidator.validateNumber().required()
+});
+
+export const isPaymentPlanQuery = joi.object({
+  from: JoiValidator.validDate(),
+  to: JoiValidator.validDate(),
+  page: JoiValidator.validateNumber(),
+  amount: JoiValidator.validateNumber(),
+  currency: JoiValidator.validateString(),
+  interval: JoiValidator.validateNumber(),
+  status: JoiValidator.validateString()
+});
+
+export const isUpdatePaymentPlan = joi.object({
+  id: JoiValidator.validateNumber(),
+  name: JoiValidator.validateString(),
+  status: JoiValidator.validateNumber()
 })
