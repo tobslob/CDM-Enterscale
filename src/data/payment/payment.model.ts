@@ -7,6 +7,9 @@ export interface Token {
 export const paymentType = <const>["card", "bank_transfer", "ussd", "debit_ng_account"];
 export type PaymentType = typeof paymentType[number];
 
+export const paymentInterval = <const>["yearly", "quarterly", "monthly", "weekly", "daily"];
+export type PaymentInterval = typeof paymentInterval[number];
+
 export interface PaymentDTO {
   amount: number;
   currency: string;
@@ -134,4 +137,26 @@ export interface VoiceCallBack {
   media_duration: string;
   key_pressed: string;
   media_url: string;
+}
+
+export interface PaymentPlan {
+  amount: number;
+  interval: PaymentInterval;
+  duration: number;
+}
+
+export interface UpdatePaymentPlan {
+  id: number;
+  name: string;
+  status: number;
+}
+
+export interface PaymentPlanQuery {
+  from?: Date;
+  to?: Date;
+  page?: number;
+  amount?: number;
+  currency?: string;
+  interval?: number;
+  status?: string;
 }
