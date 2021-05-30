@@ -9,7 +9,7 @@ import {
   requestParam,
   httpPut
 } from "inversify-express-utils";
-import { BaseController, ForbiddenError, validate } from "@app/data/util";
+import { BaseController, ForbiddenError, validate, uuid } from "@app/data/util";
 import { Request, Response } from "express";
 import {
   Token,
@@ -29,7 +29,8 @@ import {
   isOTP,
   isPaymentPlan,
   isPaymentPlanQuery,
-  isUpdatePaymentPlan
+  isUpdatePaymentPlan,
+  isToken
 } from "./payment.validator";
 import { Proxy } from "@app/services/proxy";
 import { PaymentRepo } from "@app/data/payment";
@@ -42,7 +43,7 @@ type ControllerResponse = SessionRequest;
 
 @controller("/payments")
 export class PaymentController extends BaseController<ControllerResponse> {
-  @httpPost("/session")
+  @httpPost("/session", validate(isToken, "body"))
   async confirmRepayment(@request() req: Request, @response() res: Response, @requestBody() body: Token) {
     try {
       let value = await Payment.confirmPaymentLink(body.token);
@@ -73,8 +74,11 @@ export class PaymentController extends BaseController<ControllerResponse> {
     @requestBody() body: PaymentDTO
   ) {
     try {
+      body["tx_ref"] = `Mooyi-${uuid.default()}`;
       const payment = await Payment.request(type, body);
-      this.handleSuccess(req, res, payment.meta.authorization);
+
+      const tx_ref = body["tx_ref"];
+      this.handleSuccess(req, res, { ...payment, tx_ref });
     } catch (error) {
       this.handleError(req, res, error);
     }

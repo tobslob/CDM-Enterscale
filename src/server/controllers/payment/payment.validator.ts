@@ -49,7 +49,11 @@ export const isPayment = joi.object({
   email: JoiValidator.validateEmail().required(),
   phone_number: JoiValidator.validPhoneNumber().required(),
   fullname: JoiValidator.validateString().required(),
-  authorization: isAuthorization
+  authorization: isAuthorization,
+  tx_ref: joi.when("authorization", {
+    is: isAuthorization.required(),
+    then: joi.string().required()
+  })
 });
 
 export const isOTP = joi.object({
@@ -80,4 +84,8 @@ export const isUpdatePaymentPlan = joi.object({
   id: JoiValidator.validateNumber(),
   name: JoiValidator.validateString(),
   status: JoiValidator.validateNumber()
-})
+});
+
+export const isToken = joi.object({
+  token: JoiValidator.validateString().required()
+});

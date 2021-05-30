@@ -22,9 +22,6 @@ import { isDefaulterQuery } from "../defaulter/defaulter.validator";
 import { Session } from "@app/data/user";
 import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-report";
 import { isCampaign } from "./actions.validator";
-import xml from "xml2js";
-import fs from "fs";
-import path from "path";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
 
@@ -41,27 +38,15 @@ export class ActionsController extends BaseController<ControllerResponse> {
 
       const objCampaign: CampaignDTO = JSON.parse(campaign);
 
-      const builder = new xml.Builder({
-        renderOpts: { pretty: false }
-      });
-
-      const xmlResponse = builder.buildObject({
-        Response: {
-          Read: objCampaign.message
-        }
-      });
-
-      const xmldoc = xmlResponse.toString();
+      const xmlDoc = `<?xml version="1.0" encoding="UTF-8"?>
+      <Response id="id1">
+      <Read>${objCampaign.message}</Read>
+      </Response>`;
 
       await Store.del(VOICE_CAMPAIGN, "campaign_key");
 
-      fs.unlink("./voice.xml", () => {
-        fs.writeFileSync("./voice.xml", xmldoc);
-      });
-
-      const data = await fs.promises.readFile(path.join(__dirname, "/voice.xml"), "utf8");
-      res.setHeader("Content-type", "text/plain");
-      res.send(data);
+      res.setHeader("Content-type", "application/xml");
+      res.send(xmlDoc);
     } catch (error) {
       this.handleError(req, res, error);
     }

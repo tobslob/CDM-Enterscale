@@ -14,7 +14,7 @@ dotenv.config();
 
 export const VOICE_CAMPAIGN = "enterscale-robo-call";
 export const SMS_CAMPAIGN = "enterscale-sms";
-export const EMAIL_CAMPAIGN = "";
+export const EMAIL_CAMPAIGN = "enterscale-campaign";
 
 class CampaignService {
   async send(campaign: CampaignDTO, user: any, req?: Request) {
