@@ -29,6 +29,7 @@ class PaymentRepository extends BaseRepository<PaymentHook> {
         payment_type: payment.data.payment_type,
         created_at: payment.data.created_at,
         account_id: payment.data.account_id,
+        payment_plan: payment.data.payment_plan,
         customer: {
           customer_id: payment.data.customer.customer_id,
           name: payment.data.customer.name,

@@ -1,7 +1,12 @@
 import { Model } from "@random-guys/bucket";
 
 export interface Token {
+  token: string
+}
+
+export interface PaymentQuery {
   token: string;
+  type: PaymentType;
 }
 
 export const paymentType = <const>["card", "bank_transfer", "ussd", "debit_ng_account"];
@@ -25,6 +30,7 @@ export interface PaymentDTO {
   redirect_url: string;
   client_ip: string;
   device_fingerprint?: string;
+  payment_plan?: string;
   meta: {
     flightID?: string;
     sideNote?: string;
@@ -64,6 +70,7 @@ export interface PaymentHook extends Model {
     narration: string;
     status: string;
     payment_type: PaymentType;
+    payment_plan?: string;
     created_at: Date;
     account_id: number;
     customer: {
@@ -104,6 +111,7 @@ export interface PaymentHookDTO {
     payment_type: PaymentType;
     created_at: Date;
     account_id: number;
+    payment_plan?: string;
     customer: {
       customer_id: number;
       name: string;

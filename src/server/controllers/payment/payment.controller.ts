@@ -19,7 +19,8 @@ import {
   PaymentHookDTO,
   PaymentPlan,
   PaymentPlanQuery,
-  UpdatePaymentPlan
+  UpdatePaymentPlan,
+  PaymentQuery
 } from "@app/data/payment/payment.model";
 import { Payment } from "@app/services/payment";
 import { SessionRequest, UserRepo } from "@app/data/user";
@@ -70,15 +71,30 @@ export class PaymentController extends BaseController<ControllerResponse> {
   async createRePayment(
     @request() req: Request,
     @response() res: Response,
-    @queryParam() type: PaymentType,
+    @queryParam() query: PaymentQuery,
     @requestBody() body: PaymentDTO
   ) {
     try {
+      let value = await Payment.confirmPaymentLink(query.token);
+
+      if (!value) {
+        throw new ForbiddenError("Failed to validate this user");
+      }
+
       body["tx_ref"] = `Mooyi-${uuid.default()}`;
-      const payment = await Payment.request(type, body);
+      const payment = await Payment.request(query.type, body);
 
       const tx_ref = body["tx_ref"];
       this.handleSuccess(req, res, { ...payment, tx_ref });
+
+      this.log(
+        req,
+        {
+          activity: "Create.Payment",
+          message: `${body.fullname} initiated a re-payment request`
+        },
+        value
+      );
     } catch (error) {
       this.handleError(req, res, error);
     }

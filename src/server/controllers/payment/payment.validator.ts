@@ -3,6 +3,7 @@ import joi from "@hapi/joi";
 import { paymentInterval } from "@app/data/payment";
 
 export const isTypeOfPayment = joi.object({
+  token: JoiValidator.validateString().required(),
   type: JoiValidator.validateString().valid("card", "ussd", "bank_transfer", "debit_ng_account").required()
 });
 

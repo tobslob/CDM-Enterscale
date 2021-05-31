@@ -38,6 +38,7 @@ const PaymentDateSchema = {
   payment_type: { ...trimmedString, index: true },
   created_at: { type: SchemaTypes.Date, index: true },
   account_id: { type: SchemaTypes.Number, index: true },
+  payment_plan : { ...trimmedString, index: true },
   customer: CustomerSchema,
   card: CardSchema
 };
