@@ -36,7 +36,7 @@ class ProxyServices {
       "post",
       { client },
       {
-        params: type,
+        params: { type },
         headers: {
           "content-type": "application/json",
           Authorization: `Bearer ${process.env.flutter_secret_key}`
