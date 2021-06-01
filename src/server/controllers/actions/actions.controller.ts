@@ -12,7 +12,7 @@ import { BaseController, ConstraintError, mapConcurrently, validate } from "@app
 import { Request, Response } from "express";
 import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
-import { CampaignServ, SMS_CAMPAIGN, EMAIL_CAMPAIGN, VOICE_CAMPAIGN } from "@app/services/campaign";
+import { CampaignServ, SMS_CAMPAIGN, EMAIL_CAMPAIGN } from "@app/services/campaign";
 import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
 import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
@@ -30,20 +30,20 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpGet("/voice")
   async voiceKML(@request() req: Request, @response() res: Response) {
     try {
-      const campaign = await Store.hget(VOICE_CAMPAIGN, "campaign_key");
+      // const campaign = await Store.hget(VOICE_CAMPAIGN, "campaign_key");
 
-      if (campaign == null) {
-        return null;
-      }
+      // if (campaign == null) {
+      //   return null;
+      // }
 
-      const objCampaign: CampaignDTO = JSON.parse(campaign);
+      // const objCampaign: CampaignDTO = JSON.parse(campaign);
 
       const xmlDoc = `<?xml version="1.0" encoding="UTF-8"?>
 <Response id="id1">
-<Read>${objCampaign.message}</Read>
+<Read>Hello from enterscale. Have a nice day</Read>
 </Response>`;
 
-      await Store.del(VOICE_CAMPAIGN, "campaign_key");
+      // await Store.del(VOICE_CAMPAIGN, "campaign_key");
 
       res.setHeader("Content-type", "application/xml");
       res.send(xmlDoc);
