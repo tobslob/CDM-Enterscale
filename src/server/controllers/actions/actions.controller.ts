@@ -39,9 +39,9 @@ export class ActionsController extends BaseController<ControllerResponse> {
       const objCampaign: CampaignDTO = JSON.parse(campaign);
 
       const xmlDoc = `<?xml version="1.0" encoding="UTF-8"?>
-      <Response id="id1">
-      <Read>${objCampaign.message}</Read>
-      </Response>`;
+<Response id="id1">
+<Read>${objCampaign.message}</Read>
+</Response>`;
 
       await Store.del(VOICE_CAMPAIGN, "campaign_key");
 
