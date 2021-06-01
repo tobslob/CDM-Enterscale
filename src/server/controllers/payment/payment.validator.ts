@@ -7,6 +7,10 @@ export const isTypeOfPayment = joi.object({
   type: JoiValidator.validateString().valid("card", "ussd", "bank_transfer", "debit_ng_account").required()
 });
 
+export const isTypeOfPaymentAuthorise = joi.object({
+  type: JoiValidator.validateString().valid("card", "ussd", "bank_transfer", "debit_ng_account").required()
+});
+
 const isAuthorization = joi.object({
   mode: JoiValidator.validateString().valid("pin", "avs_noauth", "avs"),
   pin: joi.when("mode", {

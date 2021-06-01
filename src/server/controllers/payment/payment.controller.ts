@@ -14,7 +14,6 @@ import { Request, Response } from "express";
 import {
   Token,
   PaymentDTO,
-  PaymentType,
   ValidatePaymentDTO,
   PaymentHookDTO,
   PaymentPlan,
@@ -31,7 +30,8 @@ import {
   isPaymentPlan,
   isPaymentPlanQuery,
   isUpdatePaymentPlan,
-  isToken
+  isToken,
+  isTypeOfPaymentAuthorise
 } from "./payment.validator";
 import { Proxy } from "@app/services/proxy";
 import { PaymentRepo } from "@app/data/payment";
@@ -150,15 +150,15 @@ export class PaymentController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPost("/authorise", validate(isTypeOfPayment, "query"), validate(isPayment, "body"))
+  @httpPost("/authorise", validate(isTypeOfPaymentAuthorise, "query"), validate(isPayment, "body"))
   async authorisePayment(
     @request() req: Request,
     @response() res: Response,
-    @queryParam() type: PaymentType,
+    @queryParam() query: PaymentQuery,
     @requestBody() body: PaymentDTO
   ) {
     try {
-      const payment = await Payment.authorisePayment(type, body);
+      const payment = await Payment.authorisePayment(query.type, body);
       this.handleSuccess(req, res, payment.data);
     } catch (error) {
       this.handleError(req, res, error);
