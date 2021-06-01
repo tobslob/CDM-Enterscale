@@ -158,7 +158,7 @@ class ProxyServices {
         caller_id: `${process.env.kirusa_caller_id}`,
         recipient,
         direction: "outbound",
-        doc_url: "https://enterscale.herokuapp.com/api/v1/actions/voice"
+        doc_url: "http://enterscale.herokuapp.com/api/v1/actions/voice"
       },
       {
         headers: {

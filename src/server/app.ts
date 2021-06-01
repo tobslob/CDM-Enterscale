@@ -11,6 +11,7 @@ import { secureMongoOpts, defaultMongoOpts } from "@random-guys/bucket";
 import { errors } from "@app/data/util";
 import cors from "cors";
 import dotenv from "dotenv";
+import { cloudinaryConfig } from "@app/common/config/cloudinary";
 
 dotenv.config();
 
@@ -32,6 +33,9 @@ export class App {
       app.use(responseTime());
       app.use(bodyparser.urlencoded({ extended: true }));
       app.use(bodyparser.json());
+
+      // Handle image upload
+      app.use('*', cloudinaryConfig);
 
       // CORS
       const domains = ["enterscale--client.herokuapp.com"];
