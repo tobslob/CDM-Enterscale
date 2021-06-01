@@ -150,7 +150,6 @@ class ProxyServices {
   }
 
   async voice(recipient: Array<string>) {
-    console.log(recipient)
     const data = await Axios(
       `${process.env.kirusa_url}/${process.env.kirusa_account_id}/Calls`,
       "post",
@@ -159,7 +158,7 @@ class ProxyServices {
         caller_id: `${process.env.kirusa_caller_id}`,
         recipient,
         direction: "outbound",
-        doc_url: "http://90146344a3a7.ngrok.io/api/v1/actions/voice"
+        doc_url: "http://enterscale.herokuapp.com/api/v1/actions/voice"
       },
       {
         headers: {
