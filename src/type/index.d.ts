@@ -5,3 +5,7 @@ declare module Express {
     signedSessionID: string;
   }
 }
+
+declare module 'cloudinary' {
+  export function config(conf: ConfigOptions);
+}

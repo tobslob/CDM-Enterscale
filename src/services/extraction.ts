@@ -131,8 +131,7 @@ class ExtractionService {
     const workbook = new Workbook();
 
     if (mime === XLSX_MIME) {
-      console.log(" 🥵 🥵🥵🥵🥵🥵🥵🥵🥵", await workbook.xlsx.load(buffer))
-      // await workbook.xlsx.load(buffer);
+      await workbook.xlsx.load(buffer);
       return workbook.getWorksheet(1).getSheetValues();
     } else if (mime === CSV_MIME) {
       const sheet = await workbook.csv.read(bufferToStream(buffer), {
