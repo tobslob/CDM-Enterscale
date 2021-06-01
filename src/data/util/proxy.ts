@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BadRequestError } from "./error";
 
 export const methods = <const>["get", "post", "patch", "delete", "put"];
 export type methodType = typeof methods[number];
@@ -13,6 +14,6 @@ export async function Axios(url: string, method: methodType, data?: object, extr
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response);
+    throw new BadRequestError(error.response.data.message);
   }
 }
