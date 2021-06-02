@@ -44,9 +44,6 @@ export class ActionsController extends BaseController<ControllerResponse> {
 <Response id="id1">
 <Read>${objCampaign.message}</Read>
 </Response>`;
-
-      await Store.del(VOICE_CAMPAIGN, "campaign_key");
-
       res.setHeader("Content-type", "application/xml");
       res.send(xmlDoc);
     } catch (error) {
@@ -74,7 +71,6 @@ export class ActionsController extends BaseController<ControllerResponse> {
       body["network"] = networkCode[body.networkCode];
 
       await SMSReportRepo.smsReport(objSession.workspace, body);
-      await Store.del(USER_SESSION_KEY, "session_key");
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -93,7 +89,6 @@ export class ActionsController extends BaseController<ControllerResponse> {
       voice["workspace"] = objSession.workspace;
 
       const report = await VoiceRepo.report(voice);
-      await Store.del(USER_SESSION_KEY, "session_key");
       return report;
     } catch (error) {
       this.handleError(req, res, error);
@@ -116,8 +111,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
 
         await EmailReportRepo.emailReport(objSession.workspace, r);
       });
-
-      await Store.del(USER_SESSION_KEY, "session_key");
+      return;
     } catch (error) {
       this.handleError(req, res, error);
     }
