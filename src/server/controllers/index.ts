@@ -7,3 +7,4 @@ export * from "./actions/actions.controller";
 export * from "./customer/customer.controller";
 export * from "./payment/payment.controller";
 export * from "./payment/payment.controller";
+export * from "./cloudinary/cloudinary.controller";

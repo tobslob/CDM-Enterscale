@@ -1,21 +1,25 @@
 import { trimmedString, readMapper, timestamps } from "@random-guys/bucket";
-import { SchemaTypes, Schema } from "mongoose";
+import { Schema } from "mongoose";
 import { uuid } from "@app/data/util";
 
 export const VoiceSchema = new Schema(
   {
     _id: { ...uuid },
-    isActive: { type: SchemaTypes.Mixed, index: true },
-    sessionId: { ...trimmedString, index: true },
-    direction: { ...trimmedString, index: true },
-    channel: { ...trimmedString, index: true },
-    amount: { type: SchemaTypes.Mixed, index: true },
-    callerNumber: { ...trimmedString, index: true },
-    destinationNumber: { type: SchemaTypes.Date, index: true },
-    dtmfDigits: { type: SchemaTypes.Date, index: true },
-    recordingUrl: { ...trimmedString, index: true },
-    durationInSeconds: { ...trimmedString, index: true },
-    currencyCode: { ...trimmedString, index: true },
+    ref_id: { ...trimmedString, index: true },
+    recipient: { ...trimmedString, index: true },
+    caller_id: { ...trimmedString, index: true },
+    status: { ...trimmedString, index: true },
+    price: { ...trimmedString, index: true },
+    balance: { ...trimmedString, index: true },
+    error_code: { ...trimmedString, index: true },
+    error_reason: { ...trimmedString, index: true },
+    call_start_time: { ...trimmedString, index: true },
+    call_end_time: { ...trimmedString, index: true },
+    call_connect_time: { ...trimmedString, index: true },
+    media_duration: { ...trimmedString, index: true },
+    key_pressed: { ...trimmedString, index: true },
+    media_url: { ...trimmedString, index: true },
+    workspace: { ...trimmedString, index: true }
   },
   {
     ...readMapper,

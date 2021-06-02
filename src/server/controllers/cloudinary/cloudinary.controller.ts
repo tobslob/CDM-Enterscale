@@ -5,7 +5,7 @@ import { BaseController } from "@app/data/util";
 import { canCreateDefaulters, isUpload } from "../defaulter/defaulter.middleware";
 
 @controller("/uploads")
-export class SessionController extends BaseController<any> {
+export class UploadController extends BaseController<any> {
   @httpPost("/file", canCreateDefaulters, isUpload)
   async UploadToCloudinary(@request() req: Request, @response() res: Response) {
     try {
