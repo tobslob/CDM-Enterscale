@@ -12,7 +12,7 @@ import { BaseController, ConstraintError, mapConcurrently, validate } from "@app
 import { Request, Response } from "express";
 import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
-import { CampaignServ, SMS_CAMPAIGN, EMAIL_CAMPAIGN, VOICE_CAMPAIGN } from "@app/services/campaign";
+import { CampaignServ, VOICE_CAMPAIGN } from "@app/services/campaign";
 import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
 import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
@@ -22,8 +22,10 @@ import { isDefaulterQuery } from "../defaulter/defaulter.validator";
 import { Session } from "@app/data/user";
 import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-report";
 import { isCampaign } from "./actions.validator";
+import { Voice, VoiceRepo } from "@app/data/voice";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
+const USER_SESSION_KEY = "user_session_key";
 
 @controller("/actions")
 export class ActionsController extends BaseController<ControllerResponse> {
@@ -55,7 +57,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/sms")
   async smsReport(@request() req: Request, @response() res: Response, @requestBody() body: SMSReportsDTO) {
     try {
-      const session = await Store.hget(SMS_CAMPAIGN, "sms_key");
+      const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
       if (session == null) {
         return null;
@@ -71,8 +73,27 @@ export class ActionsController extends BaseController<ControllerResponse> {
 
       body["network"] = networkCode[body.networkCode];
 
-      const report = await SMSReportRepo.smsReport(objSession.workspace, body);
-      await Store.del(SMS_CAMPAIGN, "sms_key");
+      await SMSReportRepo.smsReport(objSession.workspace, body);
+      await Store.del(USER_SESSION_KEY, "session_key");
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPost("/voice/report")
+  async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
+    try {
+      const voice: Voice = JSON.parse(body);
+      const session = await Store.hget(USER_SESSION_KEY, "session_key");
+
+      if (session == null) {
+        return null;
+      }
+      const objSession: Session = JSON.parse(session);
+      voice["workspace"] = objSession.workspace;
+
+      const report = await VoiceRepo.report(voice);
+      await Store.del(USER_SESSION_KEY, "session_key");
       return report;
     } catch (error) {
       this.handleError(req, res, error);
@@ -82,7 +103,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/email")
   async emailReport(@request() req: Request, @response() res: Response, @requestBody() body: EmailReportsDTO[]) {
     try {
-      const session = await Store.hget(EMAIL_CAMPAIGN, "email_key");
+      const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
       if (session == null) {
         return null;
@@ -96,7 +117,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
         await EmailReportRepo.emailReport(objSession.workspace, r);
       });
 
-      await Store.del(EMAIL_CAMPAIGN, "email_key");
+      await Store.del(USER_SESSION_KEY, "session_key");
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -143,6 +164,9 @@ export class ActionsController extends BaseController<ControllerResponse> {
   ) {
     try {
       const workspace = req.session.workspace;
+
+      await Store.hset(USER_SESSION_KEY, "session_key", JSON.stringify(req.session));
+
       const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
       const users = await Defaulter.getDefaultUsers(defaulters);
 

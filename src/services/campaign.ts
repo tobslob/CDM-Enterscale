@@ -46,8 +46,6 @@ class CampaignService {
     });
 
     await Mail.tracker(req.session.workspace, email.headers["x-message-id"]);
-
-    await Store.hset(EMAIL_CAMPAIGN, "email_key", JSON.stringify(req.session));
     return email;
   }
 
@@ -62,8 +60,6 @@ class CampaignService {
       message,
       from: process.env.sms_sender
     });
-
-    await Store.hset(SMS_CAMPAIGN, "sms_key", JSON.stringify(req.session));
     return smsResponse;
   }
 

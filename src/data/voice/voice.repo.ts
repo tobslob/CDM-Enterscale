@@ -8,18 +8,23 @@ class VoiceRepository extends BaseRepository<Voice> {
     super(mongoose.connection, "Voice", VoiceSchema);
   }
 
-  async createVoice(voice: Voice) {
+  async report(voice: Voice) {
     return this.create({
-      isActive: voice.isActive,
-      sessionId: voice.sessionId,
-      direction: voice.direction,
-      callerNumber: voice.callerNumber,
-      destinationNumber: voice.destinationNumber,
-      dtmfDigits: voice.dtmfDigits,
-      recordingUrl: voice.recordingUrl,
-      durationInSeconds: voice.durationInSeconds,
-      currencyCode: voice.currencyCode,
-      amount: voice.amount
+      ref_id: voice.ref_id,
+      recipient: voice.recipient,
+      caller_id: voice.caller_id,
+      status: voice.status,
+      price: voice.price,
+      balance: voice.balance,
+      error_code: voice.error_code,
+      error_reason: voice.error_reason,
+      call_start_time: voice.call_start_time,
+      call_end_time: voice.call_end_time,
+      call_connect_time: voice.call_connect_time,
+      media_duration: voice.media_duration,
+      key_pressed: voice.key_pressed,
+      media_url: voice.media_url,
+      workspace: voice.workspace
     });
   }
 }

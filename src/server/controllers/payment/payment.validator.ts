@@ -54,6 +54,7 @@ export const isPayment = joi.object({
   email: JoiValidator.validateEmail().required(),
   phone_number: JoiValidator.validPhoneNumber().required(),
   fullname: JoiValidator.validateString().required(),
+  payment_plan: JoiValidator.validateNumber(),
   authorization: isAuthorization,
   tx_ref: joi.when("authorization", {
     is: isAuthorization.required(),
