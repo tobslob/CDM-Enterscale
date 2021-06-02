@@ -159,7 +159,7 @@ class ProxyServices {
         recipient,
         direction: "outbound",
         doc_url: `${process.env.base_url}/actions/voice`,
-        callback_url: `${process.env.base_url}/actions/voice/report`,
+        callback_url: `${process.env.base_url}/actions/webhook`,
       },
       {
         headers: {
