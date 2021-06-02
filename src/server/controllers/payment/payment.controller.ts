@@ -130,8 +130,8 @@ export class PaymentController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPut("/plan/cancel")
-  async cancelPaymentPlan(@request() req: Request, @response() res: Response, @requestParam() id: string) {
+  @httpPut("/plan/:id/cancel")
+  async cancelPaymentPlan(@request() req: Request, @response() res: Response, @requestParam("id") id: string) {
     try {
       const payment = await Proxy.cancelPaymentPlan(id);
       this.handleSuccess(req, res, payment);
@@ -140,8 +140,8 @@ export class PaymentController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpGet("/plan")
-  async getPaymentPlan(@request() req: Request, @response() res: Response, @requestParam() id: string) {
+  @httpGet("/plan/:id")
+  async getPaymentPlan(@request() req: Request, @response() res: Response, @requestParam("id") id: string) {
     try {
       const payment = await Proxy.getPaymentPlan(id);
       this.handleSuccess(req, res, payment);

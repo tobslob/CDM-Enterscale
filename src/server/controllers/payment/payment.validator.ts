@@ -88,7 +88,7 @@ export const isPaymentPlanQuery = joi.object({
 export const isUpdatePaymentPlan = joi.object({
   id: JoiValidator.validateNumber(),
   name: JoiValidator.validateString(),
-  status: JoiValidator.validateNumber()
+  status: JoiValidator.validateString()
 });
 
 export const isToken = joi.object({

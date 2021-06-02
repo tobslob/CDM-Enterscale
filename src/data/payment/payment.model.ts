@@ -156,7 +156,7 @@ export interface PaymentPlan {
 export interface UpdatePaymentPlan {
   id: number;
   name: string;
-  status: number;
+  status: string;
 }
 
 export interface PaymentPlanQuery {
