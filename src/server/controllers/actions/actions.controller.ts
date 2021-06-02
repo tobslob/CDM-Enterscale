@@ -77,7 +77,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
   }
 
   @httpPost("/webhook")
-  async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
+  async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: any) {
     try {
       console.log("🤬 🤬 🤬 🤬 🤬 🤬", body)
       const voice: Voice = JSON.parse(body);
