@@ -76,9 +76,10 @@ export class ActionsController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpPost("/voice/report")
+  @httpPost("/webhook")
   async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
+      console.log("🤬 🤬 🤬 🤬 🤬 🤬", body)
       const voice: Voice = JSON.parse(body);
       const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
