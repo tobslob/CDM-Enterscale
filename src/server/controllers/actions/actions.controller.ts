@@ -12,7 +12,7 @@ import { BaseController, ConstraintError, mapConcurrently, validate } from "@app
 import { Request, Response } from "express";
 import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
-import { CampaignServ, VOICE_CAMPAIGN } from "@app/services/campaign";
+import { CampaignServ, VOICE_CAMPAIGN, USER_SESSION_KEY } from "@app/services/campaign";
 import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
 import { differenceInCalendarDays } from "date-fns";
 import { Defaulter } from "@app/services/defaulter";
@@ -25,7 +25,6 @@ import { isCampaign } from "./actions.validator";
 import { Voice, VoiceRepo } from "@app/data/voice";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
-const USER_SESSION_KEY = "user_session_key";
 
 @controller("/actions")
 export class ActionsController extends BaseController<ControllerResponse> {
@@ -80,11 +79,14 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/webhook")
   async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
+      let objSession: Session;
       const voice: Voice = JSON.parse(body);
       const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
-      const objSession: Session = JSON.parse(session);
-      voice.data["workspace"] = objSession.workspace;
+      if (session) {
+        objSession = JSON.parse(session);
+        voice.data["workspace"] = objSession.workspace;
+      }
 
       await VoiceRepo.report(voice);
       res.send(200);
@@ -156,9 +158,6 @@ export class ActionsController extends BaseController<ControllerResponse> {
   ) {
     try {
       const workspace = req.session.workspace;
-
-      await Store.hset(USER_SESSION_KEY, "session_key", JSON.stringify(req.session));
-
       const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
       const users = await Defaulter.getDefaultUsers(defaulters);
 

@@ -34,7 +34,7 @@ export class App {
       app.use(responseTime());
       app.use(bodyparser.urlencoded({ extended: true }));
       app.use(bodyparser.json());
-      app.use(express.text())
+      app.use(express.text());
 
       // Handle image upload
       app.use('*', cloudinaryConfig);

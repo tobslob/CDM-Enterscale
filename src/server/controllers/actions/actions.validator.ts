@@ -18,7 +18,10 @@ export const isCampaign = joi.object({
   start_date: JoiValidator.validDate(),
   end_date: JoiValidator.validDate(),
   target_audience: JoiValidator.validateString(),
-  message: JoiValidator.validateString(),
+  message: joi.when("channel", {
+    is: "EMAIL" || "CALL",
+    then: joi.string().required()
+  }),
   organisation: JoiValidator.validateString(),
   subtype: JoiValidator.validateString().valid(...subType),
   customer_file_source: JoiValidator.validateString().valid(...customAudience)

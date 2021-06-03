@@ -15,9 +15,13 @@ dotenv.config();
 export const VOICE_CAMPAIGN = "enterscale-robo-call";
 export const SMS_CAMPAIGN = "enterscale-sms";
 export const EMAIL_CAMPAIGN = "enterscale-campaign";
+export const USER_SESSION_KEY = "user_session_key";
+
 
 class CampaignService {
   async send(campaign: CampaignDTO, user: any, req?: Request) {
+    await Store.hset(USER_SESSION_KEY, "session_key", JSON.stringify(req.session));
+
     switch (campaign.channel) {
       case "EMAIL":
         return await this.email(campaign, user, req);
