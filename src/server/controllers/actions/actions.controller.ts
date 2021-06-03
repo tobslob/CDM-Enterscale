@@ -80,7 +80,11 @@ export class ActionsController extends BaseController<ControllerResponse> {
   async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
       let objSession: Session;
+
+      console.log("🚨 🚨 🚨 🚨 🚨", body)
       const voice: Voice = JSON.parse(body);
+
+      console.log("🚨 🚨 🚨", voice)
       const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
       if (session) {

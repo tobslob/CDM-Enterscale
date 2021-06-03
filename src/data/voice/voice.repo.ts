@@ -22,7 +22,7 @@ class VoiceRepository extends BaseRepository<Voice> {
         account_balance: voice.data?.account_balance,
         error_code: voice.data?.error_code,
         error_reason: voice.data?.error_reason,
-        call_start_time: voice?.data.call_start_time,
+        call_start_time: voice.data?.call_start_time,
         call_end_time: voice.data?.call_end_time,
         call_connect_time: voice.data?.call_connect_time,
         media_duration: voice.data?.media_duration,
@@ -35,7 +35,7 @@ class VoiceRepository extends BaseRepository<Voice> {
         timestamp: voice.data?.timestamp
       },
       api_token: voice?.api_token,
-      cmd: voice?.cmd
+      cmd: voice?.cmd,
     });
   }
 }
