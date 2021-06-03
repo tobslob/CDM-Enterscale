@@ -79,14 +79,13 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/webhook")
   async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
-      // let objSession: Session;
+      let objSession: Session;
       const voice: Voice = JSON.parse(body);
       const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
       if (session) {
-        let objSession = JSON.parse(session);
-        console.log(objSession)
-        // voice.data["workspace"] = objSession.workspace;
+        objSession = JSON.parse(session);
+        voice.data.workspace = objSession?.workspace;
       }
 
       await VoiceRepo.report(voice);
