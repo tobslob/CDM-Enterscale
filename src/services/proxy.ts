@@ -201,7 +201,7 @@ class ProxyServices {
       },
       access_token: process.env.fb_access_token
     });
-    return response.data;
+    return response;
   }
 }
 

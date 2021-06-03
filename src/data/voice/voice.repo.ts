@@ -10,21 +10,31 @@ class VoiceRepository extends BaseRepository<Voice> {
 
   async report(voice: Voice) {
     return this.create({
-      ref_id: voice.ref_id,
-      recipient: voice.recipient,
-      caller_id: voice.caller_id,
-      status: voice.status,
-      price: voice.price,
-      balance: voice.balance,
-      error_code: voice.error_code,
-      error_reason: voice.error_reason,
-      call_start_time: voice.call_start_time,
-      call_end_time: voice.call_end_time,
-      call_connect_time: voice.call_connect_time,
-      media_duration: voice.media_duration,
-      key_pressed: voice.key_pressed,
-      media_url: voice.media_url,
-      workspace: voice.workspace
+      callback_url: voice.callback_url,
+      data: {
+        id: voice.data.id,
+        ref_id: voice.data.ref_id,
+        recipient: voice.data.recipient,
+        caller_id: voice.data.caller_id,
+        status: voice.data.status,
+        price: voice.data.price,
+        account_balance: voice.data.account_balance,
+        error_code: voice.data.error_code,
+        error_reason: voice.data.error_reason,
+        call_start_time: voice.data.call_start_time,
+        call_end_time: voice.data.call_end_time,
+        call_connect_time: voice.data.call_connect_time,
+        media_duration: voice.data.media_duration,
+        key_pressed: voice.data.key_pressed,
+        media_url: voice.data.media_url,
+        workspace: voice.data.workspace,
+        api_token: voice.data.api_token,
+        event_timestamp: voice.data.event_timestamp,
+        queued: voice.data.queued,
+        timestamp: voice.data.timestamp
+      },
+      api_token: voice.api_token,
+      cmd: voice.cmd
     });
   }
 }

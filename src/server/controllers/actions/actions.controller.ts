@@ -71,26 +71,23 @@ export class ActionsController extends BaseController<ControllerResponse> {
       body["network"] = networkCode[body.networkCode];
 
       await SMSReportRepo.smsReport(objSession.workspace, body);
+      res.send(200);
     } catch (error) {
       this.handleError(req, res, error);
     }
   }
 
   @httpPost("/webhook")
-  async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: any) {
+  async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
-      console.log("🤬 🤬 🤬 🤬 🤬 🤬", body)
       const voice: Voice = JSON.parse(body);
       const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
-      if (session == null) {
-        return null;
-      }
       const objSession: Session = JSON.parse(session);
-      voice["workspace"] = objSession.workspace;
+      voice.data["workspace"] = objSession.workspace;
 
-      const report = await VoiceRepo.report(voice);
-      return report;
+      await VoiceRepo.report(voice);
+      res.send(200);
     } catch (error) {
       this.handleError(req, res, error);
     }

@@ -12,6 +12,7 @@ import { errors } from "@app/data/util";
 import cors from "cors";
 import dotenv from "dotenv";
 import { cloudinaryConfig } from "@app/common/config/cloudinary";
+import express from "express";
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ export class App {
       app.use(responseTime());
       app.use(bodyparser.urlencoded({ extended: true }));
       app.use(bodyparser.json());
+      app.use(express.text())
 
       // Handle image upload
       app.use('*', cloudinaryConfig);
