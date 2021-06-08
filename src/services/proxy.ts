@@ -149,17 +149,43 @@ class ProxyServices {
     return data;
   }
 
-  async voice(recipient: Array<string>) {
+  async voice(recipients: Array<string>) {
     const data = await Axios(
       `${process.env.kirusa_url}/${process.env.kirusa_account_id}/Calls`,
       "post",
       {
-        id: `Mooyi-${uuid()}`,
+        id: `Mooyi-call-${uuid()}`,
         caller_id: `${process.env.kirusa_caller_id}`,
-        recipient,
+        recipients,
         direction: "outbound",
         doc_url: `${process.env.base_url}/actions/voice`,
         callback_url: `${process.env.base_url}/actions/webhook`,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.kirusa_api_token}`
+        }
+      }
+    );
+
+    return data;
+  }
+
+  async sms(recipients: Array<string> | string, body: string, link: string) {
+    const data = await Axios(
+      `${process.env.kirusa_url}/${process.env.kirusa_account_id}/Messages`,
+      "post",
+      {
+        id: `Mooyi-sms-${uuid()}`,
+        to: recipients,
+        from: `${process.env.kirusa_caller_id}`,
+        direction: "2way",
+        sender_mask: "Mooyi",
+        body,
+        track_url: true,
+        url_to_track: link,
+        callback_url: `${process.env.base_url}/actions/sms`,
       },
       {
         headers: {

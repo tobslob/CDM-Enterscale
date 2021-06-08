@@ -51,8 +51,9 @@ export class ActionsController extends BaseController<ControllerResponse> {
   }
 
   @httpPost("/sms")
-  async smsReport(@request() req: Request, @response() res: Response, @requestBody() body: SMSReportsDTO) {
+  async smsReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
+      const sms: SMSReportsDTO = JSON.parse(body);
       const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
       if (session == null) {
@@ -60,17 +61,8 @@ export class ActionsController extends BaseController<ControllerResponse> {
       }
       const objSession: Session = JSON.parse(session);
 
-      const networkCode = {
-        "62120": "Airtel",
-        "62130": "MTN",
-        "62150": "Glo",
-        "62160": "Etisalat"
-      };
-
-      body["network"] = networkCode[body.networkCode];
-
-      await SMSReportRepo.smsReport(objSession.workspace, body);
-      res.send(200);
+      await SMSReportRepo.smsReport(objSession.workspace, sms);
+      res.sendStatus(200);
     } catch (error) {
       this.handleError(req, res, error);
     }
