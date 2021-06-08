@@ -50,7 +50,7 @@ class PaymentService {
   }
 
   async request(type: PaymentType, payment: PaymentDTO) {
-    payment["redirect_url"] = "https://enterscale.herokuapp.com/api/v1/payments/webhook";
+    payment["redirect_url"] = `${process.env.base_url}/api/v1/payments/webhook`;
     return this.authorisePayment(type, payment);
   }
 }

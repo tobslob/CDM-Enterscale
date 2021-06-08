@@ -1,50 +1,41 @@
-import { Model } from "@random-guys/bucket";
+import { Voice } from "../voice";
 
-const status = <const>["Sent", "Submitted", "Buffered", "Rejected", "Success", "Failed"];
+const status = <const>["sent", "delivered", "undelivered", "rejected", "received", "failed"];
 export type SMSStatus = typeof status[number];
 
-const network = <const>["Airtel", "MTN", "Glo", "Etisalat"];
-export type NetworkProvider = typeof network[number];
-
-const reason = <const>[
-  "InsufficientCredit",
-  "InvalidLinkId",
-  "UserIsInactive",
-  "UserInBlackList",
-  "UserAccountSuspended",
-  "NotNetworkSubcriber",
-  "UserNotSubscribedToProduct",
-  "UserDoesNotExist",
-  "DeliveryFailure"
-];
-export type FailureReason = typeof reason[number];
-
-export interface SMSReports extends Model {
-  sms_id: string;
-  phoneNumber?: string;
-  networkCode?: string;
-  network?: NetworkProvider;
-  failureReason?: FailureReason;
-  retryCount?: number;
-  status?: SMSStatus;
-  workspace: string;
+export interface SMSReports extends Voice {
+  to?: string;
+  from?: string;
+  body?: string;
+  url_access_time?: string;
+  status: SMSStatus;
 }
 
 export interface SMSReportsDTO {
-  id: string;
-  phoneNumber?: string;
-  networkCode?: string;
-  network?: NetworkProvider;
-  failureReason?: FailureReason;
-  retryCount?: number;
-  status?: SMSStatus;
+  callback_url?: string;
+  call_id?: string;
+  ref_id?: string;
+  recipient?: string;
+  caller_id?: string;
+  price?: string;
+  account_balance?: string;
+  error_code?: string;
+  error_reason?: string;
+  media_duration?: string;
+  workspace?: string;
+  event_timestamp?: string;
+  timestamp?: string;
+  api_token?: string;
+  cmd?: string;
+  to?: string;
+  from?: string;
+  body?: string;
+  url_access_time?: string;
+  status: SMSStatus;
 }
 
 export interface SMSReportQuery {
   phoneNumber?: string;
-  network?: NetworkProvider;
-  failureReason?: FailureReason;
-  retryCount?: number;
   status?: SMSStatus;
   limit?: number;
   offset?: number;

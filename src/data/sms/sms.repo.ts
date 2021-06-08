@@ -11,12 +11,21 @@ export class SMSReportRepository extends BaseRepository<SMSReports> {
 
   async smsReport(workspace: string, report: SMSReportsDTO) {
     return this.create({
-      sms_id: report.id,
-      phoneNumber: report.phoneNumber,
-      networkCode: report.networkCode,
-      network: report.network,
-      failureReason: report.failureReason,
-      retryCount: report.retryCount,
+      callback_url: report.callback_url,
+      call_id: report.call_id,
+      ref_id: report.ref_id,
+      recipient: report.recipient,
+      price: report.price,
+      account_balance: report.account_balance,
+      error_code: report.error_code,
+      error_reason: report.error_reason,
+      event_timestamp: report.event_timestamp,
+      timestamp: report.timestamp,
+      api_token: report.api_token,
+      to: report.to,
+      from: report.from,
+      body: report.body,
+      url_access_time: report.url_access_time,
       status: report.status,
       workspace
     });
@@ -25,8 +34,6 @@ export class SMSReportRepository extends BaseRepository<SMSReports> {
   async searchSmsReports(workspace: string, query: SMSReportQuery) {
     let conditions = fromQueryMap(query, {
       phoneNumber: { phoneNumber: query.phoneNumber },
-      network: { networkCode: query.network },
-      failureReason: { failureReason: query.failureReason },
       status: { status: query.status }
     });
 

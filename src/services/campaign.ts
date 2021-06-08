@@ -4,11 +4,11 @@ import dotenv from "dotenv";
 import { NotFoundError } from "@app/data/util";
 import { Proxy } from "@app/services/proxy";
 import { Request } from "express";
-import { connect } from "./africaistalking";
 import { Store } from "@app/common/services";
 import { DefaulterQuery } from "@app/data/defaulter";
 import { Mail } from "@app/data/email/email.repo";
 import { Defaulter } from "./defaulter";
+import { User } from "@app/data/user";
 
 dotenv.config();
 
@@ -16,7 +16,6 @@ export const VOICE_CAMPAIGN = "enterscale-robo-call";
 export const SMS_CAMPAIGN = "enterscale-sms";
 export const EMAIL_CAMPAIGN = "enterscale-campaign";
 export const USER_SESSION_KEY = "user_session_key";
-
 
 class CampaignService {
   async send(campaign: CampaignDTO, user: any, req?: Request) {
@@ -53,18 +52,10 @@ class CampaignService {
     return email;
   }
 
-  private async sms(campaign: CampaignDTO, user: any, req: Request) {
-    const sms = await connect.SMS;
-
+  private async sms(campaign: CampaignDTO, user: User, req: Request) {
     const link = await Defaulter.generateDefaulterLink(user, req);
-    const message = `${campaign.message}\n${link}`;
-
-    const smsResponse = await sms.send({
-      to: user.phone_number,
-      message,
-      from: process.env.sms_sender
-    });
-    return smsResponse;
+    const body = `${campaign.message}\n\n${link}`;
+    return await Proxy.sms(user.phone_number, body, link);
   }
 
   private async voice(campaign: CampaignDTO, phone_numbers: string[]) {
