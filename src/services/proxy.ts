@@ -182,8 +182,6 @@ class ProxyServices {
         direction: "2way",
         sender_mask: "Mooyi io",
         body,
-        track_url: true,
-        url_to_track: link,
         callback_url: `${process.env.base_url}/actions/sms`,
       },
       {
