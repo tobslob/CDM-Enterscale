@@ -88,7 +88,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
       }
 
       await VoiceRepo.report(voice, objSession);
-      res.send(200);
+      res.sendStatus(200);
     } catch (error) {
       this.handleError(req, res, error);
     }

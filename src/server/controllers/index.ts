@@ -8,3 +8,4 @@ export * from "./customer/customer.controller";
 export * from "./payment/payment.controller";
 export * from "./payment/payment.controller";
 export * from "./cloudinary/cloudinary.controller";
+export * from "./facebook/facebook.controller";
