@@ -54,7 +54,7 @@ class CampaignService {
 
   private async sms(campaign: CampaignDTO, user: User, req: Request) {
     const link = await Defaulter.generateDefaulterLink(user, req);
-    const body = `${campaign.message}\n${link}`;
+    const body = `${campaign.message}\n\n${link}`;
     return await Proxy.sms(user.phone_number, body, link);
   }
 
