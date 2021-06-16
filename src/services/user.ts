@@ -24,7 +24,7 @@ class UserService {
 
     if (!role.permissions.users) {
       const wrkspace = await WorkspaceRepo.byID(workspace);
-      AdapterInstance.send({
+      await AdapterInstance.send({
         subject: "Welcome! Supercharge your digital transformation",
         channel: "mail",
         recipient: user.email_address,
@@ -51,7 +51,7 @@ class UserService {
     const generatedPassword = Passwords.generateRandomPassword(10);
     const updatedUser = await UserRepo.setPassword(user.id, generatedPassword);
 
-    AdapterInstance.send({
+    await AdapterInstance.send({
       subject: "Reset Password",
       channel: "mail",
       recipient: user.email_address,
