@@ -3,6 +3,7 @@ import { BaseRepository } from "@random-guys/bucket";
 import { UrlShortner } from "./url-shortner.model";
 import { UrlShortnerSchema } from "./url-shortner.schema";
 import { mapConcurrently } from "../util";
+import  { generate } from "shortid";
 
 export class URLRepository extends BaseRepository<UrlShortner> {
   constructor() {
@@ -12,7 +13,8 @@ export class URLRepository extends BaseRepository<UrlShortner> {
   async createShortUrl(urls: string[]) {
     return await mapConcurrently(urls, url => {
       return this.create({
-        long_url: url
+        long_url: url,
+        short_url: generate()
       });
     });
   }
