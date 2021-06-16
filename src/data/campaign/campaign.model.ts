@@ -31,6 +31,7 @@ export interface Campaign extends Model {
   organisation?: string;
   subtype?: SubType;
   customer_file_source?: CustomAudienceType;
+  short_link?: boolean;
 }
 
 export interface CampaignDTO {
@@ -47,6 +48,7 @@ export interface CampaignDTO {
   organisation?: string;
   subtype?: SubType;
   customer_file_source?: CustomAudienceType;
+  short_link?: boolean;
 }
 
 export interface CampaignQuery extends PaginationQuery {

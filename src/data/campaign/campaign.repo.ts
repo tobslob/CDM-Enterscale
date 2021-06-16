@@ -28,7 +28,8 @@ class CampaignRepository extends BaseRepository<Campaign> {
       status: "STOP",
       organisation: campaignDTO.organisation,
       subtype: campaignDTO.subtype,
-      customer_file_source: campaignDTO.customer_file_source
+      customer_file_source: campaignDTO.customer_file_source,
+      short_link: campaignDTO.short_link
     });
   }
 
