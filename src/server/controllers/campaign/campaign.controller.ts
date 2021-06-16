@@ -19,6 +19,7 @@ import { isCampaignDTO, isCampaignQuery } from "./campaign.validator";
 import { differenceInCalendarDays } from "date-fns";
 import { WorkspaceRepo } from "@app/data/workspace";
 import { isIDs } from "../defaulter/defaulter.validator";
+import { replaceUrlWithShortUrl } from "@app/services/url-shortner";
 
 type ControllerResponse = Campaign[] | Campaign | SendMessageResponse | any;
 
@@ -38,6 +39,10 @@ export class CampaignController extends BaseController<ControllerResponse> {
       }
 
       const wrkspace = await WorkspaceRepo.byID(workspace);
+
+      if (body.short_link) {
+        body["message"] = await replaceUrlWithShortUrl(body.message);
+      }
 
       const campaign = await CampaignRepo.createCampaign(wrkspace, user, body);
       this.handleSuccess(req, res, campaign);

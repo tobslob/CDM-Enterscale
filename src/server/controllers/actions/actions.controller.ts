@@ -23,6 +23,8 @@ import { Session } from "@app/data/user";
 import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-report";
 import { isCampaign } from "./actions.validator";
 import { Voice, VoiceRepo } from "@app/data/voice";
+import { UrlShortnerRepo } from "@app/data/url-shortner/url-shortner.repo";
+import { replaceUrlWithShortUrl } from "@app/services/url-shortner";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
 
@@ -152,6 +154,10 @@ export class ActionsController extends BaseController<ControllerResponse> {
       const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
       const users = await Defaulter.getDefaultUsers(defaulters);
 
+      if (body.short_link) {
+        body["message"] = await replaceUrlWithShortUrl(body.message);
+      }
+
       if (body.channel === "CALL") {
         const phone_numbers = await mapConcurrently(users, async u => {
           if (u.status !== "paid") {
@@ -175,6 +181,24 @@ export class ActionsController extends BaseController<ControllerResponse> {
         message: `Sent out ${body.channel} campaign`,
         channel: body.channel
       });
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpGet("/short-url/:id")
+  async getUrlShortner(@request() req: Request, @response() res: Response, @requestParam("id") id: string) {
+    try {
+      const shortUrlRes = await UrlShortnerRepo.byQuery({ short_url: id });
+      const inc = shortUrlRes.click_count + 1;
+      await UrlShortnerRepo.update(
+        { short_url: id },
+        {
+          click_count: inc
+        }
+      );
+
+      res.redirect(shortUrlRes.long_url);
     } catch (error) {
       this.handleError(req, res, error);
     }
