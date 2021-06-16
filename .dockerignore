@@ -5,4 +5,5 @@ node_modules
 *.md
 /data
 .DS_Store
+.env
 /dist
