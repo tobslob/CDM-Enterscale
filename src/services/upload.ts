@@ -1,38 +1,67 @@
-import Datauri from "datauri/sync";
+import Datauri from "datauri/parser";
 import { uploader } from "@app/common/config/cloudinary";
-import { Request } from "express";
-import FormData from "form-data";
+import { Request, Response } from "express";
+import path from "path";
+import { generate } from "shortid";
+import { ConstraintError } from "@app/data/util";
 
-export const uploadMedia = (filePath: string) =>{
-  const form = new FormData();
-  form.append("voice", filePath);
+const parser = new Datauri();
 
-  return form;
-}
-
-const extractSingleFile = async (filePath) => {
-  const meta = Datauri(filePath);
-  return meta.content;
+/**
+ * extract the content of a raw file
+ * @param file - the raw file
+ */
+const extractSingleFile = file => {
+  return parser.format(path.extname(file.originalname).toString(), file.buffer).content;
 };
 
-const uploadSingleFile = async (file: string, req: Request) => {
-  const { secure_url: imageUrl } = await uploader.upload(file, {
-    resource_type: "raw",
-    public_id: `${req.session.workspace}`,
+/**
+ * extract the content of the supplied raw files
+ * @param files - the list of the raw files
+ */
+const extractFiles = files => files.map(file => extractSingleFile(file));
+
+/**
+ * a function that is used to upload the supplied image to the cloud
+ * @param {Object} file - a proccessed file
+ * @param {Object} index - the index of the file
+ * @returns {Object} - return the uploaded image url
+ */
+const uploadSingleFile = async (file, index) => {
+  const { secure_url } = await uploader.upload(file, {
+    public_id: `${generate()}-${index}`,
     overwrite: true,
-    folder: "voice",
-    allowed_formats: ["jpg", "jpeg", "png", "mp3", "wav"]
+    folder: "qx-items",
+    transformation: [
+      {
+        width: 500,
+        height: 250,
+        crop: "scale",
+        quality: "auto"
+      }
+    ],
+    allowedFormats: ["jpg", "jpeg", "png", "gif", "svg"]
   });
 
-  return imageUrl;
+  return secure_url;
 };
 
-export const uploadFile = async (req: Request) => {
+/**
+ * a middleware to upload image
+ * @param req - request object
+ * @param res - response object
+ */
+const uploadImage = async (req: Request, _res: Response) => {
   try {
-    if (!req.file) throw new Error("File is required for upload.");
-    const file = await extractSingleFile(req.file.path);
-    return await uploadSingleFile(file, req);
+    if (!req.files) {
+      throw new ConstraintError("Atleast one book cover should be uploaded.");
+    }
+    const files = extractFiles(req.files);
+    const imageUrls = await Promise.all(files.map((file, index) => uploadSingleFile(file, index)));
+    req["imageUrls"] = imageUrls;
   } catch (error) {
-    throw new Error(error.response);
+    throw new Error(error.message);
   }
 };
+
+export default uploadImage;
