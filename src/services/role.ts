@@ -8,7 +8,7 @@ class RoleService {
     } else if (super_admin) {
       (name = "Super Administrator"), (description = "Enterscale administrator");
     } else {
-      (name = "Platform user"), (description = "platform users");
+      (name = "Acquisition"), (description = "Aquicition List");
     }
     return await RoleRepo.createRole(workspace, {
       name,
