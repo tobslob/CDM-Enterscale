@@ -11,6 +11,7 @@ export const UserSchema = new Schema(
     email_address: { ...trimmedLowercaseString, required: true, index: true },
     phone_number: { ...trimmedString, required: true, index: true },
     DOB: { type: SchemaTypes.Date, index: true },
+    age: { type: SchemaTypes.Number, required: true, index: true },
     gender: { ...trimmedString, index: true },
     location: { ...trimmedString, index: true },
     role_id: { ...trimmedString, required: true, index: true },

@@ -6,25 +6,19 @@ import {
   requestParam,
   httpPost,
   requestBody,
-  queryParam
 } from "inversify-express-utils";
-import { BaseController, ConstraintError, mapConcurrently, validate } from "@app/data/util";
+import { BaseController, ConstraintError, mapConcurrently } from "@app/data/util";
 import { Request, Response } from "express";
 import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
-import { CampaignServ, VOICE_CAMPAIGN, USER_SESSION_KEY } from "@app/services/campaign";
-import { DefaulterRepo, DefaulterQuery } from "@app/data/defaulter";
+import { VOICE_CAMPAIGN, USER_SESSION_KEY } from "@app/services/campaign";
 import { differenceInCalendarDays } from "date-fns";
-import { Defaulter } from "@app/services/defaulter";
 import { Store } from "@app/common/services";
 import { SMSReportsDTO, SMSReportRepo } from "@app/data/sms";
-import { isDefaulterQuery } from "../defaulter/defaulter.validator";
 import { Session } from "@app/data/user";
 import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-report";
-import { isCampaign } from "./actions.validator";
 import { Voice, VoiceRepo } from "@app/data/voice";
 import { UrlShortnerRepo } from "@app/data/url-shortner/url-shortner.repo";
-import { replaceUrlWithShortUrl } from "@app/services/url-shortner";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
 
@@ -137,50 +131,6 @@ export class ActionsController extends BaseController<ControllerResponse> {
           channel: campaign.channel
         });
       }
-    } catch (error) {
-      this.handleError(req, res, error);
-    }
-  }
-
-  @httpPost("/", canCreateCampaign, validate(isDefaulterQuery, "query"), validate(isCampaign, "body"))
-  async sendInstantMessage(
-    @request() req: Request,
-    @response() res: Response,
-    @queryParam() query: DefaulterQuery,
-    @requestBody() body: CampaignDTO
-  ) {
-    try {
-      const workspace = req.session.workspace;
-      const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
-      const users = await Defaulter.getDefaultUsers(defaulters);
-
-      if (body.short_link) {
-        body["message"] = await replaceUrlWithShortUrl(body.message);
-      }
-
-      if (body.channel === "CALL") {
-        const phone_numbers = await mapConcurrently(users, async u => {
-          if (u.status !== "paid") {
-            return u.phone_number;
-          }
-        });
-        await CampaignServ.send(body, phone_numbers, req);
-
-        this.handleSuccess(req, res, []);
-      } else {
-        await mapConcurrently(users, async u => {
-          if (u.status !== "paid") {
-            return await CampaignServ.send(body, u, req);
-          }
-        });
-
-        this.handleSuccess(req, res, []);
-      }
-      this.log(req, {
-        activity: "send.instant.campaign",
-        message: `Sent out ${body.channel} campaign`,
-        channel: body.channel
-      });
     } catch (error) {
       this.handleError(req, res, error);
     }

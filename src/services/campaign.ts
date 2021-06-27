@@ -1,14 +1,14 @@
 import AdapterInstance from "@app/server/adapter/mail";
 import { CampaignDTO } from "@app/data/campaign";
 import dotenv from "dotenv";
-import { NotFoundError } from "@app/data/util";
+import { NotFoundError, mapConcurrently } from "@app/data/util";
 import { Proxy } from "@app/services/proxy";
 import { Request } from "express";
 import { Store } from "@app/common/services";
-import { DefaulterQuery } from "@app/data/defaulter";
 import { Mail } from "@app/data/email/email.repo";
-import { Defaulter } from "./defaulter";
 import { User } from "@app/data/user";
+import { DefaulterRepo, Defaulter } from "@app/data/defaulter";
+import { Defaulters } from "./defaulter";
 
 dotenv.config();
 
@@ -18,6 +18,19 @@ export const EMAIL_CAMPAIGN = "enterscale-campaign";
 export const USER_SESSION_KEY = "user_session_key";
 
 class CampaignService {
+  async sendInstantCampaign(campaign: CampaignDTO, req: Request) {
+    const workspace = req.session.workspace;
+    const defaulters = await DefaulterRepo.all({
+      conditions: { workspace, batch_id: { $in: campaign.target_audience } }
+    });
+
+    await mapConcurrently(defaulters, async (defaulter: Defaulter) => {
+      defaulter.users.forEach(async user => {
+        return await this.send(campaign, user, req);
+      })
+    });
+  }
+
   async send(campaign: CampaignDTO, user: any, req?: Request) {
     await Store.hset(USER_SESSION_KEY, "session_key", JSON.stringify(req.session));
 
@@ -34,7 +47,7 @@ class CampaignService {
   }
 
   private async email(campaign: CampaignDTO, user: any, req: Request) {
-    const link = await Defaulter.generateDefaulterLink(user, req);
+    const link = await Defaulters.generateDefaulterLink(user, req);
     const email = await AdapterInstance.send({
       subject: campaign.subject,
       channel: "mail",
@@ -53,7 +66,7 @@ class CampaignService {
   }
 
   private async sms(campaign: CampaignDTO, user: User, req: Request) {
-    const link = await Defaulter.generateDefaulterLink(user, req);
+    const link = await Defaulters.generateDefaulterLink(user, req);
     const body = `${campaign.message}\n\n${link}`;
     return await Proxy.sms(user.phone_number, body, link);
   }
@@ -63,10 +76,10 @@ class CampaignService {
     return await Proxy.voice(phone_numbers);
   }
 
-  protected async facebook(req: Request, query: DefaulterQuery, campaign: CampaignDTO) {
-    const { audience_id } = await Proxy.createCustomAudience(campaign);
-    return await Proxy.uploadCustomFile(req, query, audience_id);
-  }
+  // protected async facebook(req: Request, query: DefaulterQuery, campaign: CampaignDTO) {
+  //   const { audience_id } = await Proxy.createCustomAudience(campaign);
+  //   return await Proxy.uploadCustomFile(req, query, audience_id);
+  // }
 }
 
 export const CampaignServ = new CampaignService();

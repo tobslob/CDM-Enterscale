@@ -4,21 +4,27 @@ import { StatusType } from "../defaulter";
 
 export enum Gender {
   Male = "M",
-  Female = "F"
+  Female = "F",
+  NonBinary = "N",
+  Other = "o"
+}
+
+export interface MooyiUser {
+  first_name: string;
+  last_name: string;
+  password?: string;
+  email_address: string;
+  phone_number: string;
+  DOB: Date;
+  age?: number;
+  gender: Gender;
+  location: string;
 }
 
 /**
  * Model of a Enterscale user.
  */
-export interface User extends Model {
-  first_name: string;
-  last_name: string;
-  password: string;
-  email_address: string;
-  phone_number: string;
-  DOB: Date;
-  gender: Gender;
-  location: string;
+export interface User extends MooyiUser, Model {
   role_id: string;
   role_name: string;
   workspace: string;
@@ -32,7 +38,8 @@ export interface UserDTO {
   DOB: Date;
   gender: Gender;
   location: string;
-  permissions: Permissions;
+  role_id?: string;
+  permissions?: Permissions;
 }
 
 export interface LoginDTO {

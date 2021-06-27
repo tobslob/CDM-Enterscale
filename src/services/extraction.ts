@@ -8,6 +8,7 @@ import uuid from "uuid/v4";
 import { Multer } from "multer";
 import { StatusType } from "@app/data/defaulter";
 import { Gender } from "@app/data/user";
+import { differenceInYears } from "date-fns";
 
 export const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 export const CSV_MIME = "text/csv";
@@ -19,22 +20,28 @@ export interface ExtractedDefaulter {
   email_address: string;
   phone_number: string;
   DOB: Date;
+  age: number;
   gender: Gender;
   location: string;
-  loan_id: number;
-  actual_disbursement_date: Date;
-  is_first_loan: boolean;
-  loan_amount: number;
-  loan_tenure: number;
-  days_in_default: number;
-  amount_repaid: number;
-  amount_outstanding: number;
-  batch_id?: string;
-  status: StatusType;
+  loan_id?: number;
+  actual_disbursement_date?: Date;
+  is_first_loan?: boolean;
+  loan_amount?: number;
+  loan_tenure?: number;
+  days_in_default?: number;
+  amount_repaid?: number;
+  amount_outstanding?: number;
+  batch_id: string;
+  status?: StatusType;
+}
+
+export interface ExtractedResponse {
+  batch_id: string;
+  results: ExtractedDefaulter[];
 }
 
 class ExtractionService {
-  async extractDefaulters(file: Express.Multer.File): Promise<ExtractedDefaulter[]> {
+  async extractUsers(file: Express.Multer.File): Promise<ExtractedResponse> {
     try {
       const rows = await this.loadSheetValues(file.mimetype, file.buffer);
 
@@ -47,52 +54,53 @@ class ExtractionService {
         if (!row) return;
 
         // rows must all have 14 items
-        if (Object.keys(row).length !== 14) return;
+        if (Object.keys(row).length < 7) return;
 
         // ignore headers
         if (!EMAIL.test(row[2]?.trim())) return;
 
         // remove any comma separated string
-        row[1] = typeof row[1] === "string" ? row[1].replace(/\,/g, "") : row[1];
-        row[6] = typeof row[6] === "string" ? row[7].replace(/\,/g, "") : row[6];
-        row[7] = typeof row[7] === "string" ? row[7].replace(/\,/g, "") : row[7];
+        row[1] = typeof row[1] === "string" ? row[1]?.replace(/\,/g, "") : row[1];
+        row[10] = typeof row[10] === "string" ? row[10]?.replace(/\,/g, "") : row[10];
+        row[13] = typeof row[13] === "string" ? row[13]?.replace(/\,/g, "") : row[13];
+        row[14] = typeof row[14] === "string" ? row[14]?.replace(/\,/g, "") : row[14];
 
-        row[4] = typeof row[4] === "string" ? new Date(row[4]) : row[4];
+        row[8] = typeof row[8] === "string" ? new Date(row[8]) : row[8];
 
-        row[5] = JSON.parse(row[5].toString().toLowerCase());
-        row[6] = typeof row[6] === "string" ? Number(row[6]) : row[6];
-        row[7] = typeof row[7] === "string" ? Number(row[7]) : row[7];
-        row[8] = typeof row[8] === "string" ? Number(row[8]) : row[8];
-        row[9] = typeof row[9] === "string" ? Number(row[9]) : row[9];
-        row[10] = typeof row[10] === "string" ? Number(row[10]) : row[10];
-        row[12] = typeof row[12] === "string" ? new Date(row[12]) : row[12];
+        row[9] = row[9] ? JSON.parse(row[9]?.toString().toLowerCase()): null;
+        row[10] = typeof row[8] === "string" ? Number(row[10]) : row[10];
+        row[11] = typeof row[11] === "string" ? Number(row[11]) : row[11];
+        row[12] = typeof row[12] === "string" ? Number(row[12]) : row[12];
+        row[13] = typeof row[13] === "string" ? Number(row[13]) : row[13];
+        row[14] = typeof row[14] === "string" ? Number(row[14]) : row[14];
+        row[6] = typeof row[6] === "string" ? new Date(row[6]) : row[6];
 
         row[3] =
-          typeof row[3] === "number" ? row[3].toString().padStart(14, "+234") : row[3]?.trim().padStart(14, "+234");
+          typeof row[3] === "number" ? row[3]?.toString().padStart(14, "+234") : row[3]?.trim().padStart(14, "+234");
 
         results = uniqBy(results, result => {
           return `${result.phone_number}:${result.email_address}`;
         });
 
-        const name = row[11]?.trim()?.split(" ");
+        const name = row[4]?.trim()?.split(" ");
 
         results.push({
           loan_id: row[1],
           email_address: row[2]?.trim(),
           phone_number: row[3],
-          actual_disbursement_date: row[4],
-          is_first_loan: row[5],
-          loan_amount: row[6],
-          loan_tenure: row[7],
-          days_in_default: row[8],
-          amount_repaid: row[9],
-          amount_outstanding: row[10],
           first_name: name[0],
           last_name: name[1],
-          DOB: row[12],
-          gender: row[13]?.trim(),
-          location: row[14],
-          batch_id,
+          gender: row[5]?.trim(),
+          DOB: row[6],
+          location: row[7],
+          actual_disbursement_date: row[8],
+          is_first_loan: row[9],
+          loan_amount: row[10],
+          loan_tenure: row[11],
+          days_in_default: row[12],
+          amount_repaid: row[13],
+          amount_outstanding: row[14],
+          age: differenceInYears(new Date(), new Date(row[6])),
           status: "owing"
         });
       });
@@ -101,7 +109,7 @@ class ExtractionService {
         throw new ConstraintError("The uploaded document has less than 2 valid defaulters");
       }
 
-      return results;
+      return { batch_id, results };
     } catch (error) {
       throw new Error(error.message);
     }
