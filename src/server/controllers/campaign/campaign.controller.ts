@@ -16,9 +16,10 @@ import { Campaign, CampaignDTO, CampaignRepo, CampaignQuery } from "@app/data/ca
 import { canCreateCampaign } from "./campaign.middleware";
 import { SendMessageResponse } from "africastalking-ts";
 import { isCampaignDTO, isCampaignQuery } from "./campaign.validator";
-import { differenceInCalendarDays } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { WorkspaceRepo } from "@app/data/workspace";
 import { isIDs } from "../defaulter/defaulter.validator";
+import { CampaignServ } from "@app/services/campaign";
 import { replaceUrlWithShortUrl } from "@app/services/url-shortner";
 
 type ControllerResponse = Campaign[] | Campaign | SendMessageResponse | any;
@@ -32,19 +33,19 @@ export class CampaignController extends BaseController<ControllerResponse> {
       const user = req.session.user;
 
       if (body.end_date) {
-        const diff = differenceInCalendarDays(body.end_date, body.start_date);
+        const diff = differenceInDays(body.end_date, body.start_date);
         if (diff < 1) {
           throw new ConstraintError("The end date must at least be a day after start date");
         }
       }
 
       const wrkspace = await WorkspaceRepo.byID(workspace);
-
-      if (body.short_link) {
-        body["message"] = await replaceUrlWithShortUrl(body.message);
-      }
-
+      body.short_link ? (body["message"] = await replaceUrlWithShortUrl(body.message)) : body.message;
       const campaign = await CampaignRepo.createCampaign(wrkspace, user, body);
+
+      if (body.action.right_away) {
+        await CampaignServ.sendInstantCampaign(body, req);
+      }
       this.handleSuccess(req, res, campaign);
 
       this.log(req, {
@@ -114,7 +115,7 @@ export class CampaignController extends BaseController<ControllerResponse> {
       const workspace = req.session.workspace;
 
       if (body.end_date) {
-        const diff = differenceInCalendarDays(body.end_date, body.start_date);
+        const diff = differenceInDays(body.end_date, body.start_date);
         if (diff < 1) {
           throw new ConstraintError("The end date must at least be a day after start date");
         }

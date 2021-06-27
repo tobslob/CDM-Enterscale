@@ -5,6 +5,7 @@ import { BaseRepository } from "@random-guys/bucket";
 import { Passwords } from "@app/services/password";
 import { UnauthorizedError } from "@app/data/util";
 import { Role } from "../role/role.model";
+import { differenceInYears } from "date-fns";
 
 
 const User = model<User>("User", UserSchema);
@@ -26,6 +27,7 @@ class UserRepository extends BaseRepository<User> {
       password,
       phone_number: dto.phone_number,
       DOB: dto.DOB,
+      age: differenceInYears(new Date(), new Date(dto.DOB)),
       gender: dto.gender,
       location: dto.location,
       role_id: role.id,

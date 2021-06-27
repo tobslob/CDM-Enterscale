@@ -2,11 +2,10 @@ import Agenda from "agenda";
 import mongoose from "mongoose";
 import differenceInDays from "date-fns/differenceInDays";
 import { loopConcurrently, mapConcurrently } from "@app/data/util";
-import { CampaignRepo, Campaign } from "@app/data/campaign";
+import { CampaignRepo, Campaign, CampaignType } from "@app/data/campaign";
 import { isToday } from "date-fns";
 import { CampaignServ } from "@app/services/campaign";
-import { UserRepo } from "@app/data/user";
-import { DefaulterRepo } from "@app/data/defaulter";
+import { DefaulterRepo, Defaulter } from "@app/data/defaulter";
 
 /**
  * Freqeuncy for a recurring `ScheduleType`
@@ -30,18 +29,10 @@ export async function job() {
   Scheduler.define("Start Scheduled Campaign", { priority: "high", concurrency: 10 }, async (_job, done) => {
     await loopConcurrently(campaigns, async c => {
       if (c.status == "STOP" && isToday(c.start_date)) {
-        const defaulters = await DefaulterRepo.all({
-          conditions: {
-            batch_id: c.target_audience
+        await CampaignRepo.atomicUpdate(c.id, {
+          $set: {
+            status: "START"
           }
-        });
-
-        await mapConcurrently(defaulters, async d => {
-          await CampaignRepo.atomicUpdate(c.id, {
-            $set: {
-              status: "START"
-            }
-          });
         });
       }
     });
@@ -50,10 +41,7 @@ export async function job() {
 
   Scheduler.define("Stop Scheduled Campaign", async (_job, done) => {
     await loopConcurrently(campaigns, async c => {
-      const stop_hour = c.end_date.getHours();
-      const today_hour = new Date().getHours();
-
-      if (c.status == "START" && isToday(c.end_date) && stop_hour == today_hour) {
+      if (c.status == "START" && isToday(c.end_date)) {
         await CampaignRepo.atomicUpdate(c.id, {
           $set: {
             status: "STOP"
@@ -71,21 +59,30 @@ export async function job() {
       }
     });
 
-    await mapConcurrently(defaulters, async d => {
-      if (d.status !== "paid") {
-        const user = await UserRepo.byID(d.user);
-        await CampaignServ.send(c, user);
-      }
+    await mapConcurrently(defaulters, async (d: Defaulter) => {
+      d.users.forEach(async u => {
+        if (
+          (d.upload_type === CampaignType.STANDARD && u.status === "owing") ||
+          d.upload_type === CampaignType.AQUISITION
+        ) {
+          await CampaignServ.send(c, u);
+        }
+      });
     });
   }
 
   Scheduler.define("Run Campaign", async (_job, done) => {
-    await loopConcurrently(campaigns, async c => {
-      const send_hour = c.start_date.getHours();
+    await loopConcurrently(campaigns, async (c: Campaign) => {
       const time_hour = new Date().getHours();
 
-      if (c.status == "START" && !c.sent && differenceInDays(c.end_date, new Date()) > 1 && send_hour == time_hour) {
+      if (
+        c.status == "START" &&
+        !c.sent &&
+        differenceInDays(c.end_date, new Date()) > 1 &&
+        time_hour == c.delivery_time
+      ) {
         await runCampaign(c);
+        await CampaignRepo.atomicUpdate({ _id: c.id }, { $set: { sent_date: new Date() } });
       }
     });
     done();
@@ -97,7 +94,7 @@ export async function job() {
         c.status == "START" &&
         c.sent &&
         c.frequency == Frequency.Daily &&
-        differenceInDays(c.end_date, new Date()) > 1
+        differenceInDays(c.end_date, new Date()) >= 1
       ) {
         await CampaignRepo.atomicUpdate(c.id, {
           $set: {
@@ -115,7 +112,7 @@ export async function job() {
         c.status == "START" &&
         c.sent &&
         c.frequency == Frequency.Weekly &&
-        differenceInDays(c.end_date, new Date()) > 1
+        differenceInDays(new Date(), c.sent_date) >= 7
       ) {
         await CampaignRepo.atomicUpdate(c.id, {
           $set: {
@@ -133,7 +130,7 @@ export async function job() {
         c.status == "START" &&
         c.sent &&
         c.frequency == Frequency.Monthly &&
-        differenceInDays(c.end_date, new Date()) > 1
+        differenceInDays(new Date(), c.sent_date) >= 31
       ) {
         await CampaignRepo.atomicUpdate(c.id, {
           $set: {
@@ -156,6 +153,6 @@ export async function job() {
   stop.repeatEvery("0 0 * * *").save();
   run.repeatEvery("0 * * * *").save();
   resetDaily.repeatEvery("0 0 * * *").save();
-  resetWeekly.repeatEvery("0 0 * * MON").save();
+  resetWeekly.repeatEvery("0 0 * * SUN").save();
   resetMonthly.repeatEvery("0 0 1 * *").save();
 }

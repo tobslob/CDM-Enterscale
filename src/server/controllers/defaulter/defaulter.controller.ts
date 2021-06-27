@@ -10,60 +10,60 @@ import {
   httpPatch,
   requestBody
 } from "inversify-express-utils";
-import { BaseController, mapConcurrently, validate } from "@app/data/util";
+import { BaseController, validate, loopConcurrently } from "@app/data/util";
 import { isUpload, canCreateDefaulters } from "./defaulter.middleware";
-import { Extractions, ExtractedDefaulter } from "@app/services/extraction";
+import { Extractions, ExtractedResponse } from "@app/services/extraction";
 import { Request, Response } from "express";
-import { Defaulter } from "@app/services/defaulter";
-import { DefaulterRepo, Defaulters, DefaulterQuery, DefaulterDTO } from "@app/data/defaulter";
-import { isDefaulterDTO, isIDs } from "./defaulter.validator";
-import { CustomerRepo } from "@app/data/customer-list/customer-list.repo";
+import { DefaulterRepo, Defaulter, DefaulterQuery, DefaulterDTO } from "@app/data/defaulter";
+import { isDefaulterDTO } from "./defaulter.validator";
+import { BodyCampaignType, CampaignType } from "@app/data/campaign";
 import { UserServ } from "@app/services/user";
+import { RoleServ } from "@app/services/role";
 
-type ControllerResponse = ExtractedDefaulter[] | Defaulters[] | Defaulters;
+type ControllerResponse = Defaulter[] | Defaulter | ExtractedResponse;
 
 @controller("/defaulters")
 export class DefaultersController extends BaseController<ControllerResponse> {
   @httpPost("/bulk/extract", canCreateDefaulters, isUpload)
-  async extractDefaulters(@request() req: Request, @response() res: Response) {
+  async extractUsers(@request() req: Request, @response() res: Response, @requestBody() body: BodyCampaignType) {
     try {
       const workspace = req.session.workspace;
-      const defaulters = await Extractions.extractDefaulters(req.file);
+      const uploadedList = await Extractions.extractUsers(req.file);
 
-      const title = req.file.originalname.split(".");
-      const cratedDefaulters = await mapConcurrently(defaulters, async defaulter => {
-        return await Defaulter.createDefaulters(req, workspace, defaulter);
+      const defaulterList = await DefaulterRepo.createDefaulter(req, workspace, {
+        users: uploadedList.results,
+        batch_id: uploadedList.batch_id,
+        upload_type: body.type
       });
 
-      const defaultUsers = await Defaulter.getDefaultUsers(cratedDefaulters);
+      if (body.type === CampaignType.STANDARD) {
+        const role = await RoleServ.createRole(workspace, false, false, true);
+        await loopConcurrently(defaulterList.users, async user => {
+          user["role_id"] = role.id;
+          await UserServ.createUser(workspace, user);
+        });
+      }
 
-      await CustomerRepo.createCustomerList(workspace, {
-        batch_id: defaulters[0].batch_id,
-        title: title[0]
-      });
-
-      this.handleSuccess(req, res, defaultUsers);
+      this.handleSuccess(req, res, uploadedList);
     } catch (error) {
       this.handleError(req, res, error);
     }
   }
 
   @httpGet("/", canCreateDefaulters)
-  async getAllDefaulters(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
+  async getAllDefaultUsers(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
     try {
       const workspace = req.session.workspace;
-      const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
+      const defaulterLists = await DefaulterRepo.getDefaulters(workspace, query);
 
-      const defaultUsers = await Defaulter.getDefaultUsers(defaulters);
-
-      this.handleSuccess(req, res, defaultUsers);
+      this.handleSuccess(req, res, defaulterLists);
     } catch (error) {
       this.handleError(req, res, error);
     }
   }
 
   @httpGet("/:id", canCreateDefaulters)
-  async getDefaulter(@request() req: Request, @response() res: Response, @requestParam("id") _id: string) {
+  async getDefaultUser(@request() req: Request, @response() res: Response, @requestParam("id") _id: string) {
     try {
       const workspace = req.session.workspace;
       const defaulter = await DefaulterRepo.byQuery({ workspace, _id });
@@ -74,15 +74,11 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpDelete("/", canCreateDefaulters, validate(isIDs, "query"))
-  async deleteDefaulters(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
+  @httpDelete("/", canCreateDefaulters)
+  async deleteDefaultFile(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
     try {
       const workspace = req.session.workspace;
-      const defaulters = await DefaulterRepo.all({ conditions: { workspace, _id: { $in: query.id } } });
-
-      await mapConcurrently(defaulters, async d => {
-        await DefaulterRepo.deleteDefaulter(d);
-      });
+      await DefaulterRepo.deleteDefaulterList(query, workspace);
 
       this.handleSuccess(req, res, null);
 
@@ -97,7 +93,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
   }
 
   @httpPatch("/:id", canCreateDefaulters, validate(isDefaulterDTO, "body"))
-  async editDefaulters(
+  async editDefaulter(
     @request() req: Request,
     @response() res: Response,
     @requestParam("id") id: string,
@@ -106,16 +102,6 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     try {
       const workspace = req.session.workspace;
       const defaulter = await DefaulterRepo.editDefulter(workspace, id, body);
-      // @ts-ignore
-      await UserServ.editUser(defaulter.user, {
-        first_name: body.first_name,
-        last_name: body.last_name,
-        email_address: body.email_address,
-        DOB: body.DOB,
-        gender: body.gender,
-        location: body.location,
-        phone_number: body.phone_number
-      });
 
       this.handleSuccess(req, res, defaulter);
 

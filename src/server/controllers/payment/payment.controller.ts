@@ -22,7 +22,7 @@ import {
   PaymentQuery
 } from "@app/data/payment/payment.model";
 import { Payment } from "@app/services/payment";
-import { SessionRequest, UserRepo } from "@app/data/user";
+import { SessionRequest } from "@app/data/user";
 import {
   isPayment,
   isTypeOfPayment,
@@ -36,7 +36,6 @@ import {
 import { Proxy } from "@app/services/proxy";
 import { PaymentRepo } from "@app/data/payment";
 import dotenv from "dotenv";
-import { DefaulterRepo } from "@app/data/defaulter";
 
 dotenv.config();
 
@@ -186,20 +185,24 @@ export class PaymentController extends BaseController<ControllerResponse> {
 
       await PaymentRepo.webhook(body);
 
-      if (body.data.amount > 0) {
-        const user = await UserRepo.byQuery({
-          email_address: body.data.customer.email,
-          phone_number: body.data.customer.phone_number
-        });
-        const defaulter = await DefaulterRepo.byQuery({ workspace: user.workspace, user: user.id });
-        const amount_outstanding = defaulter.amount_outstanding - body.data.amount;
-        const amount_repaid = defaulter.loan_amount - amount_outstanding;
+      // if (body.data.amount > 0) {
+      //   const user = await UserRepo.byQuery({
+      //     email_address: body.data.customer.email,
+      //     phone_number: body.data.customer.phone_number
+      //   });
+      //   const amount_outstanding = defaulter.amount_outstanding - body.data.amount;
+      //   const amount_repaid = defaulter.loan_amount - amount_outstanding;
 
-        defaulter["amount_outstanding"] = amount_outstanding;
-        defaulter["amount_repaid"] = amount_repaid;
+      //   defaulter["amount_outstanding"] = amount_outstanding;
+      //   defaulter["amount_repaid"] = amount_repaid;
 
-        await DefaulterRepo.editDefulter(defaulter.workspace, defaulter.id, defaulter);
-      }
+      //   await DefaulterRepo.update(
+      //     { workspace: user.workspace, users: { $element: { email_address: body.data.customer.email } } },
+      //     { $set: { "users.$[element].amount_outstanding": amount_outstanding } },
+      //     { arrayFilters: [ { element: ""} ],
+      //     upsert: true }
+      //   );
+      // }
 
       res.send(200);
     } catch (error) {

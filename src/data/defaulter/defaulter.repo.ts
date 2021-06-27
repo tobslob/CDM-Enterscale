@@ -1,40 +1,28 @@
 import { BaseRepository } from "@random-guys/bucket";
-import { Defaulters, DefaulterDTO, DefaulterQuery } from "./defaulter.model";
+import { Defaulter, DefaulterDTO, DefaulterQuery } from "./defaulter.model";
 import mongoose from "mongoose";
-import { DefaulterSchema } from "./defaulter.schema";
-import { User, UserRepo } from "../user";
+import { DefaultersSchema } from "./defaulter.schema";
 import { Request } from "express";
 import { fromQueryMap } from "../util";
-import { RoleRepo } from "../role";
 
-class DefaulterRepository extends BaseRepository<Defaulters> {
+class DefaulterRepository extends BaseRepository<Defaulter> {
   constructor() {
-    super(mongoose.connection, "Defaulters", DefaulterSchema);
+    super(mongoose.connection, "Defaulters", DefaultersSchema);
   }
 
   async bulkDelete(request_token: string) {
     return this.truncate({ request_token });
   }
 
-  async createDefaulters(req: Request, workspace: string, user: User, defaulter: DefaulterDTO) {
-    if (!user) return;
-
+  async createDefaulter(req: Request, workspace: string, defaulter: DefaulterDTO) {
     const title = req.file.originalname.split(".");
 
     return this.create({
       title: title[0],
-      loan_id: defaulter.loan_id,
-      actual_disbursement_date: defaulter.actual_disbursement_date,
-      is_first_loan: defaulter.is_first_loan,
-      loan_amount: defaulter.loan_amount,
-      loan_tenure: defaulter.loan_tenure,
-      days_in_default: defaulter.days_in_default,
-      amount_repaid: defaulter.amount_repaid,
-      amount_outstanding: defaulter.amount_outstanding,
-      workspace,
-      user: user.id,
       batch_id: defaulter.batch_id,
-      role_id: user.role_id
+      upload_type: defaulter.upload_type,
+      workspace,
+      users: defaulter.users
     });
   }
 
@@ -44,8 +32,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     let conditions = fromQueryMap(query, {
       batch_id: { batch_id: query.batch_id },
       title: { title: nameRegex },
-      id: { _id: { $in: query.id } },
-      status: { status: query.status }
+      id: { _id: { $in: query.id } }
     });
 
     conditions = {
@@ -56,7 +43,7 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     const limit = Number(query.limit);
     const offset = Number(query.offset);
 
-    return new Promise<Defaulters[]>((resolve, reject) => {
+    return new Promise<Defaulter[]>((resolve, reject) => {
       let directQuery = this.model.find(conditions).skip(offset).sort({ created_at: -1 });
 
       if (query.limit !== 0) {
@@ -72,10 +59,8 @@ class DefaulterRepository extends BaseRepository<Defaulters> {
     });
   }
 
-  async deleteDefaulter(defaulter: Defaulters) {
-    await UserRepo.destroy(defaulter.user);
-    await RoleRepo.destroy(defaulter.role_id);
-    await DefaulterRepo.destroy(defaulter.id);
+  async deleteDefaulterList(query: DefaulterQuery, workspace: string) {
+    await DefaulterRepo.destroy({ workspace, query });
   }
 
   async editDefulter(workspace: string, id: string, defaulter: any) {

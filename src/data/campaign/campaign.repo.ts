@@ -29,7 +29,16 @@ class CampaignRepository extends BaseRepository<Campaign> {
       organisation: campaignDTO.organisation,
       subtype: campaignDTO.subtype,
       customer_file_source: campaignDTO.customer_file_source,
-      short_link: campaignDTO.short_link
+      short_link: campaignDTO.short_link,
+      campaign_type: campaignDTO.campaign_type,
+      gender: campaignDTO.gender,
+      age: campaignDTO.age,
+      percentage_to_send_to: campaignDTO.percentage_to_send_to,
+      template_id: campaignDTO.template_id,
+      delivery_time: campaignDTO.delivery_time,
+      time_zone: campaignDTO.time_zone,
+      action: campaignDTO.action,
+      location: campaignDTO.location
     });
   }
 
@@ -50,7 +59,18 @@ class CampaignRepository extends BaseRepository<Campaign> {
           start_date: campaignDTO.start_date,
           end_date: campaignDTO.end_date,
           target_audience: campaignDTO.target_audience,
-          message: campaignDTO.message
+          message: campaignDTO.message,
+          status: "STOP",
+          subtype: campaignDTO.subtype,
+          customer_file_source: campaignDTO?.customer_file_source,
+          campaign_type: campaignDTO.campaign_type,
+          gender: campaignDTO.gender,
+          age: campaignDTO.age,
+          percentage_to_send_to: campaignDTO.percentage_to_send_to,
+          template_id: campaignDTO.template_id,
+          delivery_time: campaignDTO.delivery_time,
+          time_zone: campaignDTO.time_zone,
+          location: campaignDTO.location
         }
       }
     );

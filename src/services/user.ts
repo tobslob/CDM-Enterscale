@@ -6,18 +6,26 @@ import { UnauthorizedError, ForbiddenError } from "@app/data/util";
 import { Auth } from "@app/common/services";
 import { Log } from "@app/common/services/logger";
 import { WorkspaceRepo } from "@app/data/workspace";
+import { RoleRepo, Role } from "@app/data/role";
 
 class UserService {
   async createUser(workspace: string, dto: UserDTO) {
     const usr = await UserRepo.model.exists({ workspace, email_address: dto.email_address });
     if (usr) return;
 
-    const role = await RoleServ.createRole(
-      workspace,
-      dto.permissions.loan_admin,
-      dto.permissions.super_admin,
-      dto.permissions.users
-    );
+    let role: Role;
+
+    if (dto.role_id) {
+      role = await RoleRepo.byID(dto.role_id);
+    } else {
+      role = await RoleServ.createRole(
+        workspace,
+        dto.permissions.loan_admin,
+        dto.permissions.super_admin,
+        dto.permissions.users
+      );
+    }
+
     const generatedPassword = Passwords.generateRandomPassword(10);
     const password = await Passwords.generateHash(generatedPassword);
     const user = await UserRepo.newUser(role, workspace, password, dto);
