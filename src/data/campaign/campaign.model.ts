@@ -18,7 +18,6 @@ export enum CampaignType {
 export interface AgeGroup {
   from: number;
   to: number;
-  all: boolean;
 }
 
 export interface BodyCampaignType{
@@ -49,7 +48,7 @@ export interface Campaign extends Model {
   customer_file_source?: CustomAudienceType;
   short_link?: boolean;
   campaign_type: CampaignType;
-  gender: Gender;
+  gender: Gender[];
   age: AgeGroup;
   percentage_to_send_to: number;
   template_id?: string;
@@ -73,7 +72,7 @@ export interface CampaignDTO {
   customer_file_source?: CustomAudienceType;
   short_link?: boolean;
   campaign_type: CampaignType;
-  gender: Gender;
+  gender: Gender[];
   age: AgeGroup;
   percentage_to_send_to: number;
   template_id?: string;

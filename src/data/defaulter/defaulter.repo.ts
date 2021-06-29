@@ -44,7 +44,7 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
               $and: [
                 { location: locationRegex },
                 { age: { $gte: campaign.age.from, $lte: campaign.age.to } },
-                { gender: campaign.gender }
+                { gender: { $in: campaign.gender } }
               ]
             }
           }
@@ -90,7 +90,7 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
             $and: [
               { location: { $regex: query.location } },
               { age: { $gte: query.age.from, $lte: query.age.to } },
-              { gender: query.gender }
+              { gender: { $in: query.gender } }
             ]
           }
         }
