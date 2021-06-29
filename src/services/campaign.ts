@@ -2,7 +2,7 @@ import AdapterInstance from "@app/server/adapter/mail";
 import { CampaignDTO } from "@app/data/campaign";
 import dotenv from "dotenv";
 import { NotFoundError, mapConcurrently } from "@app/data/util";
-import { Proxy } from "@app/services/proxy";
+import { Proxy, Prop } from "@app/services/proxy";
 import { Request } from "express";
 import { Store } from "@app/common/services";
 import { Mail } from "@app/data/email/email.repo";
@@ -80,7 +80,8 @@ class CampaignService {
 
   private async voice(campaign: CampaignDTO, phone_numbers: string[]) {
     await Store.hset(VOICE_CAMPAIGN, "campaign_key", JSON.stringify(campaign));
-    return await Proxy.voice(phone_numbers);
+    let prop: Prop = campaign.audio_url ? "media_url" : "doc_url";
+    return await Proxy.voice(campaign, prop,  phone_numbers);
   }
 
   // protected async facebook(req: Request, query: DefaulterQuery, campaign: CampaignDTO) {

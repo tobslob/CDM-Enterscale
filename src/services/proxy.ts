@@ -26,6 +26,9 @@ export const subType = <const>[
 export type CustomAudienceType = typeof customAudience[number];
 export type SubType = typeof subType[number];
 
+const prop = <const>["media_url", "doc_url"];
+export type Prop = typeof prop[number];
+
 class ProxyServices {
   async makePayment(client: string, type: string) {
     const data = await Axios(
@@ -146,7 +149,9 @@ class ProxyServices {
     return data;
   }
 
-  async voice(recipients: Array<string>) {
+  async voice(campaign: CampaignDTO, prop: Prop, recipients: Array<string>) {
+    let url: string;
+    url = prop == "doc_url" ? `${process.env.base_url}/actions/voice` : campaign.audio_url;
     const data = await Axios(
       `${process.env.kirusa_url}/${process.env.kirusa_account_id}/Calls`,
       "post",
@@ -155,8 +160,8 @@ class ProxyServices {
         caller_id: `${process.env.kirusa_caller_id}`,
         recipients,
         direction: "outbound",
-        doc_url: `${process.env.base_url}/actions/voice`,
-        callback_url: `${process.env.base_url}/actions/webhook`,
+        [prop]: url,
+        callback_url: `${process.env.base_url}/actions/webhook`
       },
       {
         headers: {
@@ -181,7 +186,7 @@ class ProxyServices {
         body,
         track_url: true,
         url_to_track: link,
-        callback_url: `${process.env.base_url}/actions/sms`,
+        callback_url: `${process.env.base_url}/actions/sms`
       },
       {
         headers: {
