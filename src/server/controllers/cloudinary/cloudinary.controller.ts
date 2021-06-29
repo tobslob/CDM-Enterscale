@@ -8,7 +8,7 @@ import uploadMedia from "@app/services/upload";
 
 @controller("/uploads")
 export class UploadController extends BaseController<string[]> {
-  @httpPost("/file", canCreateDefaulters, isUpload)
+  @httpPost("/", canCreateDefaulters, isUpload)
   async UploadToCloudinary(@request() req: Request, @response() res: Response) {
     try {
       await uploadMedia(req, res);
