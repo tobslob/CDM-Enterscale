@@ -18,9 +18,7 @@ class WorkspaceService {
       gender: dto.gender,
       location: dto.location,
       permissions: {
-        loan_admin: true,
-        super_admin: false,
-        users: false
+        loan_admin: true
       }
     });
 

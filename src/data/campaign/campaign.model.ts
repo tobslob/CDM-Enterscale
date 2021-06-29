@@ -4,7 +4,7 @@ import { SubType, CustomAudienceType } from "@app/services/proxy";
 import { PaginationQuery } from "../util";
 import { Gender } from "../user";
 
-export const channel = <const>["FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM", "CALL"];
+export const channel = <const>["FACEBOOK", "TWITTER", "EMAIL", "SMS", "INSTAGRAM", "VOICE"];
 export type Channel = typeof channel[number];
 
 export const status = <const>["START", "STOP"];
@@ -18,15 +18,11 @@ export enum CampaignType {
 export interface AgeGroup {
   from: number;
   to: number;
+  all: boolean;
 }
 
 export interface BodyCampaignType{
-  type: CampaignType;
-}
-
-export interface Action {
-  schedule: boolean;
-  right_away: boolean;
+  campaign_type: CampaignType;
 }
 
 export interface Campaign extends Model {
@@ -34,7 +30,6 @@ export interface Campaign extends Model {
   subject?: string;
   description?: string;
   channel: Channel;
-  amount?: number;
   frequency?: Frequency;
   start_date?: Date;
   end_date?: Date;
@@ -50,7 +45,6 @@ export interface Campaign extends Model {
   workspace_name: string;
   status?: Status;
   sent?: boolean;
-  organisation?: string;
   subtype?: SubType;
   customer_file_source?: CustomAudienceType;
   short_link?: boolean;
@@ -61,7 +55,7 @@ export interface Campaign extends Model {
   template_id?: string;
   delivery_time: number;
   time_zone?: string;
-  action: Action;
+  schedule: boolean;
 }
 
 export interface CampaignDTO {
@@ -69,14 +63,12 @@ export interface CampaignDTO {
   subject?: string;
   description?: string;
   channel?: Channel;
-  amount?: number;
   frequency?: Frequency;
   start_date?: Date;
   end_date?: Date;
   target_audience?: string[];
   location?: string;
   message?: string;
-  organisation?: string;
   subtype?: SubType;
   customer_file_source?: CustomAudienceType;
   short_link?: boolean;
@@ -87,7 +79,7 @@ export interface CampaignDTO {
   template_id?: string;
   delivery_time: number;
   time_zone?: string;
-  action: Action;
+  schedule: boolean;
 }
 
 export interface CampaignQuery extends PaginationQuery {

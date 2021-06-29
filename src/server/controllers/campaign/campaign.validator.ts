@@ -27,3 +27,7 @@ export const isCampaignQuery = joi.object({
   channel: JoiValidator.validateString().valid(...channel),
   description: JoiValidator.validateString()
 });
+
+export const isCampaignType = joi.object({
+  campaign_type: JoiValidator.validateString().allow("standard", "acquisition").required()
+})

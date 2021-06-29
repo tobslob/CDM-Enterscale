@@ -19,15 +19,22 @@ export const USER_SESSION_KEY = "user_session_key";
 
 class CampaignService {
   async sendInstantCampaign(campaign: CampaignDTO, req: Request) {
-    const workspace = req.session.workspace;
-    const defaulters = await DefaulterRepo.all({
-      conditions: { workspace, batch_id: { $in: campaign.target_audience } }
-    });
+    const defaulters = await DefaulterRepo.searchDefaulters(req, campaign);
+
+    if (campaign.channel === "VOICE") {
+      const phone_numbers = []
+      await mapConcurrently(defaulters, async (defaulter: Defaulter) => {
+        defaulter.users.forEach(async user => {
+          phone_numbers.push(user.phone_number);
+        });
+      });
+      return await this.send(campaign, phone_numbers, req);
+    }
 
     await mapConcurrently(defaulters, async (defaulter: Defaulter) => {
       defaulter.users.forEach(async user => {
         return await this.send(campaign, user, req);
-      })
+      });
     });
   }
 
@@ -39,7 +46,7 @@ class CampaignService {
         return await this.email(campaign, user, req);
       case "SMS":
         return await this.sms(campaign, user, req);
-      case "CALL":
+      case "VOICE":
         return await this.voice(campaign, user);
       default:
         throw new NotFoundError("channel not found");
@@ -66,8 +73,8 @@ class CampaignService {
   }
 
   private async sms(campaign: CampaignDTO, user: User, req: Request) {
-    const link = await Defaulters.generateDefaulterLink(user, req);
-    const body = `${campaign.message}\n\n${link}`;
+    const link = campaign.campaign_type == "standard" ? await Defaulters.generateDefaulterLink(user, req) : "";
+    const body = `${campaign.message}\n${link}`;
     return await Proxy.sms(user.phone_number, body, link);
   }
 

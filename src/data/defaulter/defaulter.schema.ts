@@ -1,4 +1,4 @@
-import { trimmedString, readMapper, timestamps, trimmedLowercaseString } from "@random-guys/bucket";
+import { trimmedString, readMapper, timestamps, trimmedLowercaseString, uuid } from "@random-guys/bucket";
 import { SchemaTypes, Schema } from "mongoose";
 
 const DefaultUserSchema = new Schema({
@@ -23,6 +23,7 @@ const DefaultUserSchema = new Schema({
 
 export const DefaultersSchema = new Schema(
   {
+    _id: { ...uuid },
     title: { ...trimmedString, required: true, unique: true, index: true },
     batch_id: { ...trimmedString, required: true, index: true },
     upload_type: { ...trimmedString, index: true },

@@ -1,5 +1,5 @@
 import { PaginationQuery } from "../util";
-import { MooyiUser } from "../user";
+import { MooyiUser, Gender } from "../user";
 import { Model } from "@random-guys/bucket";
 import { CampaignType } from "../campaign";
 
@@ -37,5 +37,11 @@ export interface DefaulterQuery extends PaginationQuery {
   id?: string;
   batch_id?: string;
   title?: string;
-  upload_type: CampaignType;
+  upload_type?: CampaignType;
+  location?: string;
+  gender?: Gender;
+  age?: {
+    from: number;
+    to: number;
+  };
 }

@@ -1,22 +1,20 @@
-import { RoleRepo } from "@app/data/role";
+import { RoleRepo, Permissions } from "@app/data/role";
 
 class RoleService {
-  async createRole(workspace: string, loan_admin?: boolean, super_admin?: boolean, users?: boolean) {
+  async createRole(workspace: string, permissions: Permissions) {
     let name: string, description: string;
-    if (loan_admin) {
+    if (permissions.loan_admin) {
       (name = "Loan Administrator"), (description = "Workspace loan administrator");
-    } else if (super_admin) {
+    } else if (permissions.super_admin) {
       (name = "Super Administrator"), (description = "Enterscale administrator");
+    } else if(permissions.standard){
+      (name = "Standard"), (description = "Role for list uploaded by users");
     } else {
-      (name = "Acquisition"), (description = "Aquicition List");
+      (name = "Acquisition"), (description = "Mooyi Uploaded list");
     }
     return await RoleRepo.createRole(workspace, {
       name,
-      permissions: {
-        loan_admin,
-        super_admin,
-        users
-      },
+      permissions,
       description
     });
   }

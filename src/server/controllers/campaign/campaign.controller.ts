@@ -26,7 +26,7 @@ type ControllerResponse = Campaign[] | Campaign | SendMessageResponse | any;
 
 @controller("/campaigns")
 export class CampaignController extends BaseController<ControllerResponse> {
-  @httpPost("/", canCreateCampaign, validate(isCampaignDTO, "body"))
+  @httpPost("/", canCreateCampaign)
   async createCampaign(@request() req: Request, @response() res: Response, @requestBody() body: CampaignDTO) {
     try {
       const workspace = req.session.workspace;
@@ -43,7 +43,7 @@ export class CampaignController extends BaseController<ControllerResponse> {
       body.short_link ? (body["message"] = await replaceUrlWithShortUrl(body.message)) : body.message;
       const campaign = await CampaignRepo.createCampaign(wrkspace, user, body);
 
-      if (body.action.right_away) {
+      if (!body.schedule) {
         await CampaignServ.sendInstantCampaign(body, req);
       }
       this.handleSuccess(req, res, campaign);
