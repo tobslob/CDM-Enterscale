@@ -52,10 +52,10 @@ const uploadSingleFile = async (file: any, index: number) => {
  * @param req - request object
  * @param res - response object
  */
-const uploadImage = async (req: Request, _res: Response) => {
+const uploadMedia = async (req: Request, _res: Response) => {
   try {
     if (!req.files) {
-      throw new ConstraintError("Atleast one book cover should be uploaded.");
+      throw new ConstraintError("Atleast one upload is required.");
     }
     const files = extractFiles(req.files);
     const urls = await Promise.all(files.map((file, index) => uploadSingleFile(file, index)));
@@ -65,4 +65,4 @@ const uploadImage = async (req: Request, _res: Response) => {
   }
 };
 
-export default uploadImage;
+export default uploadMedia;
