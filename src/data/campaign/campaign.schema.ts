@@ -12,7 +12,7 @@ export const CampaignSchema = new Schema(
     frequency: { ...trimmedString, index: true },
     start_date: { type: SchemaTypes.Date, index: true },
     end_date: { type: SchemaTypes.Date, index: true },
-    target_audience: { ...trimmedString, index: true },
+    target_audience: { type: SchemaTypes.Array, index: true },
     message: { ...trimmedString, required: true, index: true },
     user: { ...trimmedString, required: true, index: true },
     workspace: { ...trimmedString, index: true },
@@ -29,9 +29,13 @@ export const CampaignSchema = new Schema(
     template_id: { ...trimmedString, index: true },
     delivery_time: { type: SchemaTypes.Number, index: true },
     time_zone: { type: SchemaTypes.Number, index: true },
-    schedule : { type: SchemaTypes.Boolean, index: true, default: false},
+    schedule: { type: SchemaTypes.Boolean, index: true, default: false },
     location: { ...trimmedString, index: true },
     sent_date: { type: SchemaTypes.Date, index: true },
+    video_urls: { type: SchemaTypes.Array, index: true },
+    brand_logo: { type: SchemaTypes.Array, index: true },
+    hero_image: { type: SchemaTypes.Array, index: true },
+    audio_urls: { type: SchemaTypes.Array, index: true }
   },
   {
     ...readMapper,

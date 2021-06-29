@@ -36,7 +36,11 @@ class CampaignRepository extends BaseRepository<Campaign> {
       delivery_time: campaignDTO.delivery_time,
       time_zone: campaignDTO.time_zone,
       schedule: campaignDTO.schedule,
-      location: campaignDTO.location
+      location: campaignDTO.location,
+      video_urls: campaignDTO.video_urls,
+      brand_logo: campaignDTO.brand_logo,
+      hero_image: campaignDTO.hero_image,
+      audio_urls: campaignDTO.audio_urls
     });
   }
 

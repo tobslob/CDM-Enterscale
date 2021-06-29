@@ -55,6 +55,10 @@ export interface Campaign extends Model {
   delivery_time: number;
   time_zone?: string;
   schedule: boolean;
+  video_urls?: string[];
+  brand_logo?: string[];
+  hero_image?: string[];
+  audio_urls?: string[];
 }
 
 export interface CampaignDTO {
@@ -79,6 +83,10 @@ export interface CampaignDTO {
   delivery_time: number;
   time_zone?: string;
   schedule: boolean;
+  video_urls?: string[];
+  brand_logo?: string[];
+  hero_image?: string[];
+  audio_urls?: string[];
 }
 
 export interface CampaignQuery extends PaginationQuery {

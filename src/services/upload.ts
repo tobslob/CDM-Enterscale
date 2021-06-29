@@ -23,12 +23,13 @@ const extractFiles = files => files.map(file => extractSingleFile(file));
 
 /**
  * a function that is used to upload the supplied image to the cloud
- * @param {Object} file - a proccessed file
- * @param {Object} index - the index of the file
- * @returns {Object} - return the uploaded image url
+ * @param file - a proccessed file
+ * @param index - the index of the file
+ * @returns string - return the uploaded image url
  */
-const uploadSingleFile = async (file, index) => {
+const uploadSingleFile = async (file: any, index: number) => {
   const { secure_url } = await uploader.upload(file, {
+    resource_type: "raw",
     public_id: `${generate()}-${index}`,
     overwrite: true,
     folder: "qx-items",
@@ -40,7 +41,7 @@ const uploadSingleFile = async (file, index) => {
         quality: "auto"
       }
     ],
-    allowedFormats: ["jpg", "jpeg", "png", "gif", "svg"]
+    allowedFormats: ["jpg", "jpeg", "png", "gif", "svg", "mp4", "mp3", "wav"]
   });
 
   return secure_url;
@@ -57,8 +58,8 @@ const uploadImage = async (req: Request, _res: Response) => {
       throw new ConstraintError("Atleast one book cover should be uploaded.");
     }
     const files = extractFiles(req.files);
-    const imageUrls = await Promise.all(files.map((file, index) => uploadSingleFile(file, index)));
-    req["imageUrls"] = imageUrls;
+    const urls = await Promise.all(files.map((file, index) => uploadSingleFile(file, index)));
+    req["urls"] = urls;
   } catch (error) {
     throw new Error(error.message);
   }
