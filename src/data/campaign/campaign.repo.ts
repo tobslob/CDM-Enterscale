@@ -16,7 +16,6 @@ class CampaignRepository extends BaseRepository<Campaign> {
       subject: campaignDTO.subject,
       description: campaignDTO.description,
       channel: campaignDTO.channel,
-      amount: campaignDTO.amount,
       frequency: campaignDTO.frequency,
       start_date: campaignDTO.start_date,
       end_date: campaignDTO.end_date,
@@ -26,7 +25,6 @@ class CampaignRepository extends BaseRepository<Campaign> {
       workspace: workspace.id,
       workspace_name: workspace.name,
       status: "STOP",
-      organisation: campaignDTO.organisation,
       subtype: campaignDTO.subtype,
       customer_file_source: campaignDTO.customer_file_source,
       short_link: campaignDTO.short_link,
@@ -37,7 +35,7 @@ class CampaignRepository extends BaseRepository<Campaign> {
       template_id: campaignDTO.template_id,
       delivery_time: campaignDTO.delivery_time,
       time_zone: campaignDTO.time_zone,
-      action: campaignDTO.action,
+      schedule: campaignDTO.schedule,
       location: campaignDTO.location
     });
   }
@@ -54,7 +52,6 @@ class CampaignRepository extends BaseRepository<Campaign> {
           subject: campaignDTO.subject,
           description: campaignDTO.description,
           channel: campaignDTO.channel,
-          amount: campaignDTO.amount,
           frequency: campaignDTO.frequency,
           start_date: campaignDTO.start_date,
           end_date: campaignDTO.end_date,

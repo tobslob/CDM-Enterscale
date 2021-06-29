@@ -3,7 +3,8 @@ import { Defaulter, DefaulterDTO, DefaulterQuery } from "./defaulter.model";
 import mongoose from "mongoose";
 import { DefaultersSchema } from "./defaulter.schema";
 import { Request } from "express";
-import { fromQueryMap } from "../util";
+import { orFromQueryMap } from "../util";
+import { CampaignDTO } from "../campaign";
 
 class DefaulterRepository extends BaseRepository<Defaulter> {
   constructor() {
@@ -26,13 +27,74 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
     });
   }
 
+  /**
+   * returns an exact match and no pagination
+   * @param req server request
+   * @param campaign campaign dto object
+   */
+  async searchDefaulters(req: Request, campaign: CampaignDTO) {
+    const workspace = req.session.workspace;
+    const locationRegex = campaign.location && new RegExp(`.*${campaign.location}.*`, "i");
+    const defaulters = await DefaulterRepo.model.aggregate([
+      {
+        $match: {
+          workspace,
+          users: {
+            $elemMatch: {
+              $and: [
+                { location: locationRegex },
+                { age: { $gte: campaign.age.from, $lte: campaign.age.to } },
+                { gender: campaign.gender }
+              ]
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          title: 1,
+          batch_id: 1,
+          users: {
+            $filter: {
+              input: "$users",
+              as: "users",
+              cond: {
+                $and: [
+                  { $gte: ["$$users.age", campaign.age.from] },
+                  { $lte: ["$$users.age", campaign.age.to] },
+                  { $eq: ["$$users.gender", campaign.gender] }
+                ]
+              }
+            }
+          }
+        }
+      }
+    ]);
+
+    return defaulters;
+  }
+
+  /**
+   * returns a paginated related search
+   */
   getDefaulters(workspace: string, query?: DefaulterQuery) {
     const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
 
-    let conditions = fromQueryMap(query, {
-      batch_id: { batch_id: query.batch_id },
+    let conditions = orFromQueryMap(query, {
+      batch_id: { batch_id: { $in: query.batch_id } },
       title: { title: nameRegex },
-      id: { _id: { $in: query.id } }
+      id: { _id: { $in: query.id } },
+      users: {
+        users: {
+          $elemMatch: {
+            $and: [
+              { location: { $regex: query.location } },
+              { age: { $gte: query.age.from, $lte: query.age.to } },
+              { gender: query.gender }
+            ]
+          }
+        }
+      }
     });
 
     conditions = {

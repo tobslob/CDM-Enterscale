@@ -5,7 +5,8 @@ import { uuid } from "@app/data/util";
 const PermissionSchema: SchemaDefinition = {
   super_admin: { type: SchemaTypes.Boolean, index: true, default: false },
   loan_admin: { type: SchemaTypes.Boolean, index: true, default: false },
-  users: { type: SchemaTypes.Boolean, index: true, default: false }
+  standard: { type: SchemaTypes.Boolean, index: true, default: false },
+  acquisition: { type: SchemaTypes.Boolean, index: true, default: false }
 };
 
 export const RoleSchema = new Schema(

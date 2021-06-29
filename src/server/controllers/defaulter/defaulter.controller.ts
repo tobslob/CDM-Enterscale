@@ -10,7 +10,7 @@ import {
   httpPatch,
   requestBody
 } from "inversify-express-utils";
-import { BaseController, validate, loopConcurrently } from "@app/data/util";
+import { BaseController, validate, loopConcurrently, ConstraintError } from "@app/data/util";
 import { isUpload, canCreateDefaulters } from "./defaulter.middleware";
 import { Extractions, ExtractedResponse } from "@app/services/extraction";
 import { Request, Response } from "express";
@@ -27,17 +27,28 @@ export class DefaultersController extends BaseController<ControllerResponse> {
   @httpPost("/bulk/extract", canCreateDefaulters, isUpload)
   async extractUsers(@request() req: Request, @response() res: Response, @requestBody() body: BodyCampaignType) {
     try {
+      if (!body.campaign_type) {
+        throw new ConstraintError("campaign_type is required");
+      }
       const workspace = req.session.workspace;
       const uploadedList = await Extractions.extractUsers(req.file);
+
+      if(body.campaign_type == "standard") {
+        uploadedList.results.forEach(res => {
+          res["status"] = "owing"
+        })
+      }
 
       const defaulterList = await DefaulterRepo.createDefaulter(req, workspace, {
         users: uploadedList.results,
         batch_id: uploadedList.batch_id,
-        upload_type: body.type
+        upload_type: body.campaign_type
       });
 
-      if (body.type === CampaignType.STANDARD) {
-        const role = await RoleServ.createRole(workspace, false, false, true);
+      if (body.campaign_type === CampaignType.STANDARD) {
+        const role = await RoleServ.createRole(workspace, {
+          standard: true
+        });
         await loopConcurrently(defaulterList.users, async user => {
           user["role_id"] = role.id;
           await UserServ.createUser(workspace, user);

@@ -19,10 +19,9 @@ class UserService {
       role = await RoleRepo.byID(dto.role_id);
     } else {
       role = await RoleServ.createRole(
-        workspace,
-        dto.permissions.loan_admin,
-        dto.permissions.super_admin,
-        dto.permissions.users
+        workspace, {
+          loan_admin: true,
+        }
       );
     }
 
@@ -30,7 +29,7 @@ class UserService {
     const password = await Passwords.generateHash(generatedPassword);
     const user = await UserRepo.newUser(role, workspace, password, dto);
 
-    if (!role.permissions.users) {
+    if (!role.permissions.standard) {
       const wrkspace = await WorkspaceRepo.byID(workspace);
       await AdapterInstance.send({
         subject: "Welcome! Supercharge your digital transformation",
