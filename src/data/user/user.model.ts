@@ -2,12 +2,8 @@ import { Model } from "@random-guys/bucket";
 import { Permissions } from "@app/data/role";
 import { StatusType } from "../defaulter";
 
-export enum Gender {
-  Male = "M",
-  Female = "F",
-  NonBinary = "N",
-  Other = "o"
-}
+export const gender = <const>["Male", "Female", "Non-Binary", "Others"];
+export type Gender = typeof gender[number];
 
 export interface MooyiUser {
   first_name: string;
