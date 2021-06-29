@@ -12,7 +12,7 @@ export class UploadController extends BaseController<string[]> {
   async UploadToCloudinary(@request() req: Request, @response() res: Response) {
     try {
       await uploadImage(req, res);
-      this.handleSuccess(req, res, req["imageUrls"]);
+      this.handleSuccess(req, res, req["urls"]);
     } catch (error) {
       this.handleError(req, res, error);
     }
