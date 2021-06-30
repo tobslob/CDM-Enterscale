@@ -6,5 +6,5 @@ export * from "./campaign/campaign.controller";
 export * from "./actions/actions.controller";
 export * from "./payment/payment.controller";
 export * from "./payment/payment.controller";
-export * from "./cloudinary/cloudinary.controller";
+export * from "./media/media.controller";
 export * from "./facebook/facebook.controller";

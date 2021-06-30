@@ -3,6 +3,10 @@ import { Axios } from "@app/data/util/proxy";
 import { CampaignDTO } from "@app/data/campaign";
 import uuid from "uuid/v4";
 import { ValidatePaymentDTO, PaymentPlan, PaymentPlanQuery, UpdatePaymentPlan } from "@app/data/payment";
+import { DefaulterQuery, DefaulterRepo } from "@app/data/defaulter";
+import { Defaulters } from "./defaulter";
+import { Request } from "express";
+import { mapConcurrently } from "@app/data/util";
 dotenv.config();
 
 export const customAudience = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
@@ -214,23 +218,23 @@ class ProxyServices {
     return response;
   }
 
-  // async uploadCustomFile(req: Request, query: DefaulterQuery, audience_id: string) {
-  //   const workspace = req.session.workspace;
+  async uploadCustomFile(req: Request, query: DefaulterQuery, audience_id: string) {
+    const workspace = req.session.workspace;
 
-  //   const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
-  //   const hashedInfo = defaulters.forEach(async d => {
-  //     return await Defaulter.sha256Users(d.users);
-  //   })
+    const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
+    const hashedInfo = await mapConcurrently(defaulters, async d => {
+      return await Defaulters.sha256Users(d.users);
+    })
 
-  //   const response = await Axios(`${process.env.fb_graph_url}/v10.0/${audience_id}/users `, "post", {
-  //     payload: {
-  //       schema: ["EXTERN_ID", "EMAIL", "FN", "LN", "PHONE"],
-  //       // data: [[uuid(), ...hashedInfo.map.values()]]
-  //     },
-  //     access_token: process.env.fb_access_token
-  //   });
-  //   return response;
-  // }
+    const response = await Axios(`${process.env.fb_graph_url}/v10.0/${audience_id}/users `, "post", {
+      payload: {
+        schema: ["EXTERN_ID", "EMAIL", "FN", "LN", "PHONE"],
+        data: [uuid(), ...hashedInfo.values()]
+      },
+      access_token: process.env.fb_access_token
+    });
+    return response;
+  }
 }
 
 export const Proxy = new ProxyServices();
