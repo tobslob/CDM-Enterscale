@@ -3,6 +3,7 @@ import { DefaulterRepo } from "@app/data/defaulter";
 import { mapConcurrently } from "@app/data/util";
 import { Request } from "express";
 import sha256 from "sha256";
+import { MooyiUser } from "@app/data/user";
 
 class DefaulterService {
   async generateDefaulterLink(user: any, req: Request) {
@@ -11,7 +12,7 @@ class DefaulterService {
     return await UserServ.generateRePaymentLink({ ...value });
   }
 
-  async sha256Users(users: any[]) {
+  async sha256Users(users: MooyiUser[]) {
     return mapConcurrently(users, async usr => {
       return {
         EMAIL: sha256(usr.email_address.toLowerCase().trim()),

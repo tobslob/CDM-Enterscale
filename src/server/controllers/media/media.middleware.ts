@@ -5,7 +5,7 @@ const PNG_MIME = "image/png";
 const JPEG_MIME = "image/jpeg";
 const MP3_MINE = "audio/mpeg";
 const MP4_MINE = "video/mp4";
-const TEN_MEGABYTES = 10 * 1024 * 1024;;
+const TEN_MEGABYTES = 3 * 1024 * 1024;;
 
 const storage = multer.memoryStorage();
 const upload = multer({
