@@ -24,13 +24,13 @@ type ControllerResponse = Defaulter[] | Defaulter | ExtractedResponse;
 
 @controller("/defaulters")
 export class DefaultersController extends BaseController<ControllerResponse> {
-  @httpPost("/bulk/extract", isUpload)
+  @httpPost("/bulk/extract", canCreateDefaulters, isUpload)
   async extractUsers(@request() req: Request, @response() res: Response, @requestBody() body: BodyCampaignType) {
     try {
       if (!body.campaign_type) {
         throw new ConstraintError("campaign_type is required");
       }
-      const workspace = "4dd3a5da-3bad-4a87-9526-6f20351b4492";
+      const workspace = req.session.workspace;
 
       if(!req.file) {
         throw new ConstraintError("A valid file is required");
