@@ -10,7 +10,7 @@ const THREE_MEGABYTES = 3 * 1024 * 1024;;
 const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
-  limits: { fileSize: THREE_MEGABYTES, files: 1 },
+  limits: { fileSize: THREE_MEGABYTES, files: 5 },
   fileFilter(_req, file, cb) {
     if (file.mimetype === PNG_MIME || file.mimetype === JPEG_MIME || MP3_MINE || MP4_MINE) {
       return cb(null, true);

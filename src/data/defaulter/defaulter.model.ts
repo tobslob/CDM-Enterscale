@@ -35,13 +35,13 @@ export interface DefaulterDTO {
 
 export interface DefaulterQuery extends PaginationQuery {
   id?: string[];
-  batch_id?: string;
+  batch_id?: string[];
   title?: string;
   upload_type?: CampaignType;
   location?: string;
   gender?: Gender[];
   age?: {
-    from: number;
-    to: number;
+    from?: number;
+    to?: number;
   };
 }
