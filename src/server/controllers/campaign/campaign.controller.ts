@@ -14,7 +14,6 @@ import { BaseController, validate, ConstraintError, mapConcurrently } from "@app
 import { Request, Response } from "express";
 import { Campaign, CampaignDTO, CampaignRepo, CampaignQuery } from "@app/data/campaign";
 import { canCreateCampaign } from "./campaign.middleware";
-import { SendMessageResponse } from "africastalking-ts";
 import { isCampaignDTO, isCampaignQuery } from "./campaign.validator";
 import { differenceInDays } from "date-fns";
 import { WorkspaceRepo } from "@app/data/workspace";
@@ -22,18 +21,18 @@ import { isIDs } from "../defaulter/defaulter.validator";
 import { CampaignServ } from "@app/services/campaign";
 import { replaceUrlWithShortUrl } from "@app/services/url-shortner";
 
-type ControllerResponse = Campaign[] | Campaign | SendMessageResponse | any;
+type ControllerResponse = Campaign[] | Campaign;
 
 @controller("/campaigns")
 export class CampaignController extends BaseController<ControllerResponse> {
-  @httpPost("/", canCreateCampaign)
+  @httpPost("/", canCreateCampaign, validate(isCampaignDTO, "body"))
   async createCampaign(@request() req: Request, @response() res: Response, @requestBody() body: CampaignDTO) {
     try {
       const workspace = req.session.workspace;
       const user = req.session.user;
 
       if (body.end_date) {
-        const diff = differenceInDays(body.end_date, body.start_date);
+        const diff = differenceInDays(new Date(body.end_date), new Date(body.start_date));
         if (diff < 1) {
           throw new ConstraintError("The end date must at least be a day after start date");
         }

@@ -23,7 +23,7 @@ export const CampaignSchema = new Schema(
     customer_file_source: { ...trimmedString, index: true },
     short_link: { type: SchemaTypes.Boolean, index: true, default: false },
     campaign_type: { ...trimmedString, index: true },
-    gender: { ...trimmedString, index: true },
+    gender: { type: SchemaTypes.Array, index: true },
     age: { type: SchemaTypes.Mixed, index: true },
     percentage_to_send_to: { type: SchemaTypes.Number, index: true },
     template_id: { ...trimmedString, index: true },
