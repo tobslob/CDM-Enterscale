@@ -36,7 +36,8 @@ export class SessionController extends BaseController<Session> {
         user: user.id,
         role: role.id,
         permissions: role.permissions,
-        workspace: user.workspace
+        workspace: user.workspace,
+        workspace_name: user.workspace_name
       };
 
       this.handleSuccess(req, res, value);
@@ -70,7 +71,8 @@ export class SessionController extends BaseController<Session> {
         user: user.id,
         role: role.id,
         workspace: user.workspace,
-        token: req.sessionID
+        token: req.sessionID,
+        workspace_name: user.workspace_name
       });
     } catch (error) {
       this.handleError(req, res, error);

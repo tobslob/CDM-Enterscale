@@ -6,6 +6,7 @@ import { Passwords } from "@app/services/password";
 import { UnauthorizedError } from "@app/data/util";
 import { Role } from "../role/role.model";
 import { differenceInYears } from "date-fns";
+import { WorkspaceRepo } from "../workspace";
 
 
 const User = model<User>("User", UserSchema);
@@ -20,6 +21,7 @@ class UserRepository extends BaseRepository<User> {
    * @param dto DTO of the user to create
    */
   async newUser(role: Role, workspace: string, password: string, dto: UserDTO): Promise<User> {
+    const wrkspace = await WorkspaceRepo.byID(workspace);
     return this.create({
       email_address: dto.email_address,
       first_name: dto.first_name,
@@ -32,7 +34,8 @@ class UserRepository extends BaseRepository<User> {
       location: dto.location,
       role_id: role.id,
       role_name: role.name,
-      workspace
+      workspace,
+      workspace_name: wrkspace.name
     });
   }
 
