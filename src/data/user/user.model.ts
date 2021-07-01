@@ -24,6 +24,7 @@ export interface User extends MooyiUser, Model {
   role_id: string;
   role_name: string;
   workspace: string;
+  workspace_name: string;
 }
 
 export interface UserDTO {
@@ -62,6 +63,7 @@ export interface Session {
   role: string;
   permissions: Permissions;
   workspace: string;
+  workspace_name: string;
 }
 
 export interface SessionRequest {
