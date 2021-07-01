@@ -16,7 +16,8 @@ export const UserSchema = new Schema(
     location: { ...trimmedString, index: true },
     role_id: { ...trimmedString, required: true, index: true },
     role_name: { ...trimmedString, required: true, index: true },
-    workspace: { ...trimmedString, required: true, index: true }
+    workspace: { ...trimmedString, required: true, index: true },
+    workspace_name: { ...trimmedString, required: true, index: true }
   },
   {
     ...readMapper,
