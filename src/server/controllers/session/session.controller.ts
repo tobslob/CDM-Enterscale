@@ -24,7 +24,8 @@ export class SessionController extends BaseController<Session> {
         phone_number: user.phone_number,
         user: user.id,
         role: role.id,
-        workspace: user.workspace
+        workspace: user.workspace,
+        workspace_name: user.workspace_name
       });
 
       const value = {
