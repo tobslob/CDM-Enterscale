@@ -1,4 +1,4 @@
-import { connection, model } from "mongoose";
+import { connection } from "mongoose";
 import { User, UserDTO } from "./user.model";
 import { UserSchema } from "./user.schema";
 import { BaseRepository } from "@random-guys/bucket";
@@ -7,9 +7,6 @@ import { UnauthorizedError } from "@app/data/util";
 import { Role } from "../role/role.model";
 import { differenceInYears } from "date-fns";
 import { WorkspaceRepo } from "../workspace";
-
-
-const User = model<User>("User", UserSchema);
 
 class UserRepository extends BaseRepository<User> {
   constructor() {
