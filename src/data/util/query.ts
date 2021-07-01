@@ -37,7 +37,7 @@ export interface PaginationQuery {
   /**
    * MongoDB query object
    */
-  conditions: any;
+  conditions?: any;
 
   /**
    * The current page of results.  Defaults to 1 (the `1st`) page
@@ -107,7 +107,7 @@ export function fromQueryMap(query: any, queryMap: object) {
         delete val.$or;
       }
 
-      Object.assign(mongoQuery, val);
+      Object.assign(mongoQuery, val); 
     }
   });
 

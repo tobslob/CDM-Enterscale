@@ -62,7 +62,7 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
                 $and: [
                   { $gte: ["$$users.age", campaign.age.from] },
                   { $lte: ["$$users.age", campaign.age.to] },
-                  { $eq: ["$$users.gender", campaign.gender] }
+                  { $in: ["$$users.gender", campaign.gender] }
                 ]
               }
             }

@@ -99,7 +99,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       this.handleSuccess(req, res, null);
 
       this.log(req, {
-        object_id: query.batch_id,
+        object_id: query.batch_id[0],
         activity: "delete.defaulters",
         message: `delete defaulters`
       });

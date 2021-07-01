@@ -19,10 +19,15 @@ export const USER_SESSION_KEY = "user_session_key";
 
 class CampaignService {
   async sendInstantCampaign(campaign: CampaignDTO, req: Request) {
-    const defaulters = await DefaulterRepo.searchDefaulters(req, campaign);
+    let defaulters: Defaulter[];
+    if (campaign.location) {
+      defaulters = await DefaulterRepo.searchDefaulters(req, campaign);
+    } else {
+      defaulters = await DefaulterRepo.getDefaulters(req.session.workspace, { batch_id: campaign.target_audience });
+    }
 
     if (campaign.channel === "VOICE") {
-      const phone_numbers = []
+      const phone_numbers = [];
       await mapConcurrently(defaulters, async (defaulter: Defaulter) => {
         defaulter.users.forEach(async user => {
           phone_numbers.push(user.phone_number);
@@ -81,7 +86,7 @@ class CampaignService {
   private async voice(campaign: CampaignDTO, phone_numbers: string[]) {
     await Store.hset(VOICE_CAMPAIGN, "campaign_key", JSON.stringify(campaign));
     let prop: Prop = campaign.audio_url ? "media_url" : "doc_url";
-    return await Proxy.voice(campaign, prop,  phone_numbers);
+    return await Proxy.voice(campaign, prop, phone_numbers);
   }
 
   protected async facebook(req: Request, query: DefaulterQuery, campaign: CampaignDTO) {
