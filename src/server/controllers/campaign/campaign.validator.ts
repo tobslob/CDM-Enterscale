@@ -29,7 +29,7 @@ export const isCampaignDTO = joi.object({
   percentage_to_send_to: JoiValidator.validateNumber(),
   template_id: JoiValidator.validateString(),
   delivery_time: JoiValidator.validateNumber(),
-  time_zone: JoiValidator.validateNumber(),
+  time_zone: JoiValidator.validateString(),
   schedule: joi.boolean(),
   video_url: JoiValidator.validateString(),
   brand_logo: JoiValidator.validateString(),

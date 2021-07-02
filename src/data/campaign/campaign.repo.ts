@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { CampaignSchema } from "./campaign.schema";
 import { Workspace } from "../workspace";
 import { fromQueryMap } from "../util";
+import { timeZone } from "../util/time-zone";
 
 class CampaignRepository extends BaseRepository<Campaign> {
   constructor() {
@@ -17,8 +18,8 @@ class CampaignRepository extends BaseRepository<Campaign> {
       description: campaignDTO.description,
       channel: campaignDTO.channel,
       frequency: campaignDTO.frequency,
-      start_date: campaignDTO.start_date,
-      end_date: campaignDTO.end_date,
+      start_date: timeZone(new Date(campaignDTO.start_date), campaignDTO.time_zone),
+      end_date: timeZone(new Date(campaignDTO.end_date), campaignDTO.time_zone),
       target_audience: campaignDTO.target_audience,
       message: campaignDTO.message,
       user: user,
@@ -34,7 +35,6 @@ class CampaignRepository extends BaseRepository<Campaign> {
       percentage_to_send_to: campaignDTO.percentage_to_send_to,
       template_id: campaignDTO.template_id,
       delivery_time: campaignDTO.delivery_time,
-      time_zone: campaignDTO.time_zone,
       schedule: campaignDTO.schedule,
       location: campaignDTO.location,
       video_url: campaignDTO.video_url,
@@ -70,7 +70,6 @@ class CampaignRepository extends BaseRepository<Campaign> {
           percentage_to_send_to: campaignDTO.percentage_to_send_to,
           template_id: campaignDTO.template_id,
           delivery_time: campaignDTO.delivery_time,
-          time_zone: campaignDTO.time_zone,
           location: campaignDTO.location
         }
       }
