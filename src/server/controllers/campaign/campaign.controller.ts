@@ -20,8 +20,9 @@ import { WorkspaceRepo } from "@app/data/workspace";
 import { isIDs } from "../defaulter/defaulter.validator";
 import { CampaignServ } from "@app/services/campaign";
 import { replaceUrlWithShortUrl } from "@app/services/url-shortner";
+import { listTimeZones } from "timezone-support";
 
-type ControllerResponse = Campaign[] | Campaign;
+type ControllerResponse = Campaign[] | Campaign | string[];
 
 @controller("/campaigns")
 export class CampaignController extends BaseController<ControllerResponse> {
@@ -128,6 +129,15 @@ export class CampaignController extends BaseController<ControllerResponse> {
         activity: "edit.campaign",
         message: `edit campaign`
       });
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpGet("/time-zone")
+  async timeZone(@request() req: Request, @response() res: Response) {
+    try {
+      this.handleSuccess(req, res, listTimeZones());
     } catch (error) {
       this.handleError(req, res, error);
     }

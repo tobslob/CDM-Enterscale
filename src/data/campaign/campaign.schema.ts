@@ -28,7 +28,6 @@ export const CampaignSchema = new Schema(
     percentage_to_send_to: { type: SchemaTypes.Number, index: true },
     template_id: { ...trimmedString, index: true },
     delivery_time: { type: SchemaTypes.Number, index: true },
-    time_zone: { type: SchemaTypes.Number, index: true },
     schedule: { type: SchemaTypes.Boolean, index: true, default: false },
     location: { ...trimmedString, index: true },
     sent_date: { type: SchemaTypes.Date, index: true },

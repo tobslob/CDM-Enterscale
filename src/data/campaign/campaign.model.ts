@@ -53,7 +53,6 @@ export interface Campaign extends Model {
   percentage_to_send_to: number;
   template_id?: string;
   delivery_time: number;
-  time_zone?: string;
   schedule: boolean;
   video_url?: string;
   brand_logo?: string;
