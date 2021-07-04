@@ -19,12 +19,8 @@ export const USER_SESSION_KEY = "user_session_key";
 
 class CampaignService {
   async sendInstantCampaign(campaign: CampaignDTO, req: Request) {
-    let defaulters: Defaulter[];
-    if (campaign.location) {
-      defaulters = await DefaulterRepo.searchDefaulters(req, campaign);
-    } else {
-      defaulters = await DefaulterRepo.getDefaulters(req.session.workspace, { batch_id: campaign.target_audience });
-    }
+    const workspace = campaign.campaign_type == "acquisition" ? process.env.mooyi_workspace : req.session.workspace;
+    const defaulters = await DefaulterRepo.getDefaulters(workspace, { batch_id: campaign.target_audience });
 
     if (campaign.channel === "VOICE") {
       const phone_numbers = [];

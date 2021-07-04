@@ -7,6 +7,8 @@ import { DefaulterQuery, DefaulterRepo } from "@app/data/defaulter";
 import { Defaulters } from "./defaulter";
 import { Request } from "express";
 import { mapConcurrently } from "@app/data/util";
+import { randomBytes } from "crypto";
+
 dotenv.config();
 
 export const customAudience = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
@@ -224,7 +226,7 @@ class ProxyServices {
     const defaulters = await DefaulterRepo.getDefaulters(workspace, query);
     const hashedInfo = await mapConcurrently(defaulters, async d => {
       return await Defaulters.sha256Users(d.users);
-    })
+    });
 
     const response = await Axios(`${process.env.fb_graph_url}/v10.0/${audience_id}/users `, "post", {
       payload: {
@@ -234,6 +236,10 @@ class ProxyServices {
       access_token: process.env.fb_access_token
     });
     return response;
+  }
+
+  randU32Sync() {
+    return randomBytes(64).readBigUInt64BE(0);
   }
 }
 

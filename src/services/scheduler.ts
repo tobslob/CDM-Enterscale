@@ -79,7 +79,7 @@ export async function job() {
         c.status == "START" &&
         !c.sent &&
         differenceInDays(c.end_date, new Date()) > 1 &&
-        time_hour == c.delivery_time
+        c.delivery_time.map(d => d === time_hour)
       ) {
         await runCampaign(c);
         await CampaignRepo.atomicUpdate({ _id: c.id }, { $set: { sent_date: new Date() } });

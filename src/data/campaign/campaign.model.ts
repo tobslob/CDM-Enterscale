@@ -52,7 +52,7 @@ export interface Campaign extends Model {
   age: AgeGroup;
   percentage_to_send_to: number;
   template_id?: string;
-  delivery_time: number;
+  delivery_time: number[];
   schedule: boolean;
   video_url?: string;
   brand_logo?: string;
@@ -75,11 +75,11 @@ export interface CampaignDTO {
   customer_file_source?: CustomAudienceType;
   short_link?: boolean;
   campaign_type: CampaignType;
-  gender: Gender[];
-  age: AgeGroup;
+  gender?: Gender[];
+  age?: AgeGroup;
   percentage_to_send_to: number;
   template_id?: string;
-  delivery_time: number;
+  delivery_time: number[];
   time_zone?: string;
   schedule: boolean;
   video_url?: string;
