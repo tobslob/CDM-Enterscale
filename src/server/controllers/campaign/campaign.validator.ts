@@ -21,11 +21,11 @@ export const isCampaignDTO = joi.object({
   customer_file_source: JoiValidator.validateString().valid(...customAudience),
   short_link: joi.boolean(),
   campaign_type: JoiValidator.validateString().valid("standard", "acquisition").required(),
-  gender: joi.array().items(JoiValidator.validateString().valid(...gender)).required(),
+  gender: joi.array().items(JoiValidator.validateString().valid(...gender)),
   age: joi.object({
-    from: JoiValidator.validateNumber().required(),
-    to: JoiValidator.validateNumber().required(),
-  }).required(),
+    from: JoiValidator.validateNumber(),
+    to: JoiValidator.validateNumber()
+  }),
   percentage_to_send_to: JoiValidator.validateNumber(),
   template_id: JoiValidator.validateString(),
   delivery_time: JoiValidator.validateNumber(),
