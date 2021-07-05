@@ -2,7 +2,7 @@ import { JoiValidator } from "@app/data/util/validate";
 import joi from "@hapi/joi";
 import { Frequency } from "@app/services/scheduler";
 import { channel } from "@app/data/campaign";
-import { subType, customAudience } from "@app/services/proxy";
+import { subType, customFileSource } from "@app/services/proxy";
 import { values } from "lodash";
 
 export const isCampaign = joi.object({
@@ -24,5 +24,5 @@ export const isCampaign = joi.object({
   }),
   organisation: JoiValidator.validateString(),
   subtype: JoiValidator.validateString().valid(...subType),
-  customer_file_source: JoiValidator.validateString().valid(...customAudience)
+  customer_file_source: JoiValidator.validateString().valid(...customFileSource)
 });
