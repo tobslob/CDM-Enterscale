@@ -2,6 +2,7 @@ import { PaginationQuery } from "../util";
 import { MooyiUser, Gender } from "../user";
 import { Model } from "@random-guys/bucket";
 import { CampaignType } from "../campaign";
+import { SubType, CustomFileSource } from "@app/services/proxy";
 
 export const status = <const>["owing", "paid"];
 export type StatusType = typeof status[number];
@@ -44,4 +45,11 @@ export interface DefaulterQuery extends PaginationQuery {
     from?: number;
     to?: number;
   };
+}
+
+export interface FacebookAudienceDTO {
+  name: string;
+  subtype: SubType;
+  description: string;
+  customer_file_source: CustomFileSource,
 }

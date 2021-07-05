@@ -1,6 +1,6 @@
 import { Model } from "@random-guys/bucket";
 import { Frequency } from "@app/services/scheduler";
-import { SubType, CustomAudienceType } from "@app/services/proxy";
+import { SubType, CustomFileSource } from "@app/services/proxy";
 import { PaginationQuery } from "../util";
 import { Gender } from "../user";
 
@@ -45,7 +45,7 @@ export interface Campaign extends Model {
   status?: Status;
   sent?: boolean;
   subtype?: SubType;
-  customer_file_source?: CustomAudienceType;
+  customer_file_source?: CustomFileSource;
   short_link?: boolean;
   campaign_type: CampaignType;
   gender: Gender[];
@@ -72,7 +72,7 @@ export interface CampaignDTO {
   location?: string;
   message?: string;
   subtype?: SubType;
-  customer_file_source?: CustomAudienceType;
+  customer_file_source?: CustomFileSource;
   short_link?: boolean;
   campaign_type: CampaignType;
   gender?: Gender[];

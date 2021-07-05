@@ -2,6 +2,7 @@ import { trimmedString, readMapper, timestamps, trimmedLowercaseString, uuid } f
 import { SchemaTypes, Schema } from "mongoose";
 
 const DefaultUserSchema = new Schema({
+  _id: { ...uuid },
   first_name: { ...trimmedString, index: true },
   last_name: { ...trimmedString, index: true },
   email_address: { ...trimmedLowercaseString, required: true, unique: true, index: true },
@@ -19,7 +20,7 @@ const DefaultUserSchema = new Schema({
   amount_repaid: { type: SchemaTypes.Number, index: true },
   amount_outstanding: { type: SchemaTypes.Number, index: true },
   status: { ...trimmedString, index: true }
-}, { _id: false });
+});
 
 export const DefaultersSchema = new Schema(
   {

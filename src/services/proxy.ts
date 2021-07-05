@@ -3,15 +3,13 @@ import { Axios } from "@app/data/util/proxy";
 import { CampaignDTO } from "@app/data/campaign";
 import uuid from "uuid/v4";
 import { ValidatePaymentDTO, PaymentPlan, PaymentPlanQuery, UpdatePaymentPlan } from "@app/data/payment";
-import { DefaulterQuery, DefaulterRepo } from "@app/data/defaulter";
+import { DefaulterQuery, DefaulterRepo, FacebookAudienceDTO } from "@app/data/defaulter";
 import { Defaulters } from "./defaulter";
 import { Request } from "express";
 import { mapConcurrently } from "@app/data/util";
-import { randomBytes } from "crypto";
-
 dotenv.config();
 
-export const customAudience = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
+export const customFileSource = <const>["USER_PROVIDED_ONLY", "PARTNER_PROVIDED_ONLY", "BOTH_USER_AND_PARTNER_PROVIDED"];
 export const subType = <const>[
   "CUSTOM",
   "WEBSITE",
@@ -29,7 +27,7 @@ export const subType = <const>[
   "MEASUREMENT",
   "REGULATED_CATEGORIES_AUDIENCE"
 ];
-export type CustomAudienceType = typeof customAudience[number];
+export type CustomFileSource = typeof customFileSource[number];
 export type SubType = typeof subType[number];
 
 const prop = <const>["media_url", "doc_url"];
@@ -205,7 +203,7 @@ class ProxyServices {
     return data;
   }
 
-  async createCustomAudience(campaign: CampaignDTO) {
+  async createCustomAudience(campaign: FacebookAudienceDTO) {
     const response = await Axios(
       `${process.env.fb_graph_url}/v10.0/act_${process.env.fb_account_id}/customaudiences`,
       "post",
@@ -230,16 +228,12 @@ class ProxyServices {
 
     const response = await Axios(`${process.env.fb_graph_url}/v10.0/${audience_id}/users `, "post", {
       payload: {
-        schema: ["EXTERN_ID", "EMAIL", "FN", "LN", "PHONE"],
-        data: [uuid(), ...hashedInfo.values()]
+        schema: ["EXTERN_ID", "EMAIL", "FN", "LN", "PHONE", "GEN", "DOBY", "DOBM", "DOBD"],
+        data: [...hashedInfo]
       },
       access_token: process.env.fb_access_token
     });
     return response;
-  }
-
-  randU32Sync() {
-    return randomBytes(64).readBigUInt64BE(0);
   }
 }
 

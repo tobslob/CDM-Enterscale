@@ -14,12 +14,18 @@ class DefaulterService {
 
   async sha256Users(users: MooyiUser[]) {
     return mapConcurrently(users, async usr => {
-      return {
-        EMAIL: sha256(usr.email_address.toLowerCase().trim()),
-        FN: sha256(usr.first_name.toLowerCase().trim()),
-        LN: sha256(usr.last_name.toLowerCase().trim()),
-        PHONE: sha256(usr.phone_number.toLowerCase().trim())
-      };
+      return [
+        // @ts-ignore
+        usr.id,
+        sha256(usr.email_address.toLowerCase().trim()),
+        sha256(usr.first_name.toLowerCase().trim()),
+        sha256(usr.last_name.toLowerCase().trim()),
+        sha256(usr.phone_number.toLowerCase().trim()),
+        sha256(usr.gender.charAt(0).toLowerCase().trim()),
+        sha256(new Date(usr.DOB).getFullYear().toString()),
+        sha256(new Date(usr.DOB).getMonth().toString()),
+        sha256(new Date(usr.DOB).getDay().toString())
+      ];
     });
   }
 }

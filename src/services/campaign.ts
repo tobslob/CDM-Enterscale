@@ -7,7 +7,7 @@ import { Request } from "express";
 import { Store } from "@app/common/services";
 import { Mail } from "@app/data/email/email.repo";
 import { User } from "@app/data/user";
-import { DefaulterRepo, Defaulter, DefaulterQuery } from "@app/data/defaulter";
+import { DefaulterRepo, Defaulter, DefaulterQuery, FacebookAudienceDTO } from "@app/data/defaulter";
 import { Defaulters } from "./defaulter";
 
 dotenv.config();
@@ -85,7 +85,7 @@ class CampaignService {
     return await Proxy.voice(campaign, prop, phone_numbers);
   }
 
-  protected async facebook(req: Request, query: DefaulterQuery, campaign: CampaignDTO) {
+  protected async facebook(req: Request, query: DefaulterQuery, campaign: FacebookAudienceDTO) {
     const { audience_id } = await Proxy.createCustomAudience(campaign);
     return await Proxy.uploadCustomFile(req, query, audience_id);
   }

@@ -1,7 +1,7 @@
 import { JoiValidator } from "@app/data/util/validate";
 import joi from "@hapi/joi";
 import { channel } from "@app/data/campaign";
-import { subType, customAudience } from "@app/services/proxy";
+import { subType, customFileSource } from "@app/services/proxy";
 import { gender } from "@app/data/user";
 
 export const isCampaignDTO = joi.object({
@@ -18,7 +18,7 @@ export const isCampaignDTO = joi.object({
   subject: JoiValidator.validateString(),
   location: JoiValidator.validateString(),
   subtype: JoiValidator.validateString().valid(...subType),
-  customer_file_source: JoiValidator.validateString().valid(...customAudience),
+  customer_file_source: JoiValidator.validateString().valid(...customFileSource),
   short_link: joi.boolean(),
   campaign_type: JoiValidator.validateString().valid("standard", "acquisition").required(),
   gender: joi.array().items(JoiValidator.validateString().valid(...gender)),
