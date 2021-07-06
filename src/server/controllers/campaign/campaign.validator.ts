@@ -6,7 +6,7 @@ import { gender } from "@app/data/user";
 
 export const isCampaignDTO = joi.object({
   name: JoiValidator.validateString().required(),
-  description: JoiValidator.validateString().required(),
+  description: JoiValidator.validateString(),
   channel: JoiValidator.validateString()
     .valid(...channel)
     .required(),
@@ -28,7 +28,7 @@ export const isCampaignDTO = joi.object({
   }),
   percentage_to_send_to: JoiValidator.validateNumber(),
   template_id: JoiValidator.validateString(),
-  delivery_time: JoiValidator.validateNumber(),
+  delivery_time: JoiValidator.validateString(),
   time_zone: JoiValidator.validateString(),
   schedule: joi.boolean(),
   video_url: JoiValidator.validateString(),
