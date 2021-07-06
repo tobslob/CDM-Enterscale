@@ -28,7 +28,7 @@ export async function job() {
   const campaigns = await CampaignRepo.all({});
   Scheduler.define("Start Scheduled Campaign", { priority: "high", concurrency: 10 }, async (_job, done) => {
     await loopConcurrently(campaigns, async c => {
-      if (c.status == "STOP" && isToday(c.start_date)) {
+      if (c.status == "STOP" && isToday(new Date(c.start_date))) {
         await CampaignRepo.atomicUpdate(c.id, {
           $set: {
             status: "START"
@@ -41,7 +41,7 @@ export async function job() {
 
   Scheduler.define("Stop Scheduled Campaign", async (_job, done) => {
     await loopConcurrently(campaigns, async c => {
-      if (c.status == "START" && isToday(c.end_date)) {
+      if (c.status == "START" && isToday(new Date(c.end_date))) {
         await CampaignRepo.atomicUpdate(c.id, {
           $set: {
             status: "STOP"
@@ -95,7 +95,7 @@ export async function job() {
         c.status == "START" &&
         c.sent &&
         c.frequency == Frequency.Daily &&
-        differenceInDays(c.end_date, new Date()) >= 1
+        differenceInDays(new Date(c.end_date), new Date()) >= 1
       ) {
         await CampaignRepo.atomicUpdate(c.id, {
           $set: {
@@ -113,7 +113,7 @@ export async function job() {
         c.status == "START" &&
         c.sent &&
         c.frequency == Frequency.Weekly &&
-        differenceInDays(new Date(), c.sent_date) >= 7
+        differenceInDays(new Date(), new Date(c.sent_date)) >= 7
       ) {
         await CampaignRepo.atomicUpdate(c.id, {
           $set: {
@@ -131,7 +131,7 @@ export async function job() {
         c.status == "START" &&
         c.sent &&
         c.frequency == Frequency.Monthly &&
-        differenceInDays(new Date(), c.sent_date) >= 31
+        differenceInDays(new Date(), new Date(c.sent_date)) >= 31
       ) {
         await CampaignRepo.atomicUpdate(c.id, {
           $set: {

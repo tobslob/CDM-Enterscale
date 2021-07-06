@@ -115,7 +115,7 @@ export class CampaignController extends BaseController<ControllerResponse> {
       const workspace = req.session.workspace;
 
       if (body.end_date) {
-        const diff = differenceInDays(body.end_date, body.start_date);
+        const diff = differenceInDays(new Date(body.end_date), new Date(body.start_date));
         if (diff < 1) {
           throw new ConstraintError("The end date must at least be a day after start date");
         }
