@@ -134,7 +134,7 @@ export class CampaignController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpGet("/time-zone")
+  @httpGet("/time-zone", canCreateCampaign)
   async timeZone(@request() req: Request, @response() res: Response) {
     try {
       this.handleSuccess(req, res, listTimeZones());

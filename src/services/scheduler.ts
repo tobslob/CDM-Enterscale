@@ -73,13 +73,14 @@ export async function job() {
 
   Scheduler.define("Run Campaign", async (_job, done) => {
     await loopConcurrently(campaigns, async (c: Campaign) => {
-      const time_hour = new Date().getHours();
-
       if (
         c.status == "START" &&
         !c.sent &&
-        differenceInDays(c.end_date, new Date()) > 1 &&
-        c.delivery_time.map(d => d === time_hour)
+        differenceInDays(new Date(c.end_date), new Date()) > 1 &&
+        c.delivery_time.map(d => {
+          d = d.split(":")[0];
+          d == new Date().getHours().toString();
+        })
       ) {
         await runCampaign(c);
         await CampaignRepo.atomicUpdate({ _id: c.id }, { $set: { sent_date: new Date() } });

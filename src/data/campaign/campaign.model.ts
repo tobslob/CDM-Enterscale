@@ -27,7 +27,7 @@ export interface BodyCampaignType{
 export interface Campaign extends Model {
   name?: string;
   subject?: string;
-  description?: string;
+  description: string;
   channel: Channel;
   frequency?: Frequency;
   start_date?: Date;
@@ -52,7 +52,7 @@ export interface Campaign extends Model {
   age: AgeGroup;
   percentage_to_send_to: number;
   template_id?: string;
-  delivery_time: number[];
+  delivery_time: string[];
   schedule: boolean;
   video_url?: string;
   brand_logo?: string;
@@ -63,7 +63,7 @@ export interface Campaign extends Model {
 export interface CampaignDTO {
   name?: string;
   subject?: string;
-  description?: string;
+  description: string;
   channel?: Channel;
   frequency?: Frequency;
   start_date?: Date;
@@ -79,7 +79,7 @@ export interface CampaignDTO {
   age?: AgeGroup;
   percentage_to_send_to: number;
   template_id?: string;
-  delivery_time: number[];
+  delivery_time: string[];
   time_zone?: string;
   schedule: boolean;
   video_url?: string;
@@ -97,5 +97,5 @@ export interface CampaignQuery extends PaginationQuery {
   to?: Date;
   organisation?: string;
   channel?: Channel;
-  description?: string;
+  description: string;
 }

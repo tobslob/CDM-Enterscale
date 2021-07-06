@@ -8,3 +8,4 @@ export * from "./payment/payment.controller";
 export * from "./payment/payment.controller";
 export * from "./media/media.controller";
 export * from "./facebook/facebook.controller";
+export * from "./time-zone/time-zone.controller";
