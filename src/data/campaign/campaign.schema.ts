@@ -6,7 +6,7 @@ export const CampaignSchema = new Schema(
   {
     _id: { ...uuid },
     name: { ...trimmedString, required: true, index: true, unique: true },
-    subject: { ...trimmedString, required: true, index: true },
+    subject: { ...trimmedString, index: true },
     description: { ...trimmedString, index: true },
     channel: { ...trimmedString, required: true, index: true },
     frequency: { ...trimmedString, index: true },
