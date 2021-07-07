@@ -23,8 +23,8 @@ export const isCampaignDTO = joi.object({
   campaign_type: JoiValidator.validateString().valid("standard", "acquisition").required(),
   gender: joi.array().items(JoiValidator.validateString().valid(...gender)),
   age: joi.object({
-    from: JoiValidator.validateNumber(),
-    to: JoiValidator.validateNumber()
+    from: JoiValidator.validateNumber().default(18),
+    to: JoiValidator.validateNumber().default(100)
   }),
   percentage_to_send_to: JoiValidator.validateNumber(),
   template_id: JoiValidator.validateString(),

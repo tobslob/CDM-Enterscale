@@ -20,7 +20,11 @@ export const USER_SESSION_KEY = "user_session_key";
 class CampaignService {
   async sendInstantCampaign(campaign: CampaignDTO, req: Request) {
     const workspace = campaign.campaign_type == "acquisition" ? process.env.mooyi_workspace : req.session.workspace;
-    const defaulters = await DefaulterRepo.getDefaulters(workspace, { batch_id: campaign.target_audience });
+    const defaulters = await DefaulterRepo.getDefaulters(workspace, {
+      batch_id: campaign.target_audience,
+      age: campaign.age,
+      gender: campaign.gender
+    });
 
     if (campaign.channel === "VOICE") {
       const phone_numbers = [];
