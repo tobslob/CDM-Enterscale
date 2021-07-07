@@ -3,7 +3,7 @@ import { Model } from "@random-guys/bucket";
 export interface Permissions {
   super_admin?: boolean;
   loan_admin?: boolean;
-  standard?: boolean;
+  engagement?: boolean;
   acquisition?: boolean;
 }
 

@@ -62,7 +62,7 @@ export async function job() {
     await mapConcurrently(defaulters, async (d: Defaulter) => {
       d.users.forEach(async u => {
         if (
-          (d.upload_type === CampaignType.STANDARD && u.status === "owing") ||
+          (d.upload_type === CampaignType.ENGAGEMENT && u.status === "owing") ||
           d.upload_type === CampaignType.AQUISITION
         ) {
           await CampaignServ.send(c, u);

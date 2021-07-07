@@ -7,8 +7,8 @@ class RoleService {
       (name = "Loan Administrator"), (description = "Workspace loan administrator");
     } else if (permissions.super_admin) {
       (name = "Super Administrator"), (description = "Enterscale administrator");
-    } else if(permissions.standard){
-      (name = "Standard"), (description = "Role for list uploaded by users");
+    } else if(permissions.engagement){
+      (name = "engagement"), (description = "Role for list uploaded by users");
     } else {
       (name = "Acquisition"), (description = "Mooyi Uploaded list");
     }

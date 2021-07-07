@@ -29,7 +29,7 @@ class UserService {
     const password = await Passwords.generateHash(generatedPassword);
     const user = await UserRepo.newUser(role, workspace, password, dto);
 
-    if (!role.permissions.standard) {
+    if (!role.permissions.engagement) {
       const wrkspace = await WorkspaceRepo.byID(workspace);
       await AdapterInstance.send({
         subject: "Welcome! Supercharge your digital transformation",

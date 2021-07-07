@@ -20,7 +20,7 @@ export const isCampaignDTO = joi.object({
   subtype: JoiValidator.validateString().valid(...subType),
   customer_file_source: JoiValidator.validateString().valid(...customFileSource),
   short_link: joi.boolean(),
-  campaign_type: JoiValidator.validateString().valid("standard", "acquisition").required(),
+  campaign_type: JoiValidator.validateString().valid("engagement", "acquisition").required(),
   gender: joi.array().items(JoiValidator.validateString().valid(...gender)),
   age: joi.object({
     from: JoiValidator.validateNumber().default(18),
@@ -49,5 +49,5 @@ export const isCampaignQuery = joi.object({
 });
 
 export const isCampaignType = joi.object({
-  campaign_type: JoiValidator.validateString().valid("standard", "acquisition").required()
+  campaign_type: JoiValidator.validateString().valid("engagement", "acquisition").required()
 })

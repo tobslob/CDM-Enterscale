@@ -38,7 +38,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
       
       const uploadedList = await Extractions.extractUsers(req.file);
 
-      if(body.campaign_type == "standard") {
+      if(body.campaign_type == "engagement") {
         uploadedList.results.forEach(res => {
           // need to check if user is owing before adding owing to status
           res["status"] = "owing"
@@ -52,9 +52,9 @@ export class DefaultersController extends BaseController<ControllerResponse> {
         upload_type: body.campaign_type
       });
 
-      if (body.campaign_type === CampaignType.STANDARD) {
+      if (body.campaign_type === CampaignType.ENGAGEMENT) {
         const role = await RoleServ.createRole(workspace, {
-          standard: true
+          engagement: true
         });
         await loopConcurrently(defaulterList.users, async user => {
           user["role_id"] = role.id;

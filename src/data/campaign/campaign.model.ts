@@ -11,7 +11,7 @@ export const status = <const>["START", "STOP"];
 export type Status = typeof status[number];
 
 export enum CampaignType {
-  STANDARD = "standard",
+  ENGAGEMENT = "engagement",
   AQUISITION = "acquisition"
 }
 
