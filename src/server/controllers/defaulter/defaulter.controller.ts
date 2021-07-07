@@ -40,11 +40,13 @@ export class DefaultersController extends BaseController<ControllerResponse> {
 
       if(body.campaign_type == "standard") {
         uploadedList.results.forEach(res => {
+          // need to check if user is owing before adding owing to status
           res["status"] = "owing"
         })
       }
 
-      const defaulterList = await DefaulterRepo.createDefaulter(req, workspace, {
+      const defaulterList = await DefaulterRepo.createDefaulter(workspace, {
+        title: uploadedList.title,
         users: uploadedList.results,
         batch_id: uploadedList.batch_id,
         upload_type: body.campaign_type

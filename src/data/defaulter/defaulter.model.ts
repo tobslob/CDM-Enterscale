@@ -29,6 +29,7 @@ export interface Defaulter extends Model {
 }
 
 export interface DefaulterDTO {
+  title: string;
   batch_id?: string;
   upload_type: CampaignType;
   users: defaultUser[];

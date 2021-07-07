@@ -36,6 +36,7 @@ export interface ExtractedDefaulter {
 }
 
 export interface ExtractedResponse {
+  title: string;
   batch_id: string;
   results: ExtractedDefaulter[];
 }
@@ -67,7 +68,7 @@ class ExtractionService {
 
         row[8] = typeof row[8] === "string" ? new Date(row[8]) : row[8];
 
-        row[9] = row[9] ? JSON.parse(row[9]?.toString().toLowerCase()): null;
+        row[9] = row[9] ? JSON.parse(row[9]?.toString().toLowerCase()) : null;
         row[10] = typeof row[8] === "string" ? Number(row[10]) : row[10];
         row[11] = typeof row[11] === "string" ? Number(row[11]) : row[11];
         row[12] = typeof row[12] === "string" ? Number(row[12]) : row[12];
@@ -109,7 +110,7 @@ class ExtractionService {
         throw new ConstraintError("The uploaded document has less than 2 valid defaulters");
       }
 
-      return { batch_id, results };
+      return { batch_id, results, title: file.originalname.split("")[0] };
     } catch (error) {
       throw new Error(error.message);
     }

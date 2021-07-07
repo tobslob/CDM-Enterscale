@@ -15,11 +15,9 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
     return this.truncate({ request_token });
   }
 
-  async createDefaulter(req: Request, workspace: string, defaulter: DefaulterDTO) {
-    const title = req.file.originalname.split(".");
-
+  async createDefaulter(workspace: string, defaulter: DefaulterDTO) {
     return this.create({
-      title: title[0],
+      title: defaulter.title,
       batch_id: defaulter.batch_id,
       upload_type: defaulter.upload_type,
       workspace,
