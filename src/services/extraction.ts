@@ -110,7 +110,7 @@ class ExtractionService {
         throw new ConstraintError("The uploaded document has less than 2 valid defaulters");
       }
 
-      return { batch_id, results, title: file.originalname.split("")[0] };
+      return { batch_id, results, title: file.originalname.split(".")[0] };
     } catch (error) {
       throw new Error(error.message);
     }
