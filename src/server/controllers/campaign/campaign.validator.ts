@@ -10,8 +10,8 @@ export const isCampaignDTO = joi.object({
   channel: JoiValidator.validateString()
     .valid(...channel)
     .required(),
-  frequency: JoiValidator.validateString().valid("DAILY", "WEEKLY", "MONTHLY").required(),
-  start_date: JoiValidator.validDate().required(),
+  frequency: JoiValidator.validateString().valid("DAILY", "WEEKLY", "MONTHLY"),
+  start_date: JoiValidator.validDate(),
   end_date: JoiValidator.validDate(),
   target_audience: joi.array().items(JoiValidator.validateString()),
   message: JoiValidator.validateString().required(),
@@ -29,7 +29,7 @@ export const isCampaignDTO = joi.object({
   percentage_to_send_to: JoiValidator.validateNumber(),
   template_id: JoiValidator.validateString(),
   delivery_time: joi.array().items(JoiValidator.validateString()),
-  time_zone: JoiValidator.validateString().required(),
+  time_zone: JoiValidator.validateString(),
   schedule: joi.boolean(),
   video_url: JoiValidator.validateString(),
   brand_logo: JoiValidator.validateString(),
