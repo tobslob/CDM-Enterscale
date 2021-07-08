@@ -41,8 +41,8 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
             $elemMatch: {
               $and: [
                 { location: locationRegex },
-                { age: { $gte: campaign.age.from, $lte: campaign.age.to } },
-                { gender: { $in: campaign.gender } }
+                { age: { $gte: campaign.age?.from, $lte: campaign.age?.to } },
+                { gender: { $in: campaign?.gender } }
               ]
             }
           }
@@ -58,9 +58,9 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
               as: "users",
               cond: {
                 $and: [
-                  { $gte: ["$$users.age", campaign.age.from] },
-                  { $lte: ["$$users.age", campaign.age.to] },
-                  { $in: ["$$users.gender", campaign.gender] }
+                  { $gte: ["$$users.age", campaign.age?.from] },
+                  { $lte: ["$$users.age", campaign.age?.to] },
+                  { $in: ["$$users.gender", campaign?.gender] }
                 ]
               }
             }
@@ -86,9 +86,9 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
         users: {
           $elemMatch: {
             $and: [
-              { location: { $regex: query.location } },
-              { age: { $gte: query.age.from, $lte: query.age.to } },
-              { gender: { $in: query.gender } }
+              { location: { $regex: query?.location } },
+              { age: { $gte: query.age?.from, $lte: query?.age.to } },
+              { gender: { $in: query?.gender } }
             ]
           }
         }
