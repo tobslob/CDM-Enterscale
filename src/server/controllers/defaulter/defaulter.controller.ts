@@ -15,7 +15,7 @@ import { isUpload, canCreateDefaulters } from "./defaulter.middleware";
 import { Extractions, ExtractedResponse } from "@app/services/extraction";
 import { Request, Response } from "express";
 import { DefaulterRepo, Defaulter, DefaulterQuery, DefaulterDTO } from "@app/data/defaulter";
-import { isDefaulterDTO } from "./defaulter.validator";
+import { isDefaulterDTO, isDefaulterQuery } from "./defaulter.validator";
 import { BodyCampaignType, CampaignType } from "@app/data/campaign";
 import { UserServ } from "@app/services/user";
 import { RoleServ } from "@app/services/role";
@@ -68,7 +68,7 @@ export class DefaultersController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpGet("/", canCreateDefaulters)
+  @httpGet("/", canCreateDefaulters, validate(isDefaulterQuery, "query"))
   async getAllDefaultUsers(@request() req: Request, @response() res: Response, @queryParam() query: DefaulterQuery) {
     try {
       const workspace = req.session.workspace;

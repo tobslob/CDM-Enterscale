@@ -1,15 +1,25 @@
 import { JoiValidator } from "@app/data/util/validate";
 import joi from "@hapi/joi";
-import { status } from "@app/data/defaulter";
+import { gender } from "@app/data/user";
 
 export const isDefaulterQuery = joi
   .object({
     id: JoiValidator.validArray(),
     title: JoiValidator.validateString(),
     batch_id: JoiValidator.validateString(),
-    status: JoiValidator.validateString().valid(...status)
+    campaign_type: JoiValidator.validateString().valid("acquistion", "engagement").required(),
+    age: joi.when("campaign_type", {
+      is: joi.valid("acquistion"),
+      then: joi.object({
+        from: JoiValidator.validateNumber().default(18),
+        to: JoiValidator.validateNumber().default(100)
+      }).required(),
+    }),
+    gender: joi.when("campaign_type", {
+      is: joi.valid("acquistion"),
+      then: JoiValidator.validateString().valid(...gender)
+    })
   })
-  .xor("id", "title", "batch_id", "status");
 
 export const isDefaulterDTO = joi.object({
   loan_id: JoiValidator.validateNumber(),

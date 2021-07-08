@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import { DefaultersSchema } from "./defaulter.schema";
 import { Request } from "express";
 import { orFromQueryMap } from "../util";
-import { CampaignDTO } from "../campaign";
+import { CampaignDTO, CampaignType } from "../campaign";
 
 class DefaulterRepository extends BaseRepository<Defaulter> {
   constructor() {
@@ -76,9 +76,10 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
    * returns a paginated related search
    */
   getDefaulters(workspace: string, query?: DefaulterQuery) {
+    console.log(query)
     const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
     let conditions;
-    if (query.campaign_type == "acquisition") {
+    if (query.campaign_type == CampaignType.AQUISITION) {
       conditions = orFromQueryMap(query, {
         batch_id: { batch_id: { $in: query.batch_id } },
         title: { title: nameRegex },
