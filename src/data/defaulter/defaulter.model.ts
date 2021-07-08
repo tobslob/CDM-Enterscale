@@ -8,7 +8,7 @@ export const status = <const>["owing", "paid"];
 export type StatusType = typeof status[number];
 
 
-export interface defaultUser extends MooyiUser {
+export interface DefaultUser extends MooyiUser {
   loan_id?: number;
   actual_disbursement_date?: Date;
   is_first_loan?: boolean;
@@ -25,14 +25,14 @@ export interface Defaulter extends Model {
   batch_id: string;
   upload_type: CampaignType;
   workspace: string;
-  users: defaultUser[];
+  users: DefaultUser[];
 }
 
 export interface DefaulterDTO {
   title: string;
   batch_id?: string;
   upload_type: CampaignType;
-  users: defaultUser[];
+  users: DefaultUser[];
 }
 
 export interface DefaulterQuery extends PaginationQuery {

@@ -1,10 +1,10 @@
 import { BaseRepository } from "@random-guys/bucket";
-import { Defaulter, DefaulterDTO, DefaulterQuery } from "./defaulter.model";
+import { Defaulter, DefaulterDTO, DefaulterQuery, DefaultUser } from "./defaulter.model";
 import mongoose from "mongoose";
 import { DefaultersSchema } from "./defaulter.schema";
 import { Request } from "express";
 import { orFromQueryMap } from "../util";
-import { CampaignDTO, CampaignType } from "../campaign";
+import { CampaignType } from "../campaign";
 
 class DefaulterRepository extends BaseRepository<Defaulter> {
   constructor() {
@@ -30,19 +30,20 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
    * @param req server request
    * @param campaign campaign dto object
    */
-  async searchDefaulters(req: Request, campaign: CampaignDTO) {
+  async searchDefaulterUser(req: Request, user: DefaultUser, batch_id: string[]) {
     const workspace = req.session.workspace;
-    const locationRegex = campaign.location && new RegExp(`.*${campaign.location}.*`, "i");
     const defaulters = await DefaulterRepo.model.aggregate([
       {
         $match: {
           workspace,
+          batch_id: { $in: batch_id },
           users: {
             $elemMatch: {
               $and: [
-                { location: locationRegex },
-                { age: { $gte: campaign.age?.from, $lte: campaign.age?.to } },
-                { gender: { $in: campaign?.gender } }
+                { first_name: user.first_name },
+                { last_name: user.last_name },
+                { age:  user.age },
+                { gender: user.gender }
               ]
             }
           }
@@ -50,23 +51,23 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
       },
       {
         $project: {
-          title: 1,
-          batch_id: 1,
           users: {
             $filter: {
               input: "$users",
               as: "users",
               cond: {
                 $and: [
-                  { $gte: ["$$users.age", campaign.age?.from] },
-                  { $lte: ["$$users.age", campaign.age?.to] },
-                  { $in: ["$$users.gender", campaign.gender] }
+                  { $eq: ["$$users.first_name", user.first_name] },
+                  { $eq: ["$$users.last_name", user.last_name] },
+                  { $eq: ["$$users.age", user.age] },
+                  { $eq: ["$$users.gender", user.gender] },
                 ]
               }
             }
           }
         }
-      }
+      },
+      { $unwind: "$users" },
     ]);
 
     return defaulters;

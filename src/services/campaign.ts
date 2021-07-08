@@ -60,7 +60,12 @@ class CampaignService {
   }
 
   private async email(campaign: CampaignDTO, user: any, req: Request) {
-    const link = await Defaulters.generateDefaulterLink(user, req);
+    const link =
+      campaign.campaign_type == "engagement"
+        ? await Defaulters.generateDefaulterLink(user, campaign.target_audience, req)
+        : "";
+        console.log("LINK", link)
+    
     const email = await AdapterInstance.send({
       subject: campaign.subject,
       channel: "mail",
@@ -79,7 +84,10 @@ class CampaignService {
   }
 
   private async sms(campaign: CampaignDTO, user: User, req: Request) {
-    const link = campaign.campaign_type == "engagement" ? await Defaulters.generateDefaulterLink(user, req) : "";
+    const link =
+      campaign.campaign_type == "engagement"
+        ? await Defaulters.generateDefaulterLink(user, campaign.target_audience, req)
+        : "";
     const body = `${campaign.message}\n${link}`;
     return await Proxy.sms(user.phone_number, body, link);
   }

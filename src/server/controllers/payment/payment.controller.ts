@@ -22,7 +22,6 @@ import {
   PaymentQuery
 } from "@app/data/payment/payment.model";
 import { Payment } from "@app/services/payment";
-import { SessionRequest } from "@app/data/user";
 import {
   isPayment,
   isTypeOfPayment,
@@ -36,10 +35,11 @@ import {
 import { Proxy } from "@app/services/proxy";
 import { PaymentRepo } from "@app/data/payment";
 import dotenv from "dotenv";
+import { DefaultUser } from "@app/data/defaulter";
 
 dotenv.config();
 
-type ControllerResponse = SessionRequest;
+type ControllerResponse = DefaultUser;
 
 @controller("/payments")
 export class PaymentController extends BaseController<ControllerResponse> {

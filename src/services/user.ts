@@ -1,5 +1,5 @@
 import { RoleServ } from "./role";
-import { UserRepo, UserDTO, SessionRequest } from "@app/data/user";
+import { UserRepo, UserDTO } from "@app/data/user";
 import { Passwords } from "./password";
 import AdapterInstance from "@app/server/adapter/mail";
 import { UnauthorizedError, ForbiddenError } from "@app/data/util";
@@ -7,6 +7,7 @@ import { Auth } from "@app/common/services";
 import { Log } from "@app/common/services/logger";
 import { WorkspaceRepo } from "@app/data/workspace";
 import { RoleRepo, Role } from "@app/data/role";
+import { DefaultUser } from "@app/data/defaulter";
 
 class UserService {
   async createUser(workspace: string, dto: UserDTO) {
@@ -85,7 +86,7 @@ class UserService {
     return updatedUser;
   }
 
-  async generateRePaymentLink(request: SessionRequest) {
+  async generateRePaymentLink(request: DefaultUser) {
     const token = await Auth.commission(request, "90 days");
     return `${process.env.repayment_page}/${token}`;
   }
@@ -94,7 +95,7 @@ class UserService {
    * Returns the SessionToken
    * @param requestToken This is the request token that should be viewed
    */
-  async viewSessionToken(requestToken: string): Promise<SessionRequest> {
+  async viewSessionToken(requestToken: string): Promise<DefaultUser> {
     try {
       return await Auth.peek(requestToken);
     } catch (err) {

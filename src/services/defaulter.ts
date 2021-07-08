@@ -1,15 +1,16 @@
 import { UserServ } from "@app/services/user";
-import { DefaulterRepo } from "@app/data/defaulter";
+import { DefaulterRepo, DefaultUser } from "@app/data/defaulter";
 import { mapConcurrently } from "@app/data/util";
 import { Request } from "express";
 import sha256 from "sha256";
 import { MooyiUser } from "@app/data/user";
 
 class DefaulterService {
-  async generateDefaulterLink(user: any, req: Request) {
-    const defaulter = await DefaulterRepo.byQuery({ _id: user.id, workspace: req.session.workspace });
-    const value = { ...defaulter, ...user };
-    return await UserServ.generateRePaymentLink({ ...value });
+  async generateDefaulterLink(user: DefaultUser, batch_id: string[], req: Request) {
+    const defaulter = await DefaulterRepo.searchDefaulterUser(req, user, batch_id);
+    const usrs = defaulter.map(d => d["users"]);
+
+    return await UserServ.generateRePaymentLink(usrs[0]);
   }
 
   async sha256Users(users: MooyiUser[]) {
