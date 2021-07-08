@@ -95,13 +95,13 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
           }
         }
       });
+    } else {
+      conditions = orFromQueryMap(query, {
+        batch_id: { batch_id: { $in: query.batch_id } },
+        title: { title: nameRegex },
+        id: { _id: { $in: query.id } }
+      });
     }
-
-    conditions = orFromQueryMap(query, {
-      batch_id: { batch_id: { $in: query.batch_id } },
-      title: { title: nameRegex },
-      id: { _id: { $in: query.id } }
-    });
 
     conditions = {
       ...conditions,
