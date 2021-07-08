@@ -60,7 +60,7 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
                 $and: [
                   { $gte: ["$$users.age", campaign.age?.from] },
                   { $lte: ["$$users.age", campaign.age?.to] },
-                  { $in: ["$$users.gender", campaign?.gender] }
+                  { $in: ["$$users.gender", campaign.gender] }
                 ]
               }
             }
@@ -77,22 +77,30 @@ class DefaulterRepository extends BaseRepository<Defaulter> {
    */
   getDefaulters(workspace: string, query?: DefaulterQuery) {
     const nameRegex = query.title && new RegExp(`.*${query.title}.*`, "i");
-
-    let conditions = orFromQueryMap(query, {
-      batch_id: { batch_id: { $in: query.batch_id } },
-      title: { title: nameRegex },
-      id: { _id: { $in: query.id } },
-      users: {
+    let conditions;
+    if (query.campaign_type == "acquisition") {
+      conditions = orFromQueryMap(query, {
+        batch_id: { batch_id: { $in: query.batch_id } },
+        title: { title: nameRegex },
+        id: { _id: { $in: query.id } },
         users: {
-          $elemMatch: {
-            $and: [
-              { location: { $regex: query?.location } },
-              { age: { $gte: query.age?.from, $lte: query?.age.to } },
-              { gender: { $in: query?.gender } }
-            ]
+          users: {
+            $elemMatch: {
+              $and: [
+                { location: { $regex: query.location } },
+                { age: { $gte: query.age.from, $lte: query.age.to } },
+                { gender: { $in: query.gender } }
+              ]
+            }
           }
         }
-      }
+      });
+    }
+
+    conditions = orFromQueryMap(query, {
+      batch_id: { batch_id: { $in: query.batch_id } },
+      title: { title: nameRegex },
+      id: { _id: { $in: query.id } }
     });
 
     conditions = {

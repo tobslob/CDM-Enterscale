@@ -23,7 +23,8 @@ class CampaignService {
     const defaulters = await DefaulterRepo.getDefaulters(workspace, {
       batch_id: campaign.target_audience,
       age: campaign.age,
-      gender: campaign.gender
+      gender: campaign.gender,
+      campaign_type: campaign.campaign_type
     });
 
     if (campaign.channel === "VOICE") {

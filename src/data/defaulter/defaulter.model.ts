@@ -46,6 +46,7 @@ export interface DefaulterQuery extends PaginationQuery {
     from?: number;
     to?: number;
   };
+  campaign_type: CampaignType;
 }
 
 export interface FacebookAudienceDTO {
