@@ -27,6 +27,8 @@ class CampaignService {
       campaign_type: campaign.campaign_type
     });
 
+    console.log("I need some console", defaulters);
+
     if (defaulters.length <= 0) {
       throw new NotFoundError("There is no match for your list search query.");
     }
