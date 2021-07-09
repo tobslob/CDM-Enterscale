@@ -68,13 +68,16 @@ class MailAdapter implements Adapter {
   }
 }
 
-const AdapterInstance = new MailAdapter();
+export const AdapterInstance = new MailAdapter();
 
 // welcome mail to onboarded users
 AdapterInstance.createTemplate("welcome-mail", Mailer.mailLoader("welcome-mail.mjml"));
 
 // Reset password
 AdapterInstance.createTemplate("reset-password-mail", Mailer.mailLoader("reset-password-mail.mjml"));
+
+// campaign mail
+AdapterInstance.createTemplate("email-template", Mailer.mailLoader("email-template.mjml"));
 
 export const isMailNotification = joi.object({
   subject: JoiValidator.validateString().required(),

@@ -1,10 +1,11 @@
-import { Query, Audits, ActionLog, ControllerError } from "@app/data/util";
+import { Query, ControllerError } from "@app/data/util";
 import { Request, Response } from "express";
 import { injectable } from "inversify";
 import _ from "lodash";
 import { Log } from "@app/common/services/logger";
 import { ModelNotFoundError, DuplicateModelError } from "@random-guys/bucket";
 import { NOT_FOUND, BAD_REQUEST, CONFLICT } from "http-status-codes";
+import { AuditLogDTO, AuditLogRepo } from "../audit-log";
 
 @injectable()
 export class Controller<T> {
@@ -72,7 +73,12 @@ export class Controller<T> {
 export type PaginationOptions = Pick<Query, Exclude<keyof Query, "conditions" | "archived">>;
 
 export class BaseController<T> extends Controller<T> {
-  log(req: Request, action: ActionLog) {
-    return Audits.log(req, action);
+  async log(req: Request, action: AuditLogDTO, value?: any) {
+    await AuditLogRepo.saveLog(req, {
+      activity: action.activity,
+      message: action.message,
+      object_id: action.object_id,
+      channel: action.channel
+    }, value);
   }
 }

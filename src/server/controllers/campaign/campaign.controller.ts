@@ -1,0 +1,145 @@
+import {
+  controller,
+  httpPost,
+  request,
+  response,
+  httpGet,
+  requestBody,
+  requestParam,
+  httpDelete,
+  httpPatch,
+  queryParam
+} from "inversify-express-utils";
+import { BaseController, validate, ConstraintError, mapConcurrently } from "@app/data/util";
+import { Request, Response } from "express";
+import { Campaign, CampaignDTO, CampaignRepo, CampaignQuery } from "@app/data/campaign";
+import { canCreateCampaign } from "./campaign.middleware";
+import { isCampaignDTO, isCampaignQuery } from "./campaign.validator";
+import { differenceInDays } from "date-fns";
+import { WorkspaceRepo } from "@app/data/workspace";
+import { isIDs } from "../defaulter/defaulter.validator";
+import { CampaignServ } from "@app/services/campaign";
+import { replaceUrlWithShortUrl } from "@app/services/url-shortner";
+import { listTimeZones } from "timezone-support";
+
+type ControllerResponse = Campaign[] | Campaign | string[];
+
+@controller("/campaigns")
+export class CampaignController extends BaseController<ControllerResponse> {
+  @httpPost("/", canCreateCampaign, validate(isCampaignDTO, "body"))
+  async createCampaign(@request() req: Request, @response() res: Response, @requestBody() body: CampaignDTO) {
+    try {
+      const workspace = req.session.workspace;
+      const user = req.session.user;
+
+      if (body.end_date) {
+        const diff = differenceInDays(new Date(body.end_date), new Date(body.start_date));
+        if (diff < 1) {
+          throw new ConstraintError("The end date must at least be a day after start date");
+        }
+      }
+
+      const wrkspace = await WorkspaceRepo.byID(workspace);
+      body.short_link ? (body["message"] = await replaceUrlWithShortUrl(body.message)) : body.message;
+      const campaign = await CampaignRepo.createCampaign(wrkspace, user, body);
+
+      if (!body.schedule) {
+        await CampaignServ.sendInstantCampaign(body, req);
+      }
+      this.handleSuccess(req, res, campaign);
+
+      this.log(req, {
+        object_id: campaign.id,
+        activity: "create.campaign",
+        message: `create a campaign`,
+        channel: body.channel
+      });
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpGet("/", canCreateCampaign, validate(isCampaignQuery, "query"))
+  async getCampaigns(@request() req: Request, @response() res: Response, @queryParam() query: CampaignQuery) {
+    try {
+      const workspace = req.session.workspace;
+      const campaigns = await CampaignRepo.getCampaigns(workspace, query);
+
+      this.handleSuccess(req, res, campaigns);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpGet("/:id", canCreateCampaign)
+  async getCampaign(@request() req: Request, @response() res: Response, @requestParam("id") _id: string) {
+    try {
+      const workspace = req.session.workspace;
+      const campaigns = await CampaignRepo.byQuery({ workspace, _id });
+
+      this.handleSuccess(req, res, campaigns);
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpDelete("/", canCreateCampaign, validate(isIDs, "query"))
+  async deleteCampaign(@request() req: Request, @response() res: Response, @queryParam() query: CampaignQuery) {
+    try {
+      const workspace = req.session.workspace;
+      const campaigns = await CampaignRepo.all({ conditions: { workspace, _id: { $in: query.id } } });
+
+      await mapConcurrently(campaigns, async d => {
+        await CampaignRepo.destroy(d.id);
+      });
+
+      this.handleSuccess(req, res, campaigns);
+
+      this.log(req, {
+        activity: "delete.campaigns",
+        message: `delete campaigns`
+      });
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpPatch("/:id", canCreateCampaign, validate(isCampaignDTO, "body"))
+  async editCampaign(
+    @request() req: Request,
+    @response() res: Response,
+    @requestParam("id") id: string,
+    @requestBody() body: CampaignDTO
+  ) {
+    try {
+      const workspace = req.session.workspace;
+
+      if (body.end_date) {
+        const diff = differenceInDays(new Date(body.end_date), new Date(body.start_date));
+        if (diff < 1) {
+          throw new ConstraintError("The end date must at least be a day after start date");
+        }
+      }
+
+      const campaign = await CampaignRepo.editCampaign(workspace, id, body);
+      this.handleSuccess(req, res, campaign);
+
+      this.log(req, {
+        object_id: campaign.id,
+        activity: "edit.campaign",
+        message: `edit campaign`
+      });
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+
+  @httpGet("/time-zone", canCreateCampaign)
+  async timeZone(@request() req: Request, @response() res: Response) {
+    try {
+      this.handleSuccess(req, res, listTimeZones());
+    } catch (error) {
+      this.handleError(req, res, error);
+    }
+  }
+}

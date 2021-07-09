@@ -1,27 +1,38 @@
 import { RoleServ } from "./role";
 import { UserRepo, UserDTO } from "@app/data/user";
 import { Passwords } from "./password";
-import { RoleRepo } from "@app/data/role";
-import { Role } from "@app/data/role";
 import AdapterInstance from "@app/server/adapter/mail";
-import { UnauthorizedError } from "@app/data/util";
+import { UnauthorizedError, ForbiddenError } from "@app/data/util";
+import { Auth } from "@app/common/services";
+import { Log } from "@app/common/services/logger";
+import { WorkspaceRepo } from "@app/data/workspace";
+import { RoleRepo, Role } from "@app/data/role";
+import { DefaultUser } from "@app/data/defaulter";
 
 class UserService {
-  private role: Role;
-
   async createUser(workspace: string, dto: UserDTO) {
-    try {
-      this.role = await RoleServ.createRole(
-        workspace,
-        dto.permissions.loan_admin,
-        dto.permissions.super_admin,
-        dto.permissions.users
-      );
-      const generatedPassword = Passwords.generateRandomPassword(10);
-      const password = await Passwords.generateHash(generatedPassword);
-      const user = await UserRepo.newUser(this.role, workspace, password, dto);
+    const usr = await UserRepo.model.exists({ workspace, email_address: dto.email_address });
+    if (usr) return;
 
-      AdapterInstance.send({
+    let role: Role;
+
+    if (dto.role_id) {
+      role = await RoleRepo.byID(dto.role_id);
+    } else {
+      role = await RoleServ.createRole(
+        workspace, {
+          loan_admin: true,
+        }
+      );
+    }
+
+    const generatedPassword = Passwords.generateRandomPassword(10);
+    const password = await Passwords.generateHash(generatedPassword);
+    const user = await UserRepo.newUser(role, workspace, password, dto);
+
+    if (!role.permissions.engagement) {
+      const wrkspace = await WorkspaceRepo.byID(workspace);
+      await AdapterInstance.send({
         subject: "Welcome! Supercharge your digital transformation",
         channel: "mail",
         recipient: user.email_address,
@@ -29,14 +40,13 @@ class UserService {
         template_vars: {
           firstname: user.first_name,
           emailaddress: user.email_address,
-          password: generatedPassword
+          password: generatedPassword,
+          company: wrkspace.name
         }
       });
-
-      return user;
-    } catch (err) {
-      await RoleRepo.destroy(this.role.id);
     }
+
+    return user;
   }
 
   async resetPassword(email: string) {
@@ -49,7 +59,7 @@ class UserService {
     const generatedPassword = Passwords.generateRandomPassword(10);
     const updatedUser = await UserRepo.setPassword(user.id, generatedPassword);
 
-    AdapterInstance.send({
+    await AdapterInstance.send({
       subject: "Reset Password",
       channel: "mail",
       recipient: user.email_address,
@@ -74,6 +84,24 @@ class UserService {
     });
 
     return updatedUser;
+  }
+
+  async generateRePaymentLink(request: DefaultUser) {
+    const token = await Auth.commission(request, "90 days");
+    return `${process.env.repayment_page}/${token}`;
+  }
+
+  /**
+   * Returns the SessionToken
+   * @param requestToken This is the request token that should be viewed
+   */
+  async viewSessionToken(requestToken: string): Promise<DefaultUser> {
+    try {
+      return await Auth.peek(requestToken);
+    } catch (err) {
+      Log.error({ err });
+      throw new ForbiddenError("Failed to validate defaulter token");
+    }
   }
 }
 

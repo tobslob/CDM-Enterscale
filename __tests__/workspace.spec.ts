@@ -5,10 +5,11 @@ import supertest, { SuperTest, Test } from "supertest";
 
 import { Store } from "../src/common/services";
 import { App } from "../src/server/app";
-import { getResponse, createAuthToken, createSession, getError } from "./helpers";
+import { getResponse, createAuthToken, createSession, getError, timeout } from "./helpers";
 import { OK, FORBIDDEN } from "http-status-codes";
 import { workspaceDTO } from "./mocks/data";
-import { createWorkspace } from "./mocks/services";
+import { createWorkspace, mockSendMailNotification } from "./mocks/services";
+import sinon from "sinon";
 
 let app: App;
 let request: SuperTest<Test>;
@@ -20,11 +21,20 @@ beforeAll(async () => {
 
   const server = app.getServer().build();
   request = supertest(server);
+
+  return timeout(500);
 });
 
 afterAll(async () => {
   await Store.flushdb();
   await app.closeDB();
+});
+
+afterEach(async () => {
+  sinon.resetHistory();
+  sinon.resetBehavior();
+  await Store.flushall();
+  await app.db.dropDatabase();
 });
 
 describe("Workspace Creation", () => {
@@ -33,6 +43,8 @@ describe("Workspace Creation", () => {
     const token = await createAuthToken(session);
 
     const dto = workspaceDTO()
+
+    mockSendMailNotification();
 
     const workspace = await getResponse(
       request.post(`${baseUrl}/`).set("Authorization", token).send(dto).expect(OK)

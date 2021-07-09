@@ -1,13 +1,12 @@
-import { connection, model } from "mongoose";
+import { connection } from "mongoose";
 import { User, UserDTO } from "./user.model";
 import { UserSchema } from "./user.schema";
 import { BaseRepository } from "@random-guys/bucket";
 import { Passwords } from "@app/services/password";
 import { UnauthorizedError } from "@app/data/util";
 import { Role } from "../role/role.model";
-
-
-const User = model<User>("User", UserSchema);
+import { differenceInYears } from "date-fns";
+import { WorkspaceRepo } from "../workspace";
 
 class UserRepository extends BaseRepository<User> {
   constructor() {
@@ -19,15 +18,21 @@ class UserRepository extends BaseRepository<User> {
    * @param dto DTO of the user to create
    */
   async newUser(role: Role, workspace: string, password: string, dto: UserDTO): Promise<User> {
+    const wrkspace = await WorkspaceRepo.byID(workspace);
     return this.create({
       email_address: dto.email_address,
       first_name: dto.first_name,
       last_name: dto.last_name,
       password,
       phone_number: dto.phone_number,
+      DOB: dto.DOB,
+      age: differenceInYears(new Date(), new Date(dto.DOB)),
+      gender: dto.gender,
+      location: dto.location,
       role_id: role.id,
       role_name: role.name,
-      workspace
+      workspace,
+      workspace_name: wrkspace.name
     });
   }
 

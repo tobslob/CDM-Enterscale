@@ -10,7 +10,7 @@ import { BaseController } from "@app/data/util";
 
 @controller("/sessions")
 export class SessionController extends BaseController<Session> {
-  @httpPost("/login", validate(isLoginDTO))
+  @httpPost("/login", validate(isLoginDTO, "body"))
   async Login(@request() req: Request, @response() res: Response, @requestBody() body: LoginDTO) {
     try {
       const user = await UserRepo.getAuthenticatedUser(body.email_address, body.password);
@@ -21,21 +21,37 @@ export class SessionController extends BaseController<Session> {
         first_name: user.first_name,
         last_name: user.last_name,
         email_address: user.email_address,
+        phone_number: user.phone_number,
         user: user.id,
         role: role.id,
-        workspace: user.workspace
+        workspace: user.workspace,
+        workspace_name: user.workspace_name
       });
 
-      this.handleSuccess(req, res, {
+      const value = {
         first_name: user.first_name,
         last_name: user.last_name,
         email_address: user.email_address,
+        phone_number: user.phone_number,
         token: token,
         user: user.id,
         role: role.id,
         permissions: role.permissions,
-        workspace: user.workspace
-      });
+        workspace: user.workspace,
+        workspace_name: user.workspace_name
+      };
+
+      this.handleSuccess(req, res, value);
+
+      this.log(
+        req,
+        {
+          object_id: user.id,
+          activity: "session.user",
+          message: `Logged in`
+        },
+        { ...value, role_id: value.role }
+      );
     } catch (error) {
       this.handleError(req, res, error);
     }
@@ -52,10 +68,12 @@ export class SessionController extends BaseController<Session> {
         first_name: user.first_name,
         last_name: user.last_name,
         email_address: user.email_address,
+        phone_number: user.phone_number,
         user: user.id,
         role: role.id,
         workspace: user.workspace,
-        token: req.sessionID
+        token: req.sessionID,
+        workspace_name: user.workspace_name
       });
     } catch (error) {
       this.handleError(req, res, error);

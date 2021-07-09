@@ -1,9 +1,10 @@
 import { Model } from "@random-guys/bucket";
 
 export interface Permissions {
-  super_admin: boolean;
-  loan_admin: boolean;
-  users: boolean;
+  super_admin?: boolean;
+  loan_admin?: boolean;
+  engagement?: boolean;
+  acquisition?: boolean;
 }
 
 export interface Role extends Model {

@@ -1,4 +1,4 @@
-version: 2.1
+version: 2
 jobs:
   build:
     working_directory: ~/app
@@ -51,48 +51,30 @@ jobs:
       - checkout
       - attach_workspace:
           at: ./
+      - run:
+          name: Run tests
+          command: yarn && yarn build && yarn test
   deploy:
-    working_directory: ~/app
     docker:
-      - image: enterscale
+      - image: enterscale/cdm-enterscale:latest
+        auth:
+          username: enterscale
+          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
-          name: Build and push docker image
+          name: Deploy Staging to Heroku
           command: |
-            git config user.email $GITHUB_EMAIL
-            git config user.name $GITHUB_USERNAME
-      - add_ssh_keys:
-          fingerprints:
-            - $GITHUB_FINGERPRINT
-      - run:
-          name: Deploy to Azure Web App Using Azure Container Registry Task
-          command: npm run deploy
+            sudo apt install git
+            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git staging
 workflows:
   version: 2
-  build-test-deploy:
+  build-deploy:
     jobs:
-      - build:
-          filters:
-            branches:
-              ignore:
-                - staging
-                - master
-      - test:
-          context: enterscale
+      - build
+      - deploy:
           requires:
             - build
           filters:
             branches:
-              ignore:
-                - staging
-                - master
-      - deploy:
-          context: enterscale
-          filters:
-            branches:
-              only:
-                - staging
-                - master
+              only: staging
