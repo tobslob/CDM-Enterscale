@@ -9,6 +9,7 @@ import { Mail } from "@app/data/email/email.repo";
 import { User } from "@app/data/user";
 import { DefaulterRepo, Defaulter } from "@app/data/defaulter";
 import { Defaulters } from "./defaulter";
+import { ConstraintError } from "@random-guys/siber";
 
 dotenv.config();
 
@@ -26,6 +27,10 @@ class CampaignService {
       gender: campaign.gender,
       campaign_type: campaign.campaign_type
     });
+
+    if (defaulters.length <= 0) {
+      throw new NotFoundError("There is no match for your list search query.");
+    }
 
     if (campaign.channel === "VOICE") {
       const phone_numbers = [];
