@@ -9,7 +9,6 @@ import { Mail } from "@app/data/email/email.repo";
 import { User } from "@app/data/user";
 import { DefaulterRepo, Defaulter } from "@app/data/defaulter";
 import { Defaulters } from "./defaulter";
-import { ConstraintError } from "@random-guys/siber";
 
 dotenv.config();
 
