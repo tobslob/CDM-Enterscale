@@ -121,6 +121,8 @@ export function fromQueryMap(query: any, queryMap: object) {
     mongoQuery["$and"] = $orQueries.map(query => ({ $or: query }));
   }
 
+  console.log("🚨 🚨 🚨", mongoQuery);
+
   return mongoQuery;
 }
 
