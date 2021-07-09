@@ -7,7 +7,7 @@ import { Request } from "express";
 import { Store } from "@app/common/services";
 import { Mail } from "@app/data/email/email.repo";
 import { User } from "@app/data/user";
-import { DefaulterRepo, Defaulter, DefaulterQuery, FacebookAudienceDTO } from "@app/data/defaulter";
+import { DefaulterRepo, Defaulter } from "@app/data/defaulter";
 import { Defaulters } from "./defaulter";
 
 dotenv.config();
@@ -64,8 +64,6 @@ class CampaignService {
       campaign.campaign_type == "engagement"
         ? await Defaulters.generateDefaulterLink(user, campaign.target_audience, req)
         : "";
-        console.log("LINK", link)
-    
     const email = await AdapterInstance.send({
       subject: campaign.subject,
       channel: "mail",
@@ -96,11 +94,6 @@ class CampaignService {
     await Store.hset(VOICE_CAMPAIGN, "campaign_key", JSON.stringify(campaign));
     let prop: Prop = campaign.audio_url ? "media_url" : "doc_url";
     return await Proxy.voice(campaign, prop, phone_numbers);
-  }
-
-  protected async facebook(req: Request, query: DefaulterQuery, campaign: FacebookAudienceDTO) {
-    const { audience_id } = await Proxy.createCustomAudience(campaign);
-    return await Proxy.uploadCustomFile(req, query, audience_id);
   }
 }
 
