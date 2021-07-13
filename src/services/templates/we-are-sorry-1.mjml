@@ -1,18 +1,33 @@
 <mjml>
   <mj-body background-color="#F2F2F2">
-    <mj-section padding-top="60px"></mj-section>
-    <mj-section padding="200px" background-color="#FFFFFF" background-url="https://imgur.com/nF2G3Ug.png" background-size="cover" background-repeat="no-repeat">
+    <mj-section padding="70px 0px 0px 0px">
+      <mj-column vertical-align="middle" background-color="#FFFFFF" padding="24px">
+        <mj-text padding-top="20px"></mj-text>
+        <mj-image width="125px" align="center" src="https://i.imgur.com/u0dEDpN.png" href="https://www.enterscale.com" alt="enterscale"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#FFFFFF">
       <mj-column>
-        <mj-image width="149px" height="43.12px" align="center" src="https://i.imgur.com/u0dEDpN.png" href="https://www.enterscale.com" alt="enterscale"></mj-image>
+        <mj-image width="346px" height="252px" align="center" src="https://i.imgur.com/zPz9Yje.png" href="https://www.enterscale.com" alt="enterscale"></mj-image>
       </mj-column>
     </mj-section>
     <mj-section background-color="#FFFFFE" padding="30px">
       <mj-column width="80%">
-        <mj-text padding="20px 0px 30px" font-family="Product Sans" font-weight="400" font-size="16px" line-height="19.41px" font-style="normal" color="#7C7C7C">Hi, ${ firstname } <br /><br />
-          We can’t wait for you to start using [product/business] and seeing
-          desired results. Simply go here [link to login page] to get started,
-          or visit our Help Center [link] to learn more about how to use [product]. As always, our support team can be reached at growthteam@enterscale.com
-          if you ever get stuck.<br /><br />Have a great day!</mj-text>
+        <mj-text padding="20px 0px 30px" font-family="Product Sans" font-weight="400" font-size="16px" line-height="19.41px" font-style="normal" color="#7C7C7C">Hi there, <br /> <br />
+We’re sorry we messed up, and we owe you an apology. <br />
+It was not our intention to [enter a mistake here] and we take full responsibility
+for our actions and any inconvenience we have caused you. 
+After reviewing the situation, we found the cause to be [cause of mistake here].
+We are fully aware of this oversight and we are committed to ensuring you don’t
+have to deal with this again, by [preventative measures here].
+We value your business and hope to earn back your trust.<br /><br />If you have any
+additional feedback or cause for concern,
+please do not hesitate to reach out. <br /><br />
+ 
+Best,<br /><br />
+
+[Your company/name] (edited)
+</mj-text>mj-text>
       </mj-column>
     </mj-section>
     <mj-section background-color="#320384" padding-right="0px">
