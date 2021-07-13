@@ -178,7 +178,7 @@ class ProxyServices {
     return data;
   }
 
-  async sms(recipients: string, body: string, link: string) {
+  async sms(recipients: string, body: string) {
     const data = await Axios(
       `${process.env.kirusa_url}/${process.env.kirusa_account_id}/Messages`,
       "post",
@@ -188,8 +188,6 @@ class ProxyServices {
         direction: "2way",
         sender_mask: "Mooyi io",
         body,
-        track_url: true,
-        url_to_track: link,
         callback_url: `${process.env.base_url}/actions/sms`
       },
       {
@@ -199,6 +197,8 @@ class ProxyServices {
         }
       }
     );
+
+    console.log(data)
 
     return data;
   }

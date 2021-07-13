@@ -27,8 +27,6 @@ class CampaignService {
       campaign_type: campaign.campaign_type
     });
 
-    console.log("I need some console", defaulters);
-
     if (defaulters.length <= 0) {
       throw new NotFoundError("There is no match for your list search query.");
     }
@@ -43,8 +41,8 @@ class CampaignService {
       return await this.send(campaign, phone_numbers, req);
     }
 
-    await mapConcurrently(defaulters, async (defaulter: Defaulter) => {
-      defaulter.users.forEach(async user => {
+    return await mapConcurrently(defaulters, async (defaulter: Defaulter) => {
+      return defaulter.users.forEach(async user => {
         return await this.send(campaign, user, req);
       });
     });
@@ -93,7 +91,7 @@ class CampaignService {
         ? await Defaulters.generateDefaulterLink(user, campaign.target_audience, req)
         : "";
     const body = `${campaign.message}\n${link}`;
-    return await Proxy.sms(user.phone_number, body, link);
+    return await Proxy.sms(user.phone_number, body);
   }
 
   private async voice(campaign: CampaignDTO, phone_numbers: string[]) {

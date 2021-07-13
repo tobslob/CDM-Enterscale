@@ -17,3 +17,5 @@ export async function Axios(url: string, method: methodType, data?: object, extr
     throw new BadRequestError(error.response.data.message);
   }
 }
+// technical debt.
+// delete campaign when instant campaign fails

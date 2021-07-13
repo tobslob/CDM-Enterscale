@@ -22,13 +22,15 @@ import { CampaignServ } from "@app/services/campaign";
 import { replaceUrlWithShortUrl } from "@app/services/url-shortner";
 import { listTimeZones } from "timezone-support";
 
-type ControllerResponse = Campaign[] | Campaign | string[];
+type ControllerResponse = Campaign[] | Campaign | string[] | object;
 
 @controller("/campaigns")
 export class CampaignController extends BaseController<ControllerResponse> {
   @httpPost("/", canCreateCampaign, validate(isCampaignDTO, "body"))
   async createCampaign(@request() req: Request, @response() res: Response, @requestBody() body: CampaignDTO) {
     try {
+      let campaign: Campaign;
+      let instantResponse;
       const workspace = req.session.workspace;
       const user = req.session.user;
 
@@ -41,12 +43,12 @@ export class CampaignController extends BaseController<ControllerResponse> {
 
       const wrkspace = await WorkspaceRepo.byID(workspace);
       body.short_link ? (body["message"] = await replaceUrlWithShortUrl(body.message)) : body.message;
-      const campaign = await CampaignRepo.createCampaign(wrkspace, user, body);
+      campaign = await CampaignRepo.createCampaign(wrkspace, user, body);
 
       if (!body.schedule) {
-        await CampaignServ.sendInstantCampaign(body, req);
+        instantResponse = await CampaignServ.sendInstantCampaign(body, req);
       }
-      this.handleSuccess(req, res, campaign);
+      this.handleSuccess(req, res, campaign && !body.schedule ? campaign: instantResponse);
 
       this.log(req, {
         object_id: campaign.id,
