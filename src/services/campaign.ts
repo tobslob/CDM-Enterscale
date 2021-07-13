@@ -42,8 +42,8 @@ class CampaignService {
     }
 
     return await mapConcurrently(defaulters, async (defaulter: Defaulter) => {
-      return defaulter.users.forEach(async user => {
-        return await this.send(campaign, user, req);
+      defaulter.users.forEach(async user => {
+        await this.send(campaign, user, req);
       });
     });
   }
