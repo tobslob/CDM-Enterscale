@@ -14,6 +14,9 @@ export async function Axios(url: string, method: methodType, data?: object, extr
     });
     return response.data;
   } catch (error) {
+    console.log("🏂 🛷🎽", error.response)
     throw new BadRequestError(error.response.data.message);
   }
 }
+
+// delete campaign when channel fails
