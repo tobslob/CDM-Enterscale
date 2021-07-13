@@ -1,7 +1,7 @@
 <mjml>
   <mj-body background-color="#F2F2F2">
     <mj-section padding-top="60px"></mj-section>
-    <mj-section padding="200px" background-color="#FFFFFF" background-url="https://imgur.com/nF2G3Ug.png" background-size="cover" background-repeat="no-repeat">
+    <mj-section padding="200px" background-color="#FFFFFF" background-url="https://i.imgur.com/PEVhu7c.png" background-size="cover" background-repeat="no-repeat">
       <mj-column>
         <mj-image width="149px" height="43.12px" align="center" src="https://i.imgur.com/u0dEDpN.png" href="https://www.enterscale.com" alt="enterscale"></mj-image>
       </mj-column>
@@ -9,10 +9,13 @@
     <mj-section background-color="#FFFFFE" padding="30px">
       <mj-column width="80%">
         <mj-text padding="20px 0px 30px" font-family="Product Sans" font-weight="400" font-size="16px" line-height="19.41px" font-style="normal" color="#7C7C7C">Hi, ${ firstname } <br /><br />
-          We can’t wait for you to start using [product/business] and seeing
-          desired results. Simply go here [link to login page] to get started,
-          or visit our Help Center [link] to learn more about how to use [product]. As always, our support team can be reached at growthteam@enterscale.com
-          if you ever get stuck.<br /><br />Have a great day!</mj-text>
+Thanks for joining us at [name of company].
+We built [product] as [story behind it].
+We’d love to know why you signed up for [product]. 
+Your feedback helps us to make sure that we’re delivering exactly
+what customers want. Just hit reply and let us know. <br /><br />
+
+Thanks!</mj-text>
       </mj-column>
     </mj-section>
     <mj-section background-color="#320384" padding-right="0px">
@@ -40,7 +43,7 @@
         </mj-text>
       </mj-column>
       <mj-column>
-        <mj-text color="#00DC76" font-size="16px" line-height="28px" font-family="Product Sans" font-weight="400" align="right">www.mooyi.com</mj-text>
+        <mj-text color="#00DC76" font-size="16px" line-height="28px" font-family="Product Sans" font-weight="400" align="right">www.mooyi.io</mj-text>
       </mj-column>
     </mj-section>
   </mj-body>
