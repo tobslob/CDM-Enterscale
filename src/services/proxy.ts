@@ -153,7 +153,7 @@ class ProxyServices {
     return data;
   }
 
-  async voice(campaign: CampaignDTO, prop: Prop, recipients: Array<string>) {
+  async voice(campaign: CampaignDTO, prop: Prop, recipient: Array<string>) {
     let url: string;
     url = prop == "doc_url" ? `${process.env.base_url}/actions/voice` : campaign.audio_url;
     const data = await Axios(
@@ -162,7 +162,7 @@ class ProxyServices {
       {
         id: `Mooyi-call-${uuid()}`,
         caller_id: `${process.env.kirusa_caller_id}`,
-        recipients,
+        recipient,
         direction: "outbound",
         [prop]: url,
         callback_url: `${process.env.base_url}/actions/webhook`
@@ -197,8 +197,6 @@ class ProxyServices {
         }
       }
     );
-
-    console.log(data)
 
     return data;
   }
