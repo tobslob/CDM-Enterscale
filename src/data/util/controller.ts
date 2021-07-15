@@ -4,8 +4,9 @@ import { injectable } from "inversify";
 import _ from "lodash";
 import { Log } from "@app/common/services/logger";
 import { ModelNotFoundError, DuplicateModelError } from "@random-guys/bucket";
-import { NOT_FOUND, BAD_REQUEST, CONFLICT } from "http-status-codes";
+import { NOT_FOUND, BAD_REQUEST, CONFLICT, UNAUTHORIZED } from "http-status-codes";
 import { AuditLogDTO, AuditLogRepo } from "../audit-log";
+import { InvalidSessionError } from "@app/common/services/authorisation";
 
 @injectable()
 export class Controller<T> {
@@ -34,6 +35,7 @@ export class Controller<T> {
     if (err.code >= 100 && err.code < 600) {
       if (err instanceof ModelNotFoundError) return NOT_FOUND;
       if (err instanceof DuplicateModelError) return CONFLICT;
+      if (err instanceof InvalidSessionError) return UNAUTHORIZED
       return err.code;
     }
     return BAD_REQUEST;

@@ -8,12 +8,12 @@ import uploadMedia from "@app/services/upload";
 import { sayIt, SayIt, exportSayIt } from "@app/services/say-it";
 
 @controller("/media")
-export class UploadController extends BaseController<string[]> {
+export class UploadController extends BaseController<string> {
   @httpPost("/", canCreateDefaulters, isUpload)
   async uploadToCloudinary(@request() req: Request, @response() res: Response) {
     try {
       await uploadMedia(req, res);
-      this.handleSuccess(req, res, req["urls"]);
+      this.handleSuccess(req, res, req["url"]);
     } catch (error) {
       this.handleError(req, res, error);
     }
