@@ -35,7 +35,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
 
       const objCampaign: CampaignDTO = JSON.parse(campaign);
 
-      console.log(objCampaign);
+      console.log("REDIS IS MISBEHAVING", objCampaign);
 
       const xmlDoc = `<?xml version="1.0" encoding="UTF-8"?>
 <Response id="id1">
