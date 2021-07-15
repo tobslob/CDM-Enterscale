@@ -57,7 +57,7 @@ class CampaignService {
       case "SMS":
         return await this.sms(campaign, user, req);
       case "VOICE":
-        return await this.voice(campaign, user);
+        return await this.voice(campaign, user, req);
       default:
         throw new NotFoundError("channel not found");
     }
@@ -91,13 +91,13 @@ class CampaignService {
         ? await Defaulters.generateDefaulterLink(user, campaign.target_audience, req)
         : "";
     const body = `${campaign.message}\n${link}`;
-    return await Proxy.sms(user.phone_number, body);
+    return await Proxy.sms(user.phone_number, body, req);
   }
 
-  private async voice(campaign: CampaignDTO, phone_numbers: string[]) {
+  private async voice(campaign: CampaignDTO, phone_numbers: string[], req: Request) {
     await Store.hset(VOICE_CAMPAIGN, "campaign_key", JSON.stringify(campaign));
     let prop: Prop = campaign.audio_url ? "media_url" : "doc_url";
-    return await Proxy.voice(campaign, prop, phone_numbers);
+    return await Proxy.voice(campaign, prop, phone_numbers, req);
   }
 }
 
