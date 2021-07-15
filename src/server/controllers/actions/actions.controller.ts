@@ -35,10 +35,14 @@ export class ActionsController extends BaseController<ControllerResponse> {
 
       const objCampaign: CampaignDTO = JSON.parse(campaign);
 
+      console.log(objCampaign);
+
       const xmlDoc = `<?xml version="1.0" encoding="UTF-8"?>
 <Response id="id1">
 <Read>${objCampaign.message}</Read>
 </Response>`;
+
+console.log(xmlDoc)
       res.setHeader("Content-type", "application/xml");
       res.send(xmlDoc);
     } catch (error) {
@@ -56,6 +60,8 @@ export class ActionsController extends BaseController<ControllerResponse> {
         return null;
       }
       const objSession: Session = JSON.parse(session);
+
+      console.log("Report", objSession)
 
       await SMSReportRepo.smsReport(objSession.workspace, sms);
       res.sendStatus(200);
