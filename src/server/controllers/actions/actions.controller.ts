@@ -20,7 +20,7 @@ import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-
 import { Voice, VoiceRepo } from "@app/data/voice";
 import { UrlShortnerRepo } from "@app/data/url-shortner/url-shortner.repo";
 
-type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
+type ControllerResponse = Campaign[] | Campaign | string | string[];
 
 @controller("/actions")
 export class ActionsController extends BaseController<ControllerResponse> {
@@ -35,14 +35,11 @@ export class ActionsController extends BaseController<ControllerResponse> {
 
       const objCampaign: CampaignDTO = JSON.parse(campaign);
 
-      console.log("REDIS IS MISBEHAVING", objCampaign);
-
       const xmlDoc = `<?xml version="1.0" encoding="UTF-8"?>
 <Response id="id1">
 <Read>${objCampaign.message}</Read>
 </Response>`;
 
-console.log(xmlDoc)
       res.setHeader("Content-type", "application/xml");
       res.send(xmlDoc);
     } catch (error) {
