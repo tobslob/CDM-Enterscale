@@ -171,7 +171,7 @@ export class SessionService {
           session = await this.loadToken(req);
           next();
         } catch (err) {
-          next(new InvalidSessionError("Your session is invalid"));
+          next(new InvalidSessionError("Your session is invalid. Please log in"));
         }
       });
     };
