@@ -31,10 +31,10 @@ export const CampaignSchema = new Schema(
     schedule: { type: SchemaTypes.Boolean, index: true, default: false },
     location: { ...trimmedString, index: true },
     sent_date: { type: SchemaTypes.Date, index: true },
-    video_urls: { ...trimmedString, index: true },
+    video_url: { ...trimmedString, index: true },
     brand_logo: { ...trimmedString, index: true },
     hero_image: { ...trimmedString, index: true },
-    audio_urls: { ...trimmedString, index: true }
+    audio_url: { ...trimmedString, index: true }
   },
   {
     ...readMapper,

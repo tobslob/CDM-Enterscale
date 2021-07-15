@@ -1,25 +1,8 @@
-import Datauri from "datauri/parser";
 import { uploader } from "@app/common/config/cloudinary";
 import { Request, Response } from "express";
-import path from "path";
 import { generate } from "shortid";
 import { ConstraintError } from "@app/data/util";
-
-const parser = new Datauri();
-
-/**
- * extract the content of a raw file
- * @param file - the raw file
- */
-const extractSingleFile = file => {
-  return parser.format(path.extname(file.originalname).toString(), file.buffer).content;
-};
-
-/**
- * extract the content of the supplied raw files
- * @param files - the list of the raw files
- */
-const extractFiles = files => files.map(file => extractSingleFile(file));
+import fs from "fs";
 
 /**
  * a function that is used to upload the supplied image to the cloud
@@ -27,10 +10,10 @@ const extractFiles = files => files.map(file => extractSingleFile(file));
  * @param index - the index of the file
  * @returns string - return the uploaded image url
  */
-const uploadSingleFile = async (file: any, index: number) => {
+const uploadSingleFile = async (file: string) => {
   const { secure_url } = await uploader.upload(file, {
     resource_type: "raw",
-    public_id: `${generate()}-${index}`,
+    public_id: generate(),
     overwrite: true,
     folder: "qx-items",
     transformation: [
@@ -54,12 +37,16 @@ const uploadSingleFile = async (file: any, index: number) => {
  */
 const uploadMedia = async (req: Request, _res: Response) => {
   try {
-    if (!req.files) {
-      throw new ConstraintError("Atleast one upload is required.");
+    if (!req.file) {
+      throw new ConstraintError("An upload is required.");
     }
-    const files = extractFiles(req.files);
-    const urls = await Promise.all(files.map((file, index) => uploadSingleFile(file, index)));
-    req["urls"] = urls;
+
+    const { path } = req.file;
+
+    const url = await uploadSingleFile(path);
+    req["url"] = url;
+
+    fs.unlinkSync(path);
   } catch (error) {
     throw new Error(error.message);
   }
