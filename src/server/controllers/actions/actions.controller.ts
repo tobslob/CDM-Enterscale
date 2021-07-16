@@ -20,7 +20,7 @@ import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-
 import { Voice, VoiceRepo } from "@app/data/voice";
 import { UrlShortnerRepo } from "@app/data/url-shortner/url-shortner.repo";
 
-type ControllerResponse = Campaign[] | Campaign | string | string[] | any;
+type ControllerResponse = Campaign[] | Campaign | string | string[];
 
 @controller("/actions")
 export class ActionsController extends BaseController<ControllerResponse> {
@@ -39,6 +39,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
 <Response id="id1">
 <Read>${objCampaign.message}</Read>
 </Response>`;
+
       res.setHeader("Content-type", "application/xml");
       res.send(xmlDoc);
     } catch (error) {
@@ -56,6 +57,8 @@ export class ActionsController extends BaseController<ControllerResponse> {
         return null;
       }
       const objSession: Session = JSON.parse(session);
+
+      console.log("Report", objSession)
 
       await SMSReportRepo.smsReport(objSession.workspace, sms);
       res.sendStatus(200);
