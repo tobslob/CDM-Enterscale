@@ -1,4 +1,4 @@
-import HttpStatus, { UNAUTHORIZED } from "http-status-codes";
+import HttpStatus from "http-status-codes";
 import { Request, Response, ErrorRequestHandler, NextFunction } from "express";
 import { Log } from "@app/common/services/logger";
 import { responseHandler } from "./response";
@@ -99,7 +99,14 @@ export class ConflictError extends ControllerError {
 }
 
 export class UnauthorizedError extends ControllerError {
-  code = UNAUTHORIZED;
+  code = HttpStatus.UNAUTHORIZED;
+  constructor(message: string) {
+    super(message);
+  }
+}
+
+export class UnSupportedFileError extends ControllerError {
+  code = HttpStatus.UNPROCESSABLE_ENTITY;
   constructor(message: string) {
     super(message);
   }
@@ -123,6 +130,9 @@ export function universalErrorHandler(logger: Logger): ErrorRequestHandler {
       Log.error(err);
       return responseHandler(res, err.code, err.message, null);
     } else if (err instanceof FailedPredicateError) {
+      Log.error(err);
+      return responseHandler(res, err.code, err.message, null);
+    } else if (err instanceof UnSupportedFileError) {
       Log.error(err);
       return responseHandler(res, err.code, err.message, null);
     }
