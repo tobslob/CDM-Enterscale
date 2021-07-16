@@ -13,7 +13,7 @@ export const CampaignSchema = new Schema(
     start_date: { type: SchemaTypes.Date, index: true },
     end_date: { type: SchemaTypes.Date, index: true },
     target_audience: { type: SchemaTypes.Array, index: true },
-    message: { ...trimmedString, required: true, index: true },
+    message: { ...trimmedString, index: true },
     user: { ...trimmedString, required: true, index: true },
     workspace: { ...trimmedString, index: true },
     workspace_name: { ...trimmedString, index: true },
