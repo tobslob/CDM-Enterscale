@@ -1,9 +1,9 @@
 import multer = require("multer");
 import { CSV_MIME, XLSX_MIME } from "@app/services/extraction";
-import { ConstraintError } from "@random-guys/siber";
 import { compose } from "@random-guys/siber";
 import { Auth } from "@app/common/services";
 import { because } from "@app/common/services/authorisation";
+import { UnSupportedFileError } from "@app/data/util";
 
 export const canCreateDefaulters = compose(
   Auth.authCheck,
@@ -18,7 +18,7 @@ const upload = <any>multer({
       return cb(null, true);
     }
 
-    cb(new ConstraintError("Only CSV and XLSX files are supported for extraction"));
+    cb(new UnSupportedFileError("Only CSV and XLSX files are supported for extraction"));
   }
 });
 
