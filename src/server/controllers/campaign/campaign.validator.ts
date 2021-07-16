@@ -14,7 +14,7 @@ export const isCampaignDTO = joi.object({
   start_date: JoiValidator.validDate(),
   end_date: JoiValidator.validDate(),
   target_audience: joi.array().items(JoiValidator.validateString()),
-  message: JoiValidator.validateString().required(),
+  message: JoiValidator.validateString(),
   subject: JoiValidator.validateString(),
   location: JoiValidator.validateString(),
   subtype: JoiValidator.validateString().valid(...subType),
