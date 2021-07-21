@@ -27,7 +27,7 @@ export class TemplateController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpGet("/id")
+  @httpGet("/")
   async getAllTemplates(@request() req: Request, @response() res: Response) {
     try {
       const emailTemplates = await TemplateRepo.getAllTemplate();
