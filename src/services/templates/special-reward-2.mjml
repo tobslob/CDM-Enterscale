@@ -1,0 +1,51 @@
+<mjml>
+  <mj-body background-color="#F2F2F2">
+    <mj-section padding-top="60px"></mj-section>
+     <mj-section padding="70px 0px 0px 0px">
+      <mj-column vertical-align="middle" background-color="#FFFFFF" padding="24px">
+        <mj-text padding-top="20px"></mj-text>
+        <mj-image width="125px" align="center" src="https://i.imgur.com/u0dEDpN.png" href="https://www.enterscale.com" alt="enterscale"></mj-image>
+      </mj-column>
+    </mj-section>
+    <mj-section padding="200px" background-color="#FFFFFF" background-url="https://i.imgur.com/DGrDl09.png" background-size="cover" background-repeat="no-repeat">
+    </mj-section>
+    <mj-section background-color="#FFFFFE" padding="30px">
+      <mj-column width="80%">
+        <mj-text padding="20px 0px 30px" font-family="Product Sans" font-weight="400" font-size="16px" line-height="19.41px" font-style="normal" color="#7C7C7C">Did you know that you can get (reward/discount) for referrals? 
+Simply share your personal referral code link (URL) with your friends. 
+Click the button below to invite them. We will give your friends (reward)
+as soon as they join our community
+ 
+          </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#320384" padding-right="0px">
+      <mj-column>
+        <mj-image align="left" width="94.41px" height="24px" src="https://imgur.com/kZDLZ2G.png" href="https://www.enterscale.com" alt="enterscale"></mj-image>
+      </mj-column>
+      <mj-column padding-left="0px">
+        <mj-table width="100px" align="right">
+          <tr>
+            <td style="margin-left:40px"><img src="https://i.imgur.com/phVVVX9.png" width="18px" height="18px"></img></td>
+
+            <td style=""><img src="https://i.imgur.com/3ybph7Q.png" width="18px" height="18px"></img></td>
+            <td style=""><img src="https://i.imgur.com/kTGr7st.png" width="18px" height="18px"></img></td>
+            <td><img src="https://i.imgur.com/myZwpMN.png" width="9px" height="9px"></img></td>
+          </tr>
+        </mj-table>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#320384">
+      <mj-column>
+        <mj-text color="#FFFFFF" align="left" font-size="16px" line-height="28px" font-family="Product Sans" font-weight="400">
+          <mj-text href="">Contact Support</mj-text><br />
+          <mj-text href="">Privacy</mj-text><br />
+          <mj-text href="">Terms</mj-text>
+        </mj-text>
+      </mj-column>
+      <mj-column>
+        <mj-text color="#00DC76" font-size="16px" line-height="28px" font-family="Product Sans" font-weight="400" align="right">www.mooyi.com</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
