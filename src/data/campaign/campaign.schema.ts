@@ -26,7 +26,7 @@ export const CampaignSchema = new Schema(
     gender: { type: SchemaTypes.Array, index: true },
     age: { type: SchemaTypes.Mixed, index: true },
     percentage_to_send_to: { type: SchemaTypes.Number, index: true },
-    template_id: { ...trimmedString, index: true },
+    template_identifier: { ...trimmedString, index: true },
     delivery_time: { type: SchemaTypes.Array, index: true },
     schedule: { type: SchemaTypes.Boolean, index: true, default: false },
     location: { ...trimmedString, index: true },

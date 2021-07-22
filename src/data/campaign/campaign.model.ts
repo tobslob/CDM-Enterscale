@@ -51,7 +51,7 @@ export interface Campaign extends Model {
   gender: Gender[];
   age: AgeGroup;
   percentage_to_send_to: number;
-  template_id?: string;
+  template_identifier?: string;
   delivery_time: string[];
   schedule: boolean;
   video_url?: string;
@@ -78,7 +78,7 @@ export interface CampaignDTO {
   gender?: Gender[];
   age?: AgeGroup;
   percentage_to_send_to: number;
-  template_id?: string;
+  template_identifier?: string;
   delivery_time: string[];
   time_zone?: string;
   schedule: boolean;

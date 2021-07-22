@@ -72,11 +72,13 @@ class CampaignService {
       subject: campaign.subject,
       channel: "mail",
       recipient: user.email_address,
-      template: "email-template",
+      template: campaign?.template_identifier ?? "campaign-template",
       template_vars: {
         firstname: user.first_name,
         emailaddress: user.email_address,
-        message: campaign.message,
+        message: campaign?.message ?? null,
+        workspace: req.session.workspace,
+        amount: user.amount_outstanding,
         link
       }
     });
