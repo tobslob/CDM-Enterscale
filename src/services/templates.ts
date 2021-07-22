@@ -21,83 +21,83 @@ async function main() {
   const templates: TemplateDTO[] = [
     {
       name: "Congratulations",
-      identifier: "congratulations.mjml"
+      identifier: "congratulations"
     },
     {
       name: "Happy Anniversary",
-      identifier: "happy-anniversary-1.mjml"
+      identifier: "happy-anniversary-1"
     },
     {
       name: "Happy Anniversary",
-      identifier: "happy-anniversary-2.mjml"
+      identifier: "happy-anniversary-2"
     },
     {
       name: "Happy Birthday",
-      identifier: "happy-birthday-1.mjml"
+      identifier: "happy-birthday-1"
     },
     {
       name: "Happy Birthday",
-      identifier: "happy-birthday-2.mjml"
+      identifier: "happy-birthday-2"
     },
     {
       name: "Happy Birthday",
-      identifier: "happy-birthday-3.mjml"
+      identifier: "happy-birthday-3"
     },
     {
       name: "Happy Holiday",
-      identifier: "happy-holiday-1.mjml"
+      identifier: "happy-holiday-1"
     },
     {
       name: "Happy Holiday",
-      identifier: "happy-holiday-2.mjml"
+      identifier: "happy-holiday-2"
     },
     {
       name: "Loan Repayment",
-      identifier: "loan-repayment-1.mjml"
+      identifier: "loan-repayment-1"
     },
     {
       name: "Loan Repayment",
-      identifier: "loan-repayment-2.mjml"
+      identifier: "loan-repayment-2"
     },
     {
       name: "Loan Repayment",
-      identifier: "loan-repayment-3.mjml"
+      identifier: "loan-repayment-3"
     },
     {
       name: "Season Greetings",
-      identifier: "season-greetings-1.mjml"
+      identifier: "season-greetings-1"
     },
     {
       name: "Special Offer",
-      identifier: "special-offer.mjml"
+      identifier: "special-offer"
     },
     {
       name: "Special Reward",
-      identifier: "special-reward-1.mjml"
+      identifier: "special-reward-1"
     },
     {
       name: "Special Reward",
-      identifier: "special-reward-2.mjml"
+      identifier: "special-reward-2"
     },
     {
       name: "Thank You",
-      identifier: "thank-you-1.mjml"
+      identifier: "thank-you-1"
     },
     {
       name: "Thank You",
-      identifier: "thank-you-2.mjml"
+      identifier: "thank-you-2"
     },
     {
       name: "We Are Sorry",
-      identifier: "we-are-sorry-1.mjml"
+      identifier: "we-are-sorry-1"
     },
     {
       name: "We Are Sorry",
-      identifier: "we-are-sorry-2.mjml"
+      identifier: "we-are-sorry-2"
     },
     {
       name: "We Are Sorry",
-      identifier: "we-are-sorry-3.mjml"
+      identifier: "we-are-sorry-3"
     }
   ];
 
@@ -110,7 +110,6 @@ async function main() {
   };
 
   temps();
-  await mongoose.connection.close();
 }
 
 main();

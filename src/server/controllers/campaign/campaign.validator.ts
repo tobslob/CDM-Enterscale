@@ -27,7 +27,7 @@ export const isCampaignDTO = joi.object({
     to: JoiValidator.validateNumber().default(100)
   }),
   percentage_to_send_to: JoiValidator.validateNumber(),
-  template_id: JoiValidator.validateString(),
+  template_identifier: JoiValidator.validateString(),
   delivery_time: joi.array().items(JoiValidator.validateString()),
   time_zone: JoiValidator.validateString(),
   schedule: joi.boolean(),

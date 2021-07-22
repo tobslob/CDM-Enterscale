@@ -33,7 +33,7 @@ class CampaignRepository extends BaseRepository<Campaign> {
       gender: campaignDTO.gender,
       age: campaignDTO.age,
       percentage_to_send_to: campaignDTO.percentage_to_send_to,
-      template_id: campaignDTO.template_id,
+      template_identifier: campaignDTO.template_identifier,
       delivery_time: campaignDTO.delivery_time,
       schedule: campaignDTO.schedule,
       location: campaignDTO.location,
@@ -68,7 +68,7 @@ class CampaignRepository extends BaseRepository<Campaign> {
           gender: campaignDTO.gender,
           age: campaignDTO.age,
           percentage_to_send_to: campaignDTO.percentage_to_send_to,
-          template_id: campaignDTO.template_id,
+          template_identifier: campaignDTO.template_identifier,
           delivery_time: campaignDTO.delivery_time,
           location: campaignDTO.location
         }
