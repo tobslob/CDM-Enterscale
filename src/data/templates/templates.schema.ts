@@ -5,7 +5,7 @@ export const EmailTemplateSchema = new Schema(
   {
     _id: { ...uuid },
     name: { ...trimmedLowercaseString, index: true },
-    identifier: { ...trimmedLowercaseString, index: true },
+    identifier: { ...trimmedLowercaseString, unique: true, index: true },
   },
   {
     ...readMapper,
