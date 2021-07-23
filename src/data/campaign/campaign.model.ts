@@ -101,5 +101,6 @@ export interface CampaignQuery extends PaginationQuery {
   to?: Date;
   organisation?: string;
   channel?: Channel;
-  description: string;
+  description?: string;
+  state?: State;
 }

@@ -95,7 +95,8 @@ class CampaignRepository extends BaseRepository<Campaign> {
       description: { description: descriptionRegex },
       channel: { channel: query.channel },
       frequency: { frequency: query.frequency },
-      organisation: { organisation: organisationRegex }
+      organisation: { organisation: organisationRegex },
+      state: { state: query.state }
     });
 
     conditions = {

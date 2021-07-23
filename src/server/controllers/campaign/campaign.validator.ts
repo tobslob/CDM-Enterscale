@@ -45,7 +45,8 @@ export const isCampaignQuery = joi.object({
   to: joi.date().max("now").greater(joi.ref("from")),
   organisation: JoiValidator.validateString(),
   channel: JoiValidator.validateString().valid(...channel),
-  description: JoiValidator.validateString()
+  description: JoiValidator.validateString(),
+  state: JoiValidator.validateString().valid("CREATED", "ONGOING", "COMPLETED")
 });
 
 export const isCampaignType = joi.object({
