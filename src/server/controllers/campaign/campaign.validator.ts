@@ -41,8 +41,8 @@ export const isCampaignQuery = joi.object({
   name: JoiValidator.validateString(),
   subject: JoiValidator.validateString(),
   frequency: JoiValidator.validateString().valid("DAILY", "WEEKLY", "MONTHLY"),
-  from: JoiValidator.validDate(),
-  to: JoiValidator.validDate(),
+  from: joi.date().max("now"),
+  to: joi.date().max("now").greater(joi.ref("from")),
   organisation: JoiValidator.validateString(),
   channel: JoiValidator.validateString().valid(...channel),
   description: JoiValidator.validateString()
