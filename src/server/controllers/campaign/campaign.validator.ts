@@ -12,7 +12,7 @@ export const isCampaignDTO = joi.object({
     .required(),
   frequency: JoiValidator.validateString().valid("DAILY", "WEEKLY", "MONTHLY"),
   start_date: JoiValidator.validDate(),
-  end_date: JoiValidator.validDate(),
+  end_date: joi.date().greater(joi.ref("start_date")),
   target_audience: joi.array().items(JoiValidator.validateString()),
   message: JoiValidator.validateString(),
   subject: JoiValidator.validateString(),
@@ -34,7 +34,7 @@ export const isCampaignDTO = joi.object({
   video_url: JoiValidator.validateString(),
   brand_logo: JoiValidator.validateString(),
   hero_image: JoiValidator.validateString(),
-  audio_url: JoiValidator.validateString(),
+  audio_url: JoiValidator.validateString()
 });
 
 export const isCampaignQuery = joi.object({
@@ -50,4 +50,4 @@ export const isCampaignQuery = joi.object({
 
 export const isCampaignType = joi.object({
   campaign_type: JoiValidator.validateString().valid("engagement", "acquisition").required()
-})
+});

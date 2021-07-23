@@ -40,7 +40,8 @@ class CampaignRepository extends BaseRepository<Campaign> {
       video_url: campaignDTO.video_url,
       brand_logo: campaignDTO.brand_logo,
       hero_image: campaignDTO.hero_image,
-      audio_url: campaignDTO.audio_url
+      audio_url: campaignDTO.audio_url,
+      state: "CREATED"
     });
   }
 

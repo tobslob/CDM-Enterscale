@@ -10,6 +10,9 @@ export type Channel = typeof channel[number];
 export const status = <const>["START", "STOP"];
 export type Status = typeof status[number];
 
+export const state = <const>["CREATED", "ONGOING", "COMPLETED"];
+export type State = typeof state[number];
+
 export enum CampaignType {
   ENGAGEMENT = "engagement",
   AQUISITION = "acquisition"
@@ -58,6 +61,7 @@ export interface Campaign extends Model {
   brand_logo?: string;
   hero_image?: string;
   audio_url?: string;
+  state: State;
 }
 
 export interface CampaignDTO {
