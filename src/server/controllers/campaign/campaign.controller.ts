@@ -47,8 +47,19 @@ export class CampaignController extends BaseController<ControllerResponse> {
 
       if (!body.schedule) {
         instantResponse = await CampaignServ.sendInstantCampaign(body, req);
+        await CampaignRepo.atomicUpdate(
+          {
+            _id: campaign.id,
+            workspace
+          },
+          {
+            $set: {
+              state: "COMPLETED"
+            }
+          }
+        );
       }
-      this.handleSuccess(req, res, campaign && !body.schedule ? campaign: instantResponse);
+      this.handleSuccess(req, res, campaign && !body.schedule ? campaign : instantResponse);
 
       this.log(req, {
         object_id: campaign.id,

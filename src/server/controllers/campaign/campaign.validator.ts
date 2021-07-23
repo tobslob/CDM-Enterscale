@@ -12,7 +12,7 @@ export const isCampaignDTO = joi.object({
     .required(),
   frequency: JoiValidator.validateString().valid("DAILY", "WEEKLY", "MONTHLY"),
   start_date: JoiValidator.validDate(),
-  end_date: JoiValidator.validDate(),
+  end_date: joi.date().greater(joi.ref("start_date")),
   target_audience: joi.array().items(JoiValidator.validateString()),
   message: JoiValidator.validateString(),
   subject: JoiValidator.validateString(),
@@ -34,20 +34,21 @@ export const isCampaignDTO = joi.object({
   video_url: JoiValidator.validateString(),
   brand_logo: JoiValidator.validateString(),
   hero_image: JoiValidator.validateString(),
-  audio_url: JoiValidator.validateString(),
+  audio_url: JoiValidator.validateString()
 });
 
 export const isCampaignQuery = joi.object({
   name: JoiValidator.validateString(),
   subject: JoiValidator.validateString(),
   frequency: JoiValidator.validateString().valid("DAILY", "WEEKLY", "MONTHLY"),
-  from: JoiValidator.validDate(),
-  to: JoiValidator.validDate(),
+  from: joi.date().max("now"),
+  to: joi.date().max("now").greater(joi.ref("from")),
   organisation: JoiValidator.validateString(),
   channel: JoiValidator.validateString().valid(...channel),
-  description: JoiValidator.validateString()
+  description: JoiValidator.validateString(),
+  state: JoiValidator.validateString().valid("CREATED", "ONGOING", "COMPLETED")
 });
 
 export const isCampaignType = joi.object({
   campaign_type: JoiValidator.validateString().valid("engagement", "acquisition").required()
-})
+});

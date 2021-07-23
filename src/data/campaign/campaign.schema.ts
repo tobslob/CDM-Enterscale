@@ -34,7 +34,8 @@ export const CampaignSchema = new Schema(
     video_url: { ...trimmedString, index: true },
     brand_logo: { ...trimmedString, index: true },
     hero_image: { ...trimmedString, index: true },
-    audio_url: { ...trimmedString, index: true }
+    audio_url: { ...trimmedString, index: true },
+    state: { ...trimmedString, index: true, default: "CREATED" }
   },
   {
     ...readMapper,

@@ -40,7 +40,8 @@ class CampaignRepository extends BaseRepository<Campaign> {
       video_url: campaignDTO.video_url,
       brand_logo: campaignDTO.brand_logo,
       hero_image: campaignDTO.hero_image,
-      audio_url: campaignDTO.audio_url
+      audio_url: campaignDTO.audio_url,
+      state: "CREATED"
     });
   }
 
@@ -57,20 +58,25 @@ class CampaignRepository extends BaseRepository<Campaign> {
           description: campaignDTO.description,
           channel: campaignDTO.channel,
           frequency: campaignDTO.frequency,
-          start_date: campaignDTO.start_date,
-          end_date: campaignDTO.end_date,
+          start_date: campaignDTO.schedule ? timeZone(new Date(campaignDTO.start_date), campaignDTO.time_zone) : null,
+          end_date: campaignDTO.schedule ? timeZone(new Date(campaignDTO.end_date), campaignDTO.time_zone): null,
           target_audience: campaignDTO.target_audience,
           message: campaignDTO.message,
-          status: "STOP",
           subtype: campaignDTO.subtype,
-          customer_file_source: campaignDTO?.customer_file_source,
+          customer_file_source: campaignDTO.customer_file_source,
+          short_link: campaignDTO.short_link,
           campaign_type: campaignDTO.campaign_type,
           gender: campaignDTO.gender,
           age: campaignDTO.age,
           percentage_to_send_to: campaignDTO.percentage_to_send_to,
           template_identifier: campaignDTO.template_identifier,
           delivery_time: campaignDTO.delivery_time,
-          location: campaignDTO.location
+          schedule: campaignDTO.schedule,
+          location: campaignDTO.location,
+          video_url: campaignDTO.video_url,
+          brand_logo: campaignDTO.brand_logo,
+          hero_image: campaignDTO.hero_image,
+          audio_url: campaignDTO.audio_url,
         }
       }
     );
@@ -94,7 +100,8 @@ class CampaignRepository extends BaseRepository<Campaign> {
       description: { description: descriptionRegex },
       channel: { channel: query.channel },
       frequency: { frequency: query.frequency },
-      organisation: { organisation: organisationRegex }
+      organisation: { organisation: organisationRegex },
+      state: { state: query.state }
     });
 
     conditions = {
