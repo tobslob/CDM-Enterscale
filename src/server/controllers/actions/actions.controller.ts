@@ -50,7 +50,11 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/sms")
   async smsReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
+
+      console.log("🚨 needed for now", body)
       const sms: SMSReportsDTO = JSON.parse(body);
+
+      console.log("🚨 🚨", sms)
       const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
       if (session == null) {
