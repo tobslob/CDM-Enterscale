@@ -101,7 +101,7 @@ export class CampaignController extends BaseController<ControllerResponse> {
         this.handleSuccess(req, res, campaign);
       }
       res.status(200);
-      res.setHeader("Content-disposition", `attachment; filename=TransactionReceipt.${query.file_type}`);
+      res.setHeader("Content-disposition", `attachment; filename=CampaignReport.${query.file_type}`);
       switch (query.file_type) {
         case "csv":
           res.setHeader("Content-type", csvContentType);
