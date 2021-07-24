@@ -1,12 +1,4 @@
-import {
-  controller,
-  request,
-  response,
-  httpGet,
-  requestParam,
-  httpPost,
-  requestBody,
-} from "inversify-express-utils";
+import { controller, request, response, httpGet, requestParam, httpPost, requestBody } from "inversify-express-utils";
 import { BaseController, ConstraintError, mapConcurrently } from "@app/data/util";
 import { Request, Response } from "express";
 import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
@@ -15,7 +7,6 @@ import { VOICE_CAMPAIGN, USER_SESSION_KEY } from "@app/services/campaign";
 import { differenceInCalendarDays } from "date-fns";
 import { Store } from "@app/common/services";
 import { SMSReportsDTO, SMSReportRepo } from "@app/data/sms";
-import { Session } from "@app/data/user";
 import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-report";
 import { Voice, VoiceRepo } from "@app/data/voice";
 import { UrlShortnerRepo } from "@app/data/url-shortner/url-shortner.repo";
@@ -50,21 +41,9 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/sms")
   async smsReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
-
-      console.log("🚨 needed for now", body)
       const sms: SMSReportsDTO = JSON.parse(body);
 
-      console.log("🚨 🚨", sms)
-      const session = await Store.hget(USER_SESSION_KEY, "session_key");
-
-      if (session == null) {
-        return null;
-      }
-      const objSession: Session = JSON.parse(session);
-
-      console.log("Report", objSession)
-
-      await SMSReportRepo.smsReport(objSession.workspace, sms);
+      await SMSReportRepo.smsReport(sms);
       res.sendStatus(200);
     } catch (error) {
       this.handleError(req, res, error);
@@ -74,15 +53,9 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/webhook")
   async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
-      let objSession: Session;
       const voice: Voice = JSON.parse(body);
-      const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
-      if (session) {
-        objSession = JSON.parse(session);
-      }
-
-      await VoiceRepo.report(voice, objSession);
+      await VoiceRepo.report(voice);
       res.sendStatus(200);
     } catch (error) {
       this.handleError(req, res, error);

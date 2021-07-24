@@ -2,14 +2,13 @@ import { BaseRepository } from "@random-guys/bucket";
 import mongoose from "mongoose";
 import { VoiceSchema } from "./voice.schema";
 import { Voice } from "./voice.model";
-import { Session } from "../user";
 
 class VoiceRepository extends BaseRepository<Voice> {
   constructor() {
     super(mongoose.connection, "Voice", VoiceSchema);
   }
 
-  async report(voice: Voice, session: Session) {
+  async report(voice: Voice) {
     return this.create({
       callback_url: voice?.callback_url,
       call_id: voice?.id,
@@ -27,7 +26,6 @@ class VoiceRepository extends BaseRepository<Voice> {
       media_duration: voice?.media_duration,
       key_pressed: voice?.key_pressed,
       media_url: voice?.media_url,
-      workspace: session?.workspace,
       api_token: voice?.api_token,
       event_timestamp: voice?.event_timestamp,
       queued: voice?.queued,

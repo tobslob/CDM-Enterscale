@@ -9,11 +9,12 @@ export interface SMSReports extends Voice {
   body?: string;
   url_access_time?: string;
   status: SMSStatus;
+  sms_id?: string;
 }
 
 export interface SMSReportsDTO {
   callback_url?: string;
-  call_id?: string;
+  id?: string;
   ref_id?: string;
   recipient?: string;
   caller_id?: string;
@@ -39,4 +40,5 @@ export interface SMSReportQuery {
   status?: SMSStatus;
   limit?: number;
   offset?: number;
+  sms_id: string;
 }

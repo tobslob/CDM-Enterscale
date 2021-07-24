@@ -9,10 +9,10 @@ export class SMSReportRepository extends BaseRepository<SMSReports> {
     super(mongoose.connection, "SMSReport", SMSReportsSchema);
   }
 
-  async smsReport(workspace: string, report: SMSReportsDTO) {
+  async smsReport(report: SMSReportsDTO) {
     return this.create({
       callback_url: report.callback_url,
-      call_id: report.call_id,
+      sms_id: report.id,
       ref_id: report.ref_id,
       recipient: report.recipient,
       price: report.price,
@@ -26,8 +26,7 @@ export class SMSReportRepository extends BaseRepository<SMSReports> {
       from: report.from,
       body: report.body,
       url_access_time: report.url_access_time,
-      status: report.status,
-      workspace
+      status: report.status
     });
   }
 
