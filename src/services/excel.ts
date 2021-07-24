@@ -7,21 +7,21 @@ class ExcelService {
     const workbook = new Workbook();
     workbook.creator = "Mooyi";
     workbook.created = new Date();
-    const sheet = workbook.addWorksheet("Campaign");
+    // const sheet = workbook.addWorksheet("Campaign");
 
     if (campaign.channel === "SMS") {
-      const sms = searchSmsReports
-      sheet.columns =  [
-        { header: "Time Stamp", key: "timestamp" },
-        { header: "Phone Number", key: "to" },
-        { header: "Status", key: "status" },
-      ];
+      // const sms = searchSmsReports
+      // sheet.columns =  [
+      //   { header: "Time Stamp", key: "timestamp" },
+      //   { header: "Phone Number", key: "to" },
+      //   { header: "Status", key: "status" },
+      // ];
 
-      sheet.addRows({
-        timestamp: ,
-        to: ,
-        status: 
-      });
+      // sheet.addRows({
+      //   timestamp: ,
+      //   to: ,
+      //   status: 
+      // });
     }
     if (query.file_type === "csv") {
       return workbook.csv.write(response, {
