@@ -46,7 +46,7 @@ export class CampaignController extends BaseController<ControllerResponse> {
       campaign = await CampaignRepo.createCampaign(wrkspace, user, body);
 
       if (!body.schedule) {
-        instantResponse = await CampaignServ.sendInstantCampaign(body, req);
+        instantResponse = await CampaignServ.sendInstantCampaign(campaign, req);
         await CampaignRepo.atomicUpdate(
           {
             _id: campaign.id,
