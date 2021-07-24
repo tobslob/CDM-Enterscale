@@ -4,7 +4,7 @@ import joi from "@hapi/joi";
 import { Adapter } from "./base";
 import dotenv from "dotenv";
 import { JoiValidator } from "@app/data/util";
-import { Notification } from "@app/data/notification"
+import { Notification } from "@app/data/notification";
 
 dotenv.config();
 
@@ -72,17 +72,37 @@ export const AdapterInstance = new MailAdapter();
 
 // welcome mail to onboarded users
 AdapterInstance.createTemplate("welcome-mail", Mailer.mailLoader("welcome-mail.mjml"));
-
 // Reset password
 AdapterInstance.createTemplate("reset-password-mail", Mailer.mailLoader("reset-password-mail.mjml"));
-
 // campaign mail
-AdapterInstance.createTemplate("email-template", Mailer.mailLoader("email-template.mjml"));
+AdapterInstance.createTemplate("campaign-template", Mailer.mailLoader("campaign-template.mjml"));
+AdapterInstance.createTemplate("congratulations", Mailer.mailLoader("congratulations.mjml"));
+AdapterInstance.createTemplate("happy-anniversary-1", Mailer.mailLoader("happy-anniversary-1.mjml"));
+AdapterInstance.createTemplate("happy-anniversary-2", Mailer.mailLoader("happy-anniversary-2.mjml"));
+AdapterInstance.createTemplate("happy-birthday-1", Mailer.mailLoader("happy-birthday-1.mjml"));
+AdapterInstance.createTemplate("happy-birthday-2", Mailer.mailLoader("happy-birthday-2.mjml"));
+AdapterInstance.createTemplate("happy-birthday-3", Mailer.mailLoader("happy-birthday-3.mjml"));
+AdapterInstance.createTemplate("happy-holiday-1", Mailer.mailLoader("happy-holiday-1.mjml"));
+AdapterInstance.createTemplate("happy-holiday-2", Mailer.mailLoader("happy-holiday-2.mjml"));
+AdapterInstance.createTemplate("loan-repayment-1", Mailer.mailLoader("loan-repayment-1.mjml"));
+AdapterInstance.createTemplate("loan-repayment-2", Mailer.mailLoader("loan-repayment-2.mjml"));
+AdapterInstance.createTemplate("loan-repayment-3", Mailer.mailLoader("loan-repayment-3.mjml"));
+AdapterInstance.createTemplate("season-greetings-1", Mailer.mailLoader("season-greetings-1.mjml"));
+AdapterInstance.createTemplate("special-offer", Mailer.mailLoader("special-offer.mjml"));
+AdapterInstance.createTemplate("special-reward-1", Mailer.mailLoader("special-reward-1.mjml"));
+AdapterInstance.createTemplate("special-reward-2", Mailer.mailLoader("special-reward-2.mjml"));
+AdapterInstance.createTemplate("thank-you-1", Mailer.mailLoader("thank-you-1.mjml"));
+AdapterInstance.createTemplate("thank-you-2", Mailer.mailLoader("thank-you-2.mjml"));
+AdapterInstance.createTemplate("we-are-sorry-1", Mailer.mailLoader("we-are-sorry-1.mjml"));
+AdapterInstance.createTemplate("we-are-sorry-2", Mailer.mailLoader("we-are-sorry-2.mjml"));
+AdapterInstance.createTemplate("we-are-sorry-3", Mailer.mailLoader("we-are-sorry-3.mjml"));
 
 export const isMailNotification = joi.object({
   subject: JoiValidator.validateString().required(),
   recipient: JoiValidator.validateEmail(),
-  template: JoiValidator.validateString().valid(...AdapterInstance.getTemplates()).required(),
+  template: JoiValidator.validateString()
+    .valid(...AdapterInstance.getTemplates())
+    .required(),
   template_vars: joi.object()
 });
 
