@@ -18,12 +18,18 @@ export enum CampaignType {
   AQUISITION = "acquisition"
 }
 
+export enum FileType {
+  JSON = "json",
+  CSV = "csv",
+  XLSX = "xlsx"
+}
+
 export interface AgeGroup {
   from: number;
   to: number;
 }
 
-export interface BodyCampaignType{
+export interface BodyCampaignType {
   campaign_type: CampaignType;
 }
 
@@ -35,7 +41,7 @@ export interface Campaign extends Model {
   frequency?: Frequency;
   start_date?: Date;
   end_date?: Date;
-  sent_date?: Date
+  sent_date?: Date;
   /**
    * batch_id from uploaded files
    */
@@ -103,4 +109,5 @@ export interface CampaignQuery extends PaginationQuery {
   channel?: Channel;
   description?: string;
   state?: State;
+  file_type: FileType
 }
