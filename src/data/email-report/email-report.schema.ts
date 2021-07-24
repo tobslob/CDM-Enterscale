@@ -1,11 +1,11 @@
-import { Schema } from "mongoose";
+import { Schema, SchemaTypes } from "mongoose";
 import { trimmedLowercaseString, trimmedString, readMapper, timestamps, uuid } from "../util";
 
 export const EmailReportsSchema = new Schema(
   {
     _id: { ...uuid },
     email: { ...trimmedLowercaseString, required: true, index: true },
-    timestamp: { ...trimmedLowercaseString, index: true },
+    timestamp: { type: SchemaTypes.Date, index: true },
     "smtp-id": { ...trimmedString, index: true },
     event: { ...trimmedString, index: true },
     category: { ...trimmedString, index: true },
@@ -17,7 +17,8 @@ export const EmailReportsSchema = new Schema(
     asm_group_id: { ...trimmedString, index: true },
     response: { ...trimmedLowercaseString, index: true },
     reason: { ...trimmedLowercaseString, index: true },
-    workspace: { ...trimmedString, required: true, index: true }
+    workspace: { ...trimmedString, required: true, index: true },
+    email_id: { ...trimmedString, required: true, index: true }
   },
   {
     ...readMapper,

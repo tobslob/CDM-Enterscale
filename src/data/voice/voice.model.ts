@@ -24,3 +24,11 @@ export interface Voice extends Model {
   api_token?: string;
   cmd?: string;
 }
+
+export interface VoiceReportQuery {
+  call_id?: string;
+  recipient?: string;
+  status?: string;
+  limit?: number;
+  offset?: number;
+}

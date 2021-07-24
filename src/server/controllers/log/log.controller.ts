@@ -39,7 +39,7 @@ export class ActionsController extends BaseController<ControllerResponse> {
         message_ids.push(t.message_id);
       });
 
-      const email = await EmailReportRepo.searchEmailReports(message_ids, query);
+      const email = await EmailReportRepo.searchEmailReports(workspace, query);
 
       this.handleSuccess(req, res, email);
     } catch (error) {

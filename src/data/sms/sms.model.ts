@@ -36,9 +36,9 @@ export interface SMSReportsDTO {
 }
 
 export interface SMSReportQuery {
-  phoneNumber?: string;
+  sms_id: string;
+  to?: string;
   status?: SMSStatus;
   limit?: number;
   offset?: number;
-  sms_id: string;
 }

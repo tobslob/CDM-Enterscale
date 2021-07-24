@@ -24,11 +24,12 @@ export class EmailReportRepository extends BaseRepository<EmailReports> {
       asm_group_id: report.asm_group_id,
       response: report.response,
       reason: report.reason,
-      workspace
+      workspace,
+      email_id: report.email_id
     });
   }
 
-  async searchEmailReports(message_ids: string[], query: EmailReportsQuery) {
+  async searchEmailReports(workspace: string, query: EmailReportsQuery) {
     let conditions = fromQueryMap(query, {
       email: { email: query.email },
       timestamp: { timestamp: query.timestamp },
@@ -42,8 +43,8 @@ export class EmailReportRepository extends BaseRepository<EmailReports> {
     });
 
     conditions = {
-      ...conditions,
-      sg_message_id: { sg_message_id: { $in: message_ids } },
+      workspace,
+      ...conditions
     };
 
     const limit = Number(query.limit);

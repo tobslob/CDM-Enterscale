@@ -1,7 +1,8 @@
 import { BaseRepository } from "@random-guys/bucket";
 import mongoose from "mongoose";
 import { VoiceSchema } from "./voice.schema";
-import { Voice } from "./voice.model";
+import { Voice, VoiceReportQuery } from "./voice.model";
+import { fromQueryMap } from "../util";
 
 class VoiceRepository extends BaseRepository<Voice> {
   constructor() {
@@ -30,7 +31,39 @@ class VoiceRepository extends BaseRepository<Voice> {
       event_timestamp: voice?.event_timestamp,
       queued: voice?.queued,
       timestamp: voice?.timestamp,
-      cmd: voice?.cmd
+      cmd: voice?.cmd,
+      workspace: voice.workspace
+    });
+  }
+
+  async searchVoiceReports(workspace: string, query?: VoiceReportQuery) {
+    let conditions = fromQueryMap(query, {
+      call_id: { call_id: query.call_id },
+      recipient: { phoneNumber: query.recipient },
+      status: { status: query.status }
+    });
+
+    conditions = {
+      ...conditions,
+      workspace
+    };
+
+    const limit = Number(query.limit);
+    const offset = Number(query.offset);
+
+    return new Promise<Voice[]>((resolve, reject) => {
+      let directQuery = this.model.find(conditions).skip(offset).sort({ created_at: -1 });
+
+      if (query.limit !== 0) {
+        directQuery = directQuery.limit(limit);
+      }
+
+      return directQuery.exec((err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(result);
+      });
     });
   }
 }
