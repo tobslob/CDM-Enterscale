@@ -109,5 +109,8 @@ export interface CampaignQuery extends PaginationQuery {
   channel?: Channel;
   description?: string;
   state?: State;
+}
+
+export interface GetCampaignQuery {
   file_type: FileType
 }

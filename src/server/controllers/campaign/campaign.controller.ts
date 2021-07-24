@@ -12,17 +12,20 @@ import {
 } from "inversify-express-utils";
 import { BaseController, validate, ConstraintError, mapConcurrently } from "@app/data/util";
 import { Request, Response } from "express";
-import { Campaign, CampaignDTO, CampaignRepo, CampaignQuery } from "@app/data/campaign";
+import { Campaign, CampaignDTO, CampaignRepo, CampaignQuery, GetCampaignQuery } from "@app/data/campaign";
 import { canCreateCampaign } from "./campaign.middleware";
-import { isCampaignDTO, isCampaignQuery } from "./campaign.validator";
+import { isCampaignDTO, isCampaignQuery, isGetCampaignQuery } from "./campaign.validator";
 import { differenceInDays } from "date-fns";
 import { WorkspaceRepo } from "@app/data/workspace";
 import { isIDs } from "../defaulter/defaulter.validator";
 import { CampaignServ } from "@app/services/campaign";
 import { replaceUrlWithShortUrl } from "@app/services/url-shortner";
 import { listTimeZones } from "timezone-support";
+import { Excel } from "@app/services/excel";
 
 type ControllerResponse = Campaign[] | Campaign | string[] | object;
+const excelContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+const csvContentType = "text/plain";
 
 @controller("/campaigns")
 export class CampaignController extends BaseController<ControllerResponse> {
@@ -84,13 +87,29 @@ export class CampaignController extends BaseController<ControllerResponse> {
     }
   }
 
-  @httpGet("/:id", canCreateCampaign)
-  async getCampaign(@request() req: Request, @response() res: Response, @requestParam("id") _id: string) {
+  @httpGet("/:id", canCreateCampaign, validate(isGetCampaignQuery, "query"))
+  async getCampaign(
+    @request() req: Request,
+    @response() res: Response,
+    @requestParam("id") id: string,
+    @queryParam() query: GetCampaignQuery
+  ) {
     try {
-      const workspace = req.session.workspace;
-      const campaigns = await CampaignRepo.byQuery({ workspace, _id });
+      const campaign = await CampaignRepo.byID(id);
 
-      this.handleSuccess(req, res, campaigns);
+      if (query.file_type === "json") {
+        this.handleSuccess(req, res, campaign);
+      }
+      res.status(200);
+      res.setHeader("Content-disposition", `attachment; filename=TransactionReceipt.${query.file_type}`);
+      switch (query.file_type) {
+        case "csv":
+          res.setHeader("Content-type", csvContentType);
+          return Excel.campaignReport(query, campaign, res);
+        case "xlsx":
+          res.setHeader("Content-type", excelContentType);
+          return Excel.campaignReport(query, campaign, res);
+      }
     } catch (error) {
       this.handleError(req, res, error);
     }

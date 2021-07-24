@@ -1,12 +1,12 @@
 import { Response } from "express";
 import { Workbook } from "exceljs";
-import { CampaignQuery, Campaign } from "@app/data/campaign";
+import { GetCampaignQuery, Campaign } from "@app/data/campaign";
 import { SMSReportRepo } from "@app/data/sms";
 import { VoiceRepo } from "@app/data/voice";
 import { EmailReportRepo } from "@app/data/email-report";
 
 class ExcelService {
-  async campaignReport(query: CampaignQuery, campaign: Campaign, response: Response) {
+  async campaignReport(query: GetCampaignQuery, campaign: Campaign, response: Response) {
     const workbook = new Workbook();
     workbook.creator = "Mooyi";
     workbook.created = new Date();

@@ -53,3 +53,7 @@ export const isCampaignQuery = joi.object({
 export const isCampaignType = joi.object({
   campaign_type: JoiValidator.validateString().valid("engagement", "acquisition").required()
 });
+
+export const isGetCampaignQuery = joi.object({
+  file_type: joi.string().valid("json", "csv", "xlsx").default("json")
+});
