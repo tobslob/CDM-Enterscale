@@ -1,5 +1,5 @@
 import AdapterInstance from "@app/server/adapter/mail";
-import { CampaignDTO } from "@app/data/campaign";
+import { Campaign } from "@app/data/campaign";
 import dotenv from "dotenv";
 import { NotFoundError, mapConcurrently } from "@app/data/util";
 import { Proxy, Prop } from "@app/services/proxy";
@@ -18,7 +18,7 @@ export const EMAIL_CAMPAIGN = "enterscale-campaign";
 export const USER_SESSION_KEY = "user_session_key";
 
 class CampaignService {
-  async sendInstantCampaign(campaign: CampaignDTO, req: Request) {
+  async sendInstantCampaign(campaign: Campaign, req: Request) {
     const workspace = campaign.campaign_type == "acquisition" ? process.env.mooyi_workspace : req.session.workspace;
     const defaulters = await DefaulterRepo.getDefaulters(workspace, {
       batch_id: campaign.target_audience,
@@ -48,7 +48,7 @@ class CampaignService {
     });
   }
 
-  async send(campaign: CampaignDTO, user: any, req?: Request) {
+  async send(campaign: Campaign, user: any, req?: Request) {
     await Store.hset(USER_SESSION_KEY, "session_key", JSON.stringify(req.session));
 
     switch (campaign.channel) {
@@ -63,7 +63,7 @@ class CampaignService {
     }
   }
 
-  private async email(campaign: CampaignDTO, user: any, req: Request) {
+  private async email(campaign: Campaign, user: any, req: Request) {
     const link =
       campaign.campaign_type == "engagement"
         ? await Defaulters.generateDefaulterLink(user, campaign.target_audience, req)
@@ -87,16 +87,16 @@ class CampaignService {
     return email;
   }
 
-  private async sms(campaign: CampaignDTO, user: User, req: Request) {
+  private async sms(campaign: Campaign, user: User, req: Request) {
     const link =
       campaign.campaign_type == "engagement"
         ? await Defaulters.generateDefaulterLink(user, campaign.target_audience, req)
         : "";
-    const body = `${campaign.message}\n${link}`;
-    return await Proxy.sms(user.phone_number, body, req);
+    campaign["message"] = `${campaign.message}\n${link}`;
+    return await Proxy.sms(user.phone_number, campaign);
   }
 
-  private async voice(campaign: CampaignDTO, phone_numbers: string[], req: Request) {
+  private async voice(campaign: Campaign, phone_numbers: string[], req: Request) {
     await Store.hset(VOICE_CAMPAIGN, "campaign_key", JSON.stringify(campaign));
     let prop: Prop = campaign.audio_url ? "media_url" : "doc_url";
     return await Proxy.voice(campaign, prop, phone_numbers, req);

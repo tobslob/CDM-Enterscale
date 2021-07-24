@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { Axios } from "@app/data/util/proxy";
-import { CampaignDTO } from "@app/data/campaign";
+import { Campaign } from "@app/data/campaign";
 import { ValidatePaymentDTO, PaymentPlan, PaymentPlanQuery, UpdatePaymentPlan } from "@app/data/payment";
 import { DefaulterQuery, DefaulterRepo, FacebookAudienceDTO } from "@app/data/defaulter";
 import { Defaulters } from "./defaulter";
@@ -152,14 +152,14 @@ class ProxyServices {
     return data;
   }
 
-  async voice(campaign: CampaignDTO, prop: Prop, recipient: Array<string>, req: Request) {
+  async voice(campaign: Campaign, prop: Prop, recipient: Array<string>, req: Request) {
     let url: string;
     url = prop == "doc_url" ? `${process.env.base_url}/actions/voice` : campaign.audio_url;
     const data = await Axios(
       `${process.env.kirusa_url}/${process.env.kirusa_account_id}/Calls`,
       "post",
       {
-        id: req.session.workspace,
+        id: campaign.id,
         caller_id: `${process.env.kirusa_caller_id}`,
         recipient,
         direction: "outbound",
@@ -177,16 +177,16 @@ class ProxyServices {
     return data;
   }
 
-  async sms(recipient: string, body: string, req: Request) {
+  async sms(recipient: string, campaign: Campaign) {
     const data = await Axios(
       `${process.env.kirusa_url}/${process.env.kirusa_account_id}/Messages`,
       "post",
       {
-        id: req.session.workspace,
+        id: campaign.id,
         to: [recipient],
         direction: "2way",
         sender_mask: "Mooyi io",
-        body,
+        body: campaign.message,
         callback_url: `${process.env.base_url}/actions/sms`
       },
       {
