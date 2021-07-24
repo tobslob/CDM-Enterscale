@@ -18,7 +18,7 @@ export type Event = typeof event[number];
 
 export interface EmailReports extends Model {
   email: string;
-  timestamp?: string;
+  timestamp?: Date;
   "smtp-id"?: string;
   event?: Event;
   category?: string;
@@ -31,11 +31,12 @@ export interface EmailReports extends Model {
   response?: string;
   reason?: string;
   workspace: string;
+  email_id: string;
 }
 
 export interface EmailReportsDTO {
   email: string;
-  timestamp?: string;
+  timestamp?: any;
   "smtp-id"?: string;
   event?: Event;
   category?: string;
@@ -47,11 +48,13 @@ export interface EmailReportsDTO {
   asm_group_id?: number;
   response?: string;
   reason?: string;
+  email_id?: string
 }
 
 export interface EmailReportsQuery {
+  email_id?: string;
   email?: string;
-  timestamp?: string;
+  timestamp?: Date;
   event?: Event;
   category?: string;
   useragent?: string;

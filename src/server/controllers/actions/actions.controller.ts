@@ -1,24 +1,17 @@
-import {
-  controller,
-  request,
-  response,
-  httpGet,
-  requestParam,
-  httpPost,
-  requestBody,
-} from "inversify-express-utils";
+import { controller, request, response, httpGet, requestParam, httpPost, requestBody } from "inversify-express-utils";
 import { BaseController, ConstraintError, mapConcurrently } from "@app/data/util";
 import { Request, Response } from "express";
 import { Campaign, CampaignRepo, CampaignDTO } from "@app/data/campaign";
 import { canCreateCampaign } from "../campaign/campaign.middleware";
-import { VOICE_CAMPAIGN, USER_SESSION_KEY } from "@app/services/campaign";
+import { VOICE_CAMPAIGN } from "@app/services/campaign";
 import { differenceInCalendarDays } from "date-fns";
 import { Store } from "@app/common/services";
 import { SMSReportsDTO, SMSReportRepo } from "@app/data/sms";
-import { Session } from "@app/data/user";
-import { EmailReportsDTO, EmailReportRepo, EmailReports } from "@app/data/email-report";
+import { EmailReportsDTO, EmailReportRepo } from "@app/data/email-report";
 import { Voice, VoiceRepo } from "@app/data/voice";
 import { UrlShortnerRepo } from "@app/data/url-shortner/url-shortner.repo";
+import { Mail } from "@app/data/email/email.repo";
+import { fromUnixTime } from "date-fns";
 
 type ControllerResponse = Campaign[] | Campaign | string | string[];
 
@@ -50,21 +43,12 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/sms")
   async smsReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
+      const smsReport: SMSReportsDTO = JSON.parse(body);
 
-      console.log("🚨 needed for now", body)
-      const sms: SMSReportsDTO = JSON.parse(body);
+      const campaign = await CampaignRepo.byID(smsReport.id);
+      smsReport["workspace"] = campaign.workspace;
+      await SMSReportRepo.smsReport(smsReport);
 
-      console.log("🚨 🚨", sms)
-      const session = await Store.hget(USER_SESSION_KEY, "session_key");
-
-      if (session == null) {
-        return null;
-      }
-      const objSession: Session = JSON.parse(session);
-
-      console.log("Report", objSession)
-
-      await SMSReportRepo.smsReport(objSession.workspace, sms);
       res.sendStatus(200);
     } catch (error) {
       this.handleError(req, res, error);
@@ -74,15 +58,12 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/webhook")
   async voiceReport(@request() req: Request, @response() res: Response, @requestBody() body: string) {
     try {
-      let objSession: Session;
       const voice: Voice = JSON.parse(body);
-      const session = await Store.hget(USER_SESSION_KEY, "session_key");
 
-      if (session) {
-        objSession = JSON.parse(session);
-      }
+      const campaign = await CampaignRepo.byID(voice.id);
+      voice["workspace"] = campaign.workspace;
+      await VoiceRepo.report(voice);
 
-      await VoiceRepo.report(voice, objSession);
       res.sendStatus(200);
     } catch (error) {
       this.handleError(req, res, error);
@@ -92,18 +73,14 @@ export class ActionsController extends BaseController<ControllerResponse> {
   @httpPost("/email")
   async emailReport(@request() req: Request, @response() res: Response, @requestBody() body: EmailReportsDTO[]) {
     try {
-      const session = await Store.hget(USER_SESSION_KEY, "session_key");
-
-      if (session == null) {
-        return null;
-      }
-      const objSession: EmailReports = JSON.parse(session);
-
       await mapConcurrently(body, async r => {
         const message_id = r.sg_message_id.split(".");
         r["sg_message_id"] = message_id[0];
 
-        await EmailReportRepo.emailReport(objSession.workspace, r);
+        const { workspace, email_id } = await Mail.byQuery({ message_id: message_id[0] });
+        r["email_id"] = email_id;
+        r["timestamp"] = fromUnixTime(r.timestamp);
+        await EmailReportRepo.emailReport(workspace, r);
       });
       return;
     } catch (error) {

@@ -83,7 +83,7 @@ class CampaignService {
       }
     });
 
-    await Mail.tracker(req.session.workspace, email.headers["x-message-id"]);
+    await Mail.tracker(req.session.workspace, email.headers["x-message-id"], campaign.id);
     return email;
   }
 
