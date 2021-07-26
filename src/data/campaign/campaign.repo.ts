@@ -89,12 +89,6 @@ class CampaignRepository extends BaseRepository<Campaign> {
     const organisationRegex = new RegExp(`.*${query.organisation}.*`, "i");
 
     let conditions = fromQueryMap(query, {
-      $always: {
-        start_date: {
-          $gte: query.from,
-          $lte: query.to
-        }
-      },
       name: { name: nameRegex },
       subject: { subject: subjectRegex },
       description: { description: descriptionRegex },
@@ -112,7 +106,7 @@ class CampaignRepository extends BaseRepository<Campaign> {
     const limit = Number(query.limit);
     const offset = Number(query.offset);
     return new Promise<Campaign[]>((resolve, reject) => {
-      let directQuery = this.model.find({ workspace }).skip(offset).sort({ created_at: -1 });
+      let directQuery = this.model.find(conditions).skip(offset).sort({ created_at: -1 });
 
       if (query.limit !== 0) {
         directQuery = directQuery.limit(limit);
