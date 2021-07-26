@@ -8,9 +8,9 @@ export class MailRepository extends BaseRepository<Email> {
     super(mongoose.connection, "EmailTracker", EmailTrackerSchema);
   }
 
-  async tracker(workspace: string, message_id: string, email_id: string) {
+  async tracker(workspace: string, message_id: string, campaign_id: string) {
     return this.create({
-      email_id,
+      campaign_id,
       message_id,
       workspace
     });

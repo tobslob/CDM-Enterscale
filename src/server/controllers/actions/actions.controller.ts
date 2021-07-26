@@ -77,8 +77,8 @@ export class ActionsController extends BaseController<ControllerResponse> {
         const message_id = r.sg_message_id.split(".");
         r["sg_message_id"] = message_id[0];
 
-        const { workspace, email_id } = await Mail.byQuery({ message_id: message_id[0] });
-        r["email_id"] = email_id;
+        const { workspace, campaign_id } = await Mail.byQuery({ message_id: message_id[0] });
+        r["campaign_id"] = campaign_id;
         r["timestamp"] = fromUnixTime(r.timestamp);
         await EmailReportRepo.emailReport(workspace, r);
       });

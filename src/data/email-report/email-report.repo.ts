@@ -25,12 +25,13 @@ export class EmailReportRepository extends BaseRepository<EmailReports> {
       response: report.response,
       reason: report.reason,
       workspace,
-      email_id: report.email_id
+      campaign_id: report.campaign_id
     });
   }
 
   async searchEmailReports(workspace: string, query: EmailReportsQuery) {
     let conditions = fromQueryMap(query, {
+      campaign_id: { campaign_id: query.campaign_id },
       email: { email: query.email },
       timestamp: { timestamp: query.timestamp },
       event: { event: query.event },

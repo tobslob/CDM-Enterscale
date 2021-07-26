@@ -1,16 +1,15 @@
-import { trimmedString, readMapper, timestamps } from "@random-guys/bucket";
 import { Schema } from "mongoose";
-import { uuid } from "@app/data/util";
+import { uuid, trimmedLowercaseString, trimmedString, readMapper, timestamps } from "@app/data/util";
 
 export const VoiceSchema = new Schema(
   {
     _id: { ...uuid },
     callback_url: { ...trimmedString, index: true },
-    call_id: { ...trimmedString, index: true },
+    campaign_id: { ...trimmedString, index: true },
     ref_id: { ...trimmedString, index: true },
     recipient: { ...trimmedString, index: true },
     caller_id: { ...trimmedString, index: true },
-    status: { ...trimmedString, index: true },
+    status: { ...trimmedLowercaseString, index: true },
     price: { ...trimmedString, index: true },
     account_balance: { ...trimmedString, index: true },
     error_code: { ...trimmedString, index: true },

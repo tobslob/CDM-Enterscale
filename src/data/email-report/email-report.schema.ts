@@ -18,7 +18,7 @@ export const EmailReportsSchema = new Schema(
     response: { ...trimmedLowercaseString, index: true },
     reason: { ...trimmedLowercaseString, index: true },
     workspace: { ...trimmedString, required: true, index: true },
-    email_id: { ...trimmedString, required: true, index: true }
+    campaign_id: { ...trimmedString, required: true, index: true }
   },
   {
     ...readMapper,
