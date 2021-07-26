@@ -46,8 +46,7 @@ export const isCampaignQuery = joi.object({
   organisation: JoiValidator.validateString(),
   channel: JoiValidator.validateString().valid(...channel),
   description: JoiValidator.validateString(),
-  state: JoiValidator.validateString().valid("CREATED", "ONGOING", "COMPLETED"),
-  file_type: JoiValidator.validateString().valid("json", "xlsx", "csv").required()
+  state: JoiValidator.validateString().valid("CREATED", "ONGOING", "COMPLETED")
 });
 
 export const isCampaignType = joi.object({
@@ -55,5 +54,5 @@ export const isCampaignType = joi.object({
 });
 
 export const isGetCampaignQuery = joi.object({
-  file_type: joi.string().valid("json", "csv", "xlsx").default("json")
+  file_type: joi.string().valid("json", "csv", "xlsx").default("json").required()
 });

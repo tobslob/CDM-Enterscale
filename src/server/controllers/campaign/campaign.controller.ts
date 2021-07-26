@@ -98,7 +98,7 @@ export class CampaignController extends BaseController<ControllerResponse> {
       const campaign = await CampaignRepo.byID(id);
 
       if (query.file_type === "json") {
-        this.handleSuccess(req, res, campaign);
+        return this.handleSuccess(req, res, campaign);
       }
       res.status(200);
       res.setHeader("Content-disposition", `attachment; filename=CampaignReport.${query.file_type}`);
