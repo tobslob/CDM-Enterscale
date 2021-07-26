@@ -1,12 +1,15 @@
 import { Model } from "@random-guys/bucket";
 
+const status = <const>["accepted", "failed", "queued", "success", "rejected"];
+type VStatus = typeof status[number];
+
 export interface Voice extends Model {
   callback_url?: string;
-  call_id?: string;
+  campaign_id?: string;
   ref_id?: string;
   recipient?: string;
   caller_id?: string;
-  status?: string;
+  status?: VStatus;
   price?: string;
   account_balance?: string;
   error_code?: string;
@@ -26,9 +29,9 @@ export interface Voice extends Model {
 }
 
 export interface VoiceReportQuery {
-  call_id?: string;
+  campaign_id?: string;
   recipient?: string;
-  status?: string;
+  status?: VStatus;
   limit?: number;
   offset?: number;
 }

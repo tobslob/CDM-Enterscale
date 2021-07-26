@@ -5,7 +5,7 @@ export const SMSReportsSchema = new Schema(
   {
     _id: { ...uuid },
     callback_url: { ...trimmedLowercaseString, index: true },
-    sms_id: { ...trimmedLowercaseString, index: true },
+    campaign_id: { ...trimmedLowercaseString, index: true },
     ref_id: { ...trimmedLowercaseString, index: true },
     recipient: { ...trimmedLowercaseString, index: true },
     price: { ...trimmedLowercaseString, index: true },

@@ -12,7 +12,7 @@ export class SMSReportRepository extends BaseRepository<SMSReports> {
   async smsReport(report: SMSReportsDTO) {
     return this.create({
       callback_url: report.callback_url,
-      sms_id: report.id,
+      campaign_id: report.id,
       ref_id: report.ref_id,
       recipient: report.recipient,
       price: report.price,
@@ -33,7 +33,7 @@ export class SMSReportRepository extends BaseRepository<SMSReports> {
 
   async searchSmsReports(workspace: string, query?: SMSReportQuery) {
     let conditions = fromQueryMap(query, {
-      sms_id: { sms_id: query.sms_id },
+      campaign_id: { campaign_id: query.campaign_id },
       to: { to: query.to },
       status: { status: query.status }
     });

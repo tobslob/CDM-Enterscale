@@ -12,7 +12,7 @@ class VoiceRepository extends BaseRepository<Voice> {
   async report(voice: Voice) {
     return this.create({
       callback_url: voice?.callback_url,
-      call_id: voice?.id,
+      campaign_id: voice?.id,
       ref_id: voice?.ref_id,
       recipient: voice?.recipient,
       caller_id: voice?.caller_id,
@@ -38,7 +38,7 @@ class VoiceRepository extends BaseRepository<Voice> {
 
   async searchVoiceReports(workspace: string, query?: VoiceReportQuery) {
     let conditions = fromQueryMap(query, {
-      call_id: { call_id: query.call_id },
+      campaign_id: { campaign_id: query.campaign_id },
       recipient: { phoneNumber: query.recipient },
       status: { status: query.status }
     });

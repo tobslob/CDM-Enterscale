@@ -13,7 +13,7 @@ class ExcelService {
     const sheet = workbook.addWorksheet("Campaign");
 
     if (campaign.channel === "SMS") {
-      const smsReports = await SMSReportRepo.searchSmsReports(campaign.workspace, { sms_id: campaign.id });
+      const smsReports = await SMSReportRepo.searchSmsReports(campaign.workspace, { campaign_id: campaign.id });
       sheet.columns = [
         { header: "Time Stamp", key: "timestamp" },
         { header: "Phone Number", key: "to" },
@@ -29,7 +29,7 @@ class ExcelService {
     }
 
     if (campaign.channel === "VOICE") {
-      const voiceReports = await VoiceRepo.searchVoiceReports(campaign.workspace, { call_id: campaign.id });
+      const voiceReports = await VoiceRepo.searchVoiceReports(campaign.workspace, { campaign_id: campaign.id });
       sheet.columns = [
         { header: "Time Stamp", key: "timestamp" },
         { header: "Recipient", key: "recipient" },
@@ -52,7 +52,7 @@ class ExcelService {
     }
 
     if (campaign.channel === "EMAIL") {
-      const emailReports = await EmailReportRepo.searchEmailReports(campaign.workspace, { email_id: campaign.id });
+      const emailReports = await EmailReportRepo.searchEmailReports(campaign.workspace, { campaign_id: campaign.id });
       sheet.columns = [
         { header: "Time Stamp", key: "timestamp" },
         { header: "Recipient", key: "email" },

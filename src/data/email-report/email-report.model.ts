@@ -31,7 +31,7 @@ export interface EmailReports extends Model {
   response?: string;
   reason?: string;
   workspace: string;
-  email_id: string;
+  campaign_id: string;
 }
 
 export interface EmailReportsDTO {
@@ -48,11 +48,11 @@ export interface EmailReportsDTO {
   asm_group_id?: number;
   response?: string;
   reason?: string;
-  email_id?: string
+  campaign_id?: string
 }
 
 export interface EmailReportsQuery {
-  email_id?: string;
+  campaign_id?: string;
   email?: string;
   timestamp?: Date;
   event?: Event;
