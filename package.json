@@ -50,7 +50,7 @@
     "inversify": "^5.0.1",
     "inversify-express-utils": "^6.3.2",
     "ioredis": "^4.17.3",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.20",
     "mjml": "^4.8.1",
     "module-alias": "^2.2.2",
